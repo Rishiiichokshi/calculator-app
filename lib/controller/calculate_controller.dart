@@ -1,11 +1,7 @@
-import 'package:get/get.dart';
+import 'package:get/get_state_manager/src/simple/get_controllers.dart';
 import 'package:math_expressions/math_expressions.dart';
 
 class CalculateController extends GetxController {
-  /* 
-  UserInput = What User entered with the keyboard .
-  UserOutput = Calculate the numbers that the user entered and put into userOutPut variable.
-  */
   var userInput = "";
   var userOutput = "";
 
