@@ -27,19 +27,20 @@ class ScientificCalculator extends StatelessWidget {
     "DEL",
     "%",
     "/",
-    "2nd",
+    "2ⁿᵈ",
     "x²",
     "x³",
-    "x^y",
-    "ex",
-    "10x",
+    "xʸ",
+    "eˣ",
+    "10ˣ",
     "7",
     "8",
     "9",
     "x",
     "1/x",
     "2√x",
-    "3√x",
+    "∛x",
+    // "3√x",
     "y√x",
     "In",
     "log10",
@@ -108,14 +109,15 @@ class ScientificCalculator extends StatelessWidget {
               borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(15), topRight: Radius.circular(15))),
           child: GridView.builder(
-              padding: EdgeInsets.only(top: 1.h, bottom: 1.h),
+              padding:
+                  EdgeInsets.only(top: 1.h, bottom: 1.h, left: 3.w, right: 3.w),
               physics: const NeverScrollableScrollPhysics(),
               itemCount: buttons.length,
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 10,
-                  mainAxisExtent: 4.6.h,
-                  mainAxisSpacing: 0.6.w,
-                  crossAxisSpacing: 2.w),
+                  mainAxisExtent: 5.3.h,
+                  mainAxisSpacing: 1.5.w,
+                  crossAxisSpacing: 2.9.w),
               itemBuilder: (contex, index) {
                 switch (index) {
                   /// CLEAR BTN

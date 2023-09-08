@@ -26,12 +26,12 @@ class ScientificButton extends StatelessWidget {
         // margin: const EdgeInsets.all(0),
         decoration: BoxDecoration(
           color: color,
-          borderRadius: BorderRadius.circular(12.w),
+          borderRadius: BorderRadius.circular(4.w),
         ),
         child: Center(
           child: Text(
             text,
-            style: TextStyle(color: textColor, fontSize: 15.sp),
+            style: TextStyle(color: textColor, fontSize: 13.sp),
           ),
         ),
       ),
