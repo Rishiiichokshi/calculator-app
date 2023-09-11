@@ -32,11 +32,14 @@ class ScientificController extends GetxController {
 
     userInputFC = userInputFC
         .replaceAll("x", "*")
+        .replaceAll("/", "/")
+        .replaceAll("-", "-")
+        .replaceAll("+", "+")
         .replaceAll("x²", "^2")
         .replaceAll("x³", "^3")
+        .replaceAll("EE", "*10^")
         .replaceAll("xʸ", "^")
         .replaceAll("2√x", "sqrt")
-        // .replaceAll("y√x", "^(1/")
         .replaceAll("∛x", "pow($userInput, 1/3)") // Cube root calculation
         .replaceAll("10ˣ", "pow(10,")
         .replaceAll('eˣ', 'exp')
@@ -44,7 +47,7 @@ class ScientificController extends GetxController {
         .replaceAll("1/x", "1/")
         .replaceAll('X!', '!')
         .replaceAll('e', '${math.e}')
-        .replaceAll('π', '3.1415926535897932');
+        .replaceAll('π', '${math.pi}');
 
     if (userInputFC.contains("e^")) {
       // Extract the portion after "e^" and calculate the result
@@ -57,6 +60,25 @@ class ScientificController extends GetxController {
         userOutput = 'Error';
       }
     }
+
+    // Handle the "log₁₀" operation
+    if (userInputFC.contains("log₁₀")) {
+      final logMatches = RegExp(r'log₁₀\(([^)]+)\)').allMatches(userInputFC);
+      for (var match in logMatches) {
+        final fullMatch = match.group(0).toString();
+        final innerValue = match.group(1);
+        double? input = double.tryParse(innerValue!);
+        if (input != null && input > 0) {
+          double result = math.log(input) / math.log(10);
+          userInputFC = userInputFC.replaceFirst(fullMatch, result.toString());
+        } else {
+          userOutput = "Invalid input";
+          update();
+          return;
+        }
+      }
+    }
+
     // Handle the "In" operation
     if (userInputFC.contains("In(")) {
       final inMatches = RegExp(r'In\(([^)]+)\)').allMatches(userInputFC);
@@ -75,19 +97,6 @@ class ScientificController extends GetxController {
       }
     }
 
-    // Check if a constant has been inserted, and if so, skip further replacements
-    // if (!constantInserted) {
-    //   userInputFC = userInputFC
-    //       .replaceAll(
-    //         'e',
-    //         '${math.e}',
-    //       )
-    //       .replaceAll(
-    //         'π',
-    //         '3.1415926535897932',
-    //       );
-    // }
-
     try {
       Parser p = Parser();
       Expression exp = p.parse(userInputFC);
@@ -95,7 +104,7 @@ class ScientificController extends GetxController {
       double eval = exp.evaluate(EvaluationType.REAL, ctx);
 
       userOutput = eval.toString();
-      userInputFC = eval.toString();
+      userInput = eval.toString();
       print('===ParcerUserOutput: $userOutput');
       print('===ParceruserInputFC: $userInputFC');
     } catch (e) {
@@ -124,9 +133,12 @@ class ScientificController extends GetxController {
   /// on Number Button Tapped
   void onBtnTapped(List<String> buttons, int index) {
     ///if there is already in input In then this cant able to edit user input
-    if (userInput.contains("In")) {
-      return;
-    }
+    // if (userInput.contains("In")) {
+    //   return;
+    // }
+    // if (userInput.contains("log₁₀")) {
+    //   return;
+    // }
 
     /// x² button
     if (buttons[index] == 'x²') {
@@ -149,6 +161,23 @@ class ScientificController extends GetxController {
         userInput = "10^$userInput";
       } else {
         userOutput = "0";
+      }
+    }
+
+    /// "log₁₀" button
+    else if (buttons[index] == 'log₁₀') {
+      if (userInput.isNotEmpty) {
+        double? input = double.tryParse(userInput);
+        if (input != null && input > 0) {
+          double result =
+              math.log(input) / math.log(10); // Calculate the base-10 logarithm
+          userInput = "log₁₀($userInput)";
+          userOutput = result.toString();
+        } else {
+          userOutput = "Invalid input";
+        }
+      } else {
+        userOutput = "Not a Number";
       }
     }
 
@@ -233,20 +262,151 @@ class ScientificController extends GetxController {
 
     /// π button
     else if (buttons[index] == 'π') {
-      userInput = 'π';
-      // constantInserted = true;
+      if (userInput.isNotEmpty) {
+        final lastChar = userInput[userInput.length - 1];
+        if (lastChar == '*' ||
+            lastChar == '/' ||
+            lastChar == '+' ||
+            lastChar == '-') {
+          // If the last character is an operator, simply add "π" without multiplication
+          userInput += 'π';
+        } else {
+          // Otherwise, add the multiplication operator before "π"
+          userInput += '*π';
+        }
+      } else {
+        // If the input is empty, print the value of π
+        userOutput = math.pi.toString();
+      }
     }
 
     /// e button
     else if (buttons[index] == 'e') {
-      userInput = 'e';
-      // constantInserted = true;
+      if (userInput.isNotEmpty) {
+        final lastChar = userInput[userInput.length - 1];
+        if (lastChar == '*' ||
+            lastChar == '/' ||
+            lastChar == '+' ||
+            lastChar == '-') {
+          // If the last character is an operator, simply add "e" without multiplication
+          userInput += 'e';
+        } else {
+          // Otherwise, add the multiplication operator before "e"
+          userInput += '*e';
+        }
+      } else {
+        // If the input is empty, print the value of 'e'
+        userOutput = math.e.toString();
+      }
+    }
+
+    /// % button
+    else if (buttons[index] == '%') {
+      percentButtonPressed();
+    }
+
+    /// EE button
+    else if (buttons[index] == 'EE') {
+      userInput += ' o';
+      evaluateEEExpression();
+    }
+
+    /// . button
+    else if (buttons[index] == '.') {
+      if (userInput.isEmpty) {
+        userInput = '0.';
+      } else {
+        userInput += '.';
+      }
+    }
+
+    /// 00 button
+    else if (buttons[index] == "0") {
+      // If "00" button is pressed, handle it separately
+      if (userInput == "0") {
+        // If the current input is "0," don't allow further input
+        return;
+      } else if (userInput.isEmpty) {
+        // If there is no input, show only one "0"
+        userInput = "0";
+      } else {
+        userInput += buttons[index];
+      }
+    }
+
+    ///remove.00
+    else if (userInput.endsWith('.00')) {
+      // If userInput ends with ".00", remove the ".00" before adding the new digit
+      userInput = userInput.substring(0, userInput.length - 3);
+      userInput += buttons[index];
     }
 
     /// other  buttons
     else {
       userInput += buttons[index];
     }
+
+    evaluateLiveOutput();
     update();
+  }
+
+  /// Update userOutput based on the current userInput.
+  void evaluateLiveOutput() {
+    String userInputFC = userInput;
+    try {
+      Parser p = Parser();
+      Expression exp = p.parse(userInputFC);
+      ContextModel ctx = ContextModel();
+      double eval = exp.evaluate(EvaluationType.REAL, ctx);
+      userOutput = eval.toString();
+      print('===LiveOutput: $userOutput');
+    } catch (e) {
+      print('===Error: $e');
+    }
+    update();
+  }
+
+  /// Add this function to your ScientificController class
+  void percentButtonPressed() {
+    if (userInput.isNotEmpty) {
+      try {
+        Parser p = Parser();
+        Expression exp = p.parse(userInput);
+        ContextModel ctx = ContextModel();
+        double eval = exp.evaluate(EvaluationType.REAL, ctx);
+        double percentage = eval / 100;
+        userOutput = percentage.toString();
+        userInput = percentage.toString();
+        update();
+      } catch (e) {
+        userOutput = 'Error';
+        update();
+      }
+    } else {
+      userOutput = "0";
+      update();
+    }
+  }
+
+  /// Add this function to your ScientificController class
+  void evaluateEEExpression() {
+    String userInputFC = userInput;
+    try {
+      // Replace 'EE' with '*10^'
+      userInputFC = userInputFC.replaceAll('EE', '*10^');
+
+      Parser p = Parser();
+      Expression exp = p.parse(userInputFC);
+      ContextModel ctx = ContextModel();
+      double eval = exp.evaluate(EvaluationType.REAL, ctx);
+
+      userOutput = eval.toString();
+      update();
+    } catch (e) {
+      // Handle the exception if needed.
+      // This is optional but can be used to provide a user-friendly error message.
+      userOutput = 'Error';
+      update();
+    }
   }
 }

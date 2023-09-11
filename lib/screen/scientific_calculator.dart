@@ -43,7 +43,7 @@ class ScientificCalculator extends StatelessWidget {
     // "3√x",
     "y√x",
     "In",
-    "log10",
+    "log₁₀",
     "4",
     "5",
     "6",
@@ -115,7 +115,7 @@ class ScientificCalculator extends StatelessWidget {
               itemCount: buttons.length,
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 10,
-                  mainAxisExtent: 5.3.h,
+                  mainAxisExtent: 4.3.h,
                   mainAxisSpacing: 1.5.w,
                   crossAxisSpacing: 2.9.w),
               itemBuilder: (contex, index) {
@@ -147,23 +147,6 @@ class ScientificCalculator extends StatelessWidget {
                             ? DarkColors.leftOperatorColor
                             : LightColors.leftOperatorColor,
                         text: buttons[index]);
-
-                  /// 'x²' button
-                  case 11:
-                    return ScientificButton(
-                      buttonTapped: () {
-                        controller.onBtnTapped(buttons, index);
-                      },
-                      color: themeController.isDark
-                          ? DarkColors.btnBgColor
-                          : LightColors.btnBgColor,
-                      textColor: isOperator(buttons[index])
-                          ? LightColors.operatorColor
-                          : themeController.isDark
-                              ? Colors.white
-                              : Colors.black,
-                      text: buttons[index],
-                    );
 
                   /// EQUAL BTN
                   case 49:
@@ -270,7 +253,13 @@ class ScientificCalculator extends StatelessWidget {
                 // ),
                 Container(
                   alignment: Alignment.bottomRight,
-                  child: Text(controller.userOutput,
+                  child: Text(
+
+                      ///remove.00
+                      controller.userOutput.endsWith(".00")
+                          ? controller.userOutput
+                              .substring(0, controller.userOutput.length - 3)
+                          : controller.userOutput,
                       style: TextStyle(
                           color: themeController.isDark
                               ? Colors.white

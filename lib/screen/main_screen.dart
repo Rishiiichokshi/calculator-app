@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:sizer/sizer.dart';
 
 ///
 import '../controller/theme_controller.dart';
@@ -17,21 +18,21 @@ class MainScreen extends StatelessWidget {
     "DEL",
     "%",
     "/",
-    "9",
-    "8",
     "7",
+    "8",
+    "9",
     "x",
-    "6",
-    "5",
     "4",
+    "5",
+    "6",
     "-",
-    "3",
-    "2",
     "1",
+    "2",
+    "3",
     "+",
+    "00",
     "0",
     ".",
-    "ANS",
     "=",
   ];
 
@@ -79,8 +80,8 @@ class MainScreen extends StatelessWidget {
           child: GridView.builder(
               physics: const NeverScrollableScrollPhysics(),
               itemCount: buttons.length,
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 4),
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 4, mainAxisExtent: 12.7.h),
               itemBuilder: (contex, index) {
                 switch (index) {
                   /// CLEAR BTN
@@ -199,7 +200,11 @@ class MainScreen extends StatelessWidget {
               Container(
                 alignment: Alignment.centerRight,
                 child: Text(
-                  controller.userInput,
+                  ///remove.00
+                  (controller.userInput.endsWith(".00")
+                      ? controller.userInput
+                          .substring(0, controller.userInput.length - 3)
+                      : controller.userInput),
                   style: TextStyle(
                       color:
                           themeController.isDark ? Colors.white : Colors.black,
@@ -211,7 +216,15 @@ class MainScreen extends StatelessWidget {
               ),
               Container(
                 alignment: Alignment.bottomRight,
-                child: Text(controller.userOutput,
+                child: Text(
+
+                    ///remove.00
+                    controller.userOutput.isEmpty
+                        ? "0.00"
+                        : (controller.userOutput.endsWith(".00")
+                            ? controller.userOutput
+                                .substring(0, controller.userOutput.length - 3)
+                            : controller.userOutput),
                     style: TextStyle(
                         color: themeController.isDark
                             ? Colors.white
