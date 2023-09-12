@@ -112,6 +112,7 @@ class MainScreen extends StatelessWidget {
                         buttonTapped: () {
                           controller.equalPressed();
                         },
+                        fontSize: 19.sp,
                         color: themeController.isDark
                             ? DarkColors.btnBgColor
                             : LightColors.btnBgColor,
@@ -125,6 +126,7 @@ class MainScreen extends StatelessWidget {
                         buttonTapped: () {
                           controller.onBtnTapped(buttons, index);
                         },
+                        fontSize: isOperator(buttons[index]) ? 19.sp : 14.sp,
                         color: themeController.isDark
                             ? DarkColors.btnBgColor
                             : LightColors.btnBgColor,

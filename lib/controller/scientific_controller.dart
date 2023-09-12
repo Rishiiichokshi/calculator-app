@@ -8,8 +8,21 @@ import 'package:math_expressions/math_expressions.dart';
 class ScientificController extends GetxController {
   var userInput = "";
   var userOutput = "0";
-  // var constantInserted = false;
   var isNegative = false;
+  int cursorPosition = 0;
+  final buttonText = "Rad".obs;
+
+  /// Declare a flag to track if a dot is present in the current number
+  bool dotAllowed = true;
+
+  // Method to toggle the button text.
+  toggleButtonText() {
+    if (buttonText.value == "Rad") {
+      buttonText.value = "Deg";
+    } else {
+      buttonText.value = "Rad";
+    }
+  }
 
   /// Equal Button Pressed Func
   equalPressed() {
@@ -103,12 +116,19 @@ class ScientificController extends GetxController {
       ContextModel ctx = ContextModel();
       double eval = exp.evaluate(EvaluationType.REAL, ctx);
 
-      userOutput = eval.toString();
-      userInput = eval.toString();
+      if (eval % 1 == 0) {
+        // If the result is an integer, convert it to an integer and then to a string
+        userOutput = eval.toInt().toString();
+        userInput = eval.toInt().toString();
+      } else {
+        // If it's not an integer, keep it as a double with 2 decimal places
+        userOutput = eval.toString();
+      }
+      // userOutput = eval.toString();
+      // userInput = eval.toString();
       print('===ParcerUserOutput: $userOutput');
       print('===ParceruserInputFC: $userInputFC');
     } catch (e) {
-      // Handle the exception and provide a user-friendly error message.
       userOutput = 'Error';
     }
     update();
@@ -118,28 +138,18 @@ class ScientificController extends GetxController {
   clearInputAndOutput() {
     userInput = "";
     userOutput = "0";
-    // constantInserted = false;
+    dotAllowed = true;
     update();
   }
 
   /// Delete Button Pressed Func
   deleteBtnAction() {
-    // if (!constantInserted) {
     userInput = userInput.substring(0, userInput.length - 1);
-    // }
     update();
   }
 
   /// on Number Button Tapped
   void onBtnTapped(List<String> buttons, int index) {
-    ///if there is already in input In then this cant able to edit user input
-    // if (userInput.contains("In")) {
-    //   return;
-    // }
-    // if (userInput.contains("log₁₀")) {
-    //   return;
-    // }
-
     /// x² button
     if (buttons[index] == 'x²') {
       userInput += "^2";
@@ -183,18 +193,19 @@ class ScientificController extends GetxController {
 
     /// eˣ button
     else if (buttons[index] == 'eˣ') {
-      if (userInput.isNotEmpty) {
-        double? input = double.tryParse(userInput);
-        if (input != null) {
-          double result = math.exp(input);
-          userInput = "e^$userInput";
-          userOutput = '0';
-        } else {
-          userOutput = "Not a Number";
-        }
+      // if (userInput.isNotEmpty) {
+      double? input = double.tryParse(userInput);
+      if (input != null) {
+        double result = math.exp(input);
+        userInput = "e^$userInput";
+        // userOutput = '0';
       } else {
-        userOutput = "0";
+        userInput = 'e^';
+        // userOutput = "Not a Number";
       }
+      // } else {
+      //   userOutput = "0";
+      // }
     }
 
     /// 2√x button
@@ -307,16 +318,41 @@ class ScientificController extends GetxController {
 
     /// EE button
     else if (buttons[index] == 'EE') {
-      userInput += ' o';
-      evaluateEEExpression();
+      if (userInput.isNotEmpty) {
+        userInput += ' EE ';
+        // evaluateEEExpression();
+      } else {
+        userOutput = 'Not a Number';
+      }
+    }
+
+    /// sin button
+    else if (buttons[index] == 'sin') {
+      sinButtonPressed();
+    }
+
+    /// cos button
+    else if (buttons[index] == 'cos') {
+      cosButtonPressed();
+    }
+
+    /// tan button
+    else if (buttons[index] == 'tan') {
+      tanButtonPressed();
     }
 
     /// . button
     else if (buttons[index] == '.') {
-      if (userInput.isEmpty) {
-        userInput = '0.';
-      } else {
-        userInput += '.';
+      if (dotAllowed) {
+        if (userInput.isEmpty) {
+          userInput = '0.';
+        } else if (RegExp(r'\d$').hasMatch(userInput) &&
+            //this will not able to add . if there is already i mean if value is already double
+            !userInput.contains('.')) {
+          userInput += '.';
+        }
+        // Set the dotAllowed flag to false to prevent additional dots
+        dotAllowed = false;
       }
     }
 
@@ -341,6 +377,23 @@ class ScientificController extends GetxController {
       userInput += buttons[index];
     }
 
+    ///this will add isOperator one time only
+    else if (isOperator(buttons[index])) {
+      // Handle operator button press
+      if (userInput.isNotEmpty &&
+          !isOperator(userInput[userInput.length - 1])) {
+        // Only add the operator if the current input doesn't end with an operator
+        userInput += buttons[index];
+        // Allow a dot in the next number
+        dotAllowed = true;
+      } else if (userInput.isNotEmpty &&
+          isOperator(userInput[userInput.length - 1])) {
+        // Replace the last operator if it's different
+        userInput =
+            userInput.substring(0, userInput.length - 1) + buttons[index];
+      }
+    }
+
     /// other  buttons
     else {
       userInput += buttons[index];
@@ -352,13 +405,21 @@ class ScientificController extends GetxController {
 
   /// Update userOutput based on the current userInput.
   void evaluateLiveOutput() {
-    String userInputFC = userInput;
+    String userInputFC =
+        userInput.replaceAll("x", "*").replaceAll('π', '${math.pi}');
     try {
       Parser p = Parser();
       Expression exp = p.parse(userInputFC);
       ContextModel ctx = ContextModel();
       double eval = exp.evaluate(EvaluationType.REAL, ctx);
-      userOutput = eval.toString();
+      if (eval % 1 == 0) {
+        // If the result is an integer, convert it to an integer and then to a string
+        userOutput = eval.toInt().toString();
+      } else {
+        // If it's not an integer, keep it as a double with 2 decimal places
+        userOutput = eval.toString();
+      }
+
       print('===LiveOutput: $userOutput');
     } catch (e) {
       print('===Error: $e');
@@ -388,25 +449,93 @@ class ScientificController extends GetxController {
     }
   }
 
-  /// Add this function to your ScientificController class
-  void evaluateEEExpression() {
-    String userInputFC = userInput;
-    try {
-      // Replace 'EE' with '*10^'
-      userInputFC = userInputFC.replaceAll('EE', '*10^');
+  bool isOperator(String str) {
+    return ['%', '/', 'x', '-', '.', '+'].contains(str);
+  }
 
-      Parser p = Parser();
-      Expression exp = p.parse(userInputFC);
-      ContextModel ctx = ContextModel();
-      double eval = exp.evaluate(EvaluationType.REAL, ctx);
+  void updateCursorPosition(int position) {
+    cursorPosition = position;
+    // You can use this cursor position to manipulate your userInput string
+  }
 
-      userOutput = eval.toString();
-      update();
-    } catch (e) {
-      // Handle the exception if needed.
-      // This is optional but can be used to provide a user-friendly error message.
-      userOutput = 'Error';
-      update();
+  void sinButtonPressed() {
+    // Find the beginning of the current number or operator.
+    final startIndex = userInput.isNotEmpty
+        ? userInput.lastIndexOf(RegExp(r'[+\-*/]')) + 1
+        : 0;
+
+    // Check if there's a number before sin
+    final isNumberBeforeSin = startIndex < userInput.length &&
+        RegExp(r'\d').hasMatch(userInput[startIndex]);
+
+    // If there's a number before sin, insert "*sin("; otherwise, insert "sin(".
+    if (isNumberBeforeSin) {
+      userInput = userInput.substring(0, startIndex) +
+          "${userInput.substring(startIndex)}*sin(";
+    } else {
+      userInput = userInput + "sin(";
     }
+
+    // Update the cursor position to be inside the "sin()" function.
+    int newCursorPosition = startIndex +
+        (isNumberBeforeSin ? 5 : 4); // 5 is the length of "*sin()".
+    updateCursorPosition(newCursorPosition);
+
+    // Evaluate the updated expression.
+    evaluateLiveOutput();
+  }
+
+  void cosButtonPressed() {
+    // Find the beginning of the current number or operator.
+    final startIndex = userInput.isNotEmpty
+        ? userInput.lastIndexOf(RegExp(r'[+\-*/]')) + 1
+        : 0;
+
+    // Check if there's a number before cos
+    final isNumberBeforeCos = startIndex < userInput.length &&
+        RegExp(r'\d').hasMatch(userInput[startIndex]);
+
+    // If there's a number before cos, insert "*cos("; otherwise, insert "cos(".
+    if (isNumberBeforeCos) {
+      userInput = userInput.substring(0, startIndex) +
+          "${userInput.substring(startIndex)}*cos(";
+    } else {
+      userInput = userInput + "cos(";
+    }
+
+    // Update the cursor position to be inside the "cos()" function.
+    int newCursorPosition = startIndex +
+        (isNumberBeforeCos ? 5 : 4); // 5 is the length of "*cos()".
+    updateCursorPosition(newCursorPosition);
+
+    // Evaluate the updated expression.
+    evaluateLiveOutput();
+  }
+
+  void tanButtonPressed() {
+    // Find the beginning of the current number or operator.
+    final startIndex = userInput.isNotEmpty
+        ? userInput.lastIndexOf(RegExp(r'[+\-*/]')) + 1
+        : 0;
+
+    // Check if there's a number before tan
+    final isNumberBeforeTan = startIndex < userInput.length &&
+        RegExp(r'\d').hasMatch(userInput[startIndex]);
+
+    // If there's a number before tan, insert "*tan("; otherwise, insert "tan(".
+    if (isNumberBeforeTan) {
+      userInput = userInput.substring(0, startIndex) +
+          "${userInput.substring(startIndex)}*tan(";
+    } else {
+      userInput = userInput + "tan(";
+    }
+
+    // Update the cursor position to be inside the "tan()" function.
+    int newCursorPosition = startIndex +
+        (isNumberBeforeTan ? 5 : 4); // 5 is the length of "*tan()".
+    updateCursorPosition(newCursorPosition);
+
+    // Evaluate the updated expression.
+    evaluateLiveOutput();
   }
 }

@@ -8,13 +8,6 @@ class CalculateController extends GetxController {
   /// Declare a flag to track if a dot is present in the current number
   bool dotAllowed = true;
 
-  // /// Regular expression to validate input
-  // final RegExp inputPattern =
-  //     RegExp(r'^(\d+(\.\d*)?([+\-*/%]\d+(\.\d*)?)*)?(\.\d*)?$');
-
-  final RegExp inputPattern =
-      RegExp(r'^(?:\d+(\.\d*)?([+\-*/%x]\d+(\.\d*)?)*)?(?:\.\d*)?$');
-
   /// Equal Button Pressed Func
   equalPressed() {
     String userInputFC = userInput;
@@ -24,8 +17,8 @@ class CalculateController extends GetxController {
     ContextModel ctx = ContextModel();
     double eval = exp.evaluate(EvaluationType.REAL, ctx);
 
-    userOutput = eval.toStringAsFixed(2);
-    userInput = eval.toStringAsFixed(2);
+    userOutput = eval.toString();
+    userInput = eval.toString();
     update();
   }
 
@@ -33,6 +26,7 @@ class CalculateController extends GetxController {
   clearInputAndOutput() {
     userInput = "";
     userOutput = "0";
+    dotAllowed = true;
     update();
   }
 
@@ -44,11 +38,12 @@ class CalculateController extends GetxController {
 
   /// on Number Button Tapped
   onBtnTapped(List<String> buttons, int index) {
+    /// % button
     if (buttons[index] == '%') {
       percentageButtonPressed();
     }
 
-    /// 00 button
+    /// 00 button & 0 Button
     else if (buttons[index] == "00" || buttons[index] == "0") {
       // If "00" button is pressed, handle it separately
       if (userInput == "0") {
@@ -69,25 +64,16 @@ class CalculateController extends GetxController {
       userInput += buttons[index];
     }
 
-    // /// . button
-    // /// || isOperator(userInput[userInput.length - 1]) add this line to use of single dot only
-    // else if (buttons[index] == '.') {
-    //   if (userInput.isEmpty) {
-    //     userInput += '0.';
-    //   } else if (!userInput.contains('.')) {
-    //     userInput += '.';
-    //   }
-    // }
-
     /// . button
     else if (buttons[index] == '.') {
-      // Only allow a dot if it's allowed in the current number and input is valid
-      if (dotAllowed && inputPattern.hasMatch(userInput + '.')) {
-        userInput += '.';
-        // Set the dotAllowed flag to false to prevent consecutive dots
+      if (dotAllowed) {
+        if (userInput.isEmpty) {
+          userInput = '0.';
+        } else if (RegExp(r'\d$').hasMatch(userInput)) {
+          userInput += '.';
+        }
+        // Set the dotAllowed flag to false to prevent additional dots
         dotAllowed = false;
-      } else if (userInput.isEmpty) {
-        userInput = '0.';
       }
     }
 
@@ -117,17 +103,41 @@ class CalculateController extends GetxController {
         Expression exp = p.parse(userInput);
         ContextModel ctx = ContextModel();
         double eval = exp.evaluate(EvaluationType.REAL, ctx);
-        userOutput = eval.toStringAsFixed(2);
+        userOutput = eval.toString();
       } catch (e) {
         // userOutput = 'Error';
         print(e);
       }
     }
+    evaluateLiveOutput();
     update();
   }
 
   bool isOperator(String str) {
     return ['%', '/', 'x', '-', '.', '+'].contains(str);
+  }
+
+  /// Update userOutput based on the current userInput.
+  void evaluateLiveOutput() {
+    String userInputFC = userInput.replaceAll("x", "*");
+
+    try {
+      Parser p = Parser();
+      Expression exp = p.parse(userInputFC);
+      ContextModel ctx = ContextModel();
+      double eval = exp.evaluate(EvaluationType.REAL, ctx);
+      if (eval % 1 == 0) {
+        // If the result is an integer, convert it to an integer and then to a string
+        userOutput = eval.toInt().toString();
+      } else {
+        // If it's not an integer, keep it as a double with 2 decimal places
+        userOutput = eval.toString();
+      }
+      print('===LiveOutput: $userOutput');
+    } catch (e) {
+      print('===Error: $e');
+    }
+    update();
   }
 
   /// Percentage Button Pressed Func
@@ -139,8 +149,8 @@ class CalculateController extends GetxController {
         ContextModel ctx = ContextModel();
         double eval = exp.evaluate(EvaluationType.REAL, ctx);
         double percentage = eval / 100;
-        userOutput = percentage.toStringAsFixed(2);
-        userInput = percentage.toStringAsFixed(2);
+        userOutput = percentage.toString();
+        userInput = percentage.toString();
         update();
       } catch (e) {
         userOutput = 'Error';
