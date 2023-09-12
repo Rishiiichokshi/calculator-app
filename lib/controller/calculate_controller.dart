@@ -5,6 +5,16 @@ class CalculateController extends GetxController {
   var userInput = "";
   var userOutput = "0";
 
+  /// Declare a flag to track if a dot is present in the current number
+  bool dotAllowed = true;
+
+  // /// Regular expression to validate input
+  // final RegExp inputPattern =
+  //     RegExp(r'^(\d+(\.\d*)?([+\-*/%]\d+(\.\d*)?)*)?(\.\d*)?$');
+
+  final RegExp inputPattern =
+      RegExp(r'^(?:\d+(\.\d*)?([+\-*/%x]\d+(\.\d*)?)*)?(?:\.\d*)?$');
+
   /// Equal Button Pressed Func
   equalPressed() {
     String userInputFC = userInput;
@@ -59,13 +69,25 @@ class CalculateController extends GetxController {
       userInput += buttons[index];
     }
 
+    // /// . button
+    // /// || isOperator(userInput[userInput.length - 1]) add this line to use of single dot only
+    // else if (buttons[index] == '.') {
+    //   if (userInput.isEmpty) {
+    //     userInput += '0.';
+    //   } else if (!userInput.contains('.')) {
+    //     userInput += '.';
+    //   }
+    // }
+
     /// . button
-    /// || isOperator(userInput[userInput.length - 1]) add this line to use of single dot only
     else if (buttons[index] == '.') {
-      if (userInput.isEmpty) {
-        userInput += '0.';
-      } else if (!userInput.contains('.')) {
+      // Only allow a dot if it's allowed in the current number and input is valid
+      if (dotAllowed && inputPattern.hasMatch(userInput + '.')) {
         userInput += '.';
+        // Set the dotAllowed flag to false to prevent consecutive dots
+        dotAllowed = false;
+      } else if (userInput.isEmpty) {
+        userInput = '0.';
       }
     }
 
@@ -76,6 +98,8 @@ class CalculateController extends GetxController {
           !isOperator(userInput[userInput.length - 1])) {
         // Only add the operator if the current input doesn't end with an operator
         userInput += buttons[index];
+        // Allow a dot in the next number
+        dotAllowed = true;
       } else if (userInput.isNotEmpty &&
           isOperator(userInput[userInput.length - 1])) {
         // Replace the last operator if it's different

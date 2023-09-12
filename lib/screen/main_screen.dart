@@ -36,12 +36,6 @@ class MainScreen extends StatelessWidget {
     "=",
   ];
 
-  /////////////////////////////////////
-  //@CodeWithFlexz on Instagram
-  //
-  //AmirBayat0 on Github
-  //Programming with Flexz on Youtube
-  /////////////////////////////////////
   @override
   Widget build(BuildContext context) {
     var controller = Get.find<CalculateController>();
@@ -81,7 +75,7 @@ class MainScreen extends StatelessWidget {
               physics: const NeverScrollableScrollPhysics(),
               itemCount: buttons.length,
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 4, mainAxisExtent: 12.7.h),
+                  crossAxisCount: 4, mainAxisExtent: 11.3.h),
               itemBuilder: (contex, index) {
                 switch (index) {
                   /// CLEAR BTN
@@ -194,7 +188,7 @@ class MainScreen extends StatelessWidget {
           ),
         ),
         Padding(
-          padding: const EdgeInsets.only(right: 20, top: 70),
+          padding: EdgeInsets.only(right: 6.w, top: 10.h),
           child: Column(
             children: [
               Container(
@@ -208,7 +202,7 @@ class MainScreen extends StatelessWidget {
                   style: TextStyle(
                       color:
                           themeController.isDark ? Colors.white : Colors.black,
-                      fontSize: 25),
+                      fontSize: 18.sp),
                 ),
               ),
               const SizedBox(
