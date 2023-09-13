@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'dart:math';
 
 import 'package:get/get.dart';
 import 'dart:math' as math;
@@ -10,26 +11,32 @@ class ScientificController extends GetxController {
   var userOutput = "0";
   var isNegative = false;
   int cursorPosition = 0;
-  final buttonText = "Rad".obs;
+  RxString buttonText = "Rad".obs;
 
   /// Declare a flag to track if a dot is present in the current number
   bool dotAllowed = true;
 
-  // Method to toggle the button text.
-  toggleButtonText() {
-    if (buttonText.value == "Rad") {
-      buttonText.value = "Deg";
-    } else {
-      buttonText.value = "Rad";
-    }
+  //2nd button toggle
+  RxBool isToggleOn = false.obs;
+
+  //2nd button toggle
+  void toggleButton() {
+    isToggleOn.value = !isToggleOn.value;
+    print(isToggleOn);
+    update(); // Notify the UI to update after the toggle
+  }
+
+  ///Rat to Deg Button change
+  void changeButtonText() {
+    buttonText.value = (buttonText.value == "Rad") ? "Deg" : "Rad";
   }
 
   /// Equal Button Pressed Func
   equalPressed() {
     String userInputFC = userInput;
 
-    log('====$userInput');
-    log('====userInputFC===$userInputFC');
+    print('====$userInput');
+    print('====userInputFC===$userInputFC');
 
     ///  y√x
     // Handle the "y√x" expression by capturing both inputs and inserting them
@@ -61,7 +68,119 @@ class ScientificController extends GetxController {
         .replaceAll('X!', '!')
         .replaceAll('e', '${math.e}')
         .replaceAll('π', '${math.pi}');
+    handleTrigonometricOperation("sin", userInputFC);
+    handleTrigonometricOperation("cos", userInputFC);
+    handleTrigonometricOperation("tan", userInputFC);
 
+    // Handle the "sin" operation
+    if (userInputFC.contains("sin")) {
+      final matches = RegExp(r'sin\(([^)]+)\)').allMatches(userInputFC);
+      for (var match in matches) {
+        final fullMatch = match.group(0).toString();
+        final innerValue = match.group(1);
+        double? input = double.tryParse(innerValue!);
+        if (input != null) {
+          final isDegMode = buttonText.value == "Deg";
+          final resultInRadians =
+              isDegMode ? math.sin(input) : math.sin(input * math.pi / 180);
+          userInputFC =
+              userInputFC.replaceFirst(fullMatch, resultInRadians.toString());
+        } else {
+          userOutput = 'Error';
+          update();
+          return;
+        }
+      }
+    }
+
+    // Handle the "cos" operation
+    if (userInputFC.contains("cos")) {
+      final matches = RegExp(r'cos\(([^)]+)\)').allMatches(userInputFC);
+      for (var match in matches) {
+        final fullMatch = match.group(0).toString();
+        final innerValue = match.group(1);
+        double? input = double.tryParse(innerValue!);
+        if (input != null) {
+          final isDegMode = buttonText.value == "Deg";
+          final resultInRadians =
+              isDegMode ? math.cos(input) : math.cos(input * math.pi / 180);
+          userInputFC =
+              userInputFC.replaceFirst(fullMatch, resultInRadians.toString());
+        } else {
+          userOutput = 'Error';
+          update();
+          return;
+        }
+      }
+    }
+
+    // Handle the "tan" operation
+    if (userInputFC.contains("tan")) {
+      final matches = RegExp(r'tan\(([^)]+)\)').allMatches(userInputFC);
+      for (var match in matches) {
+        final fullMatch = match.group(0).toString();
+        final innerValue = match.group(1);
+        double? input = double.tryParse(innerValue!);
+        if (input != null) {
+          final isDegMode = buttonText.value == "Deg";
+          final resultInRadians =
+              isDegMode ? math.tan(input) : math.tan(input * math.pi / 180);
+          userInputFC =
+              userInputFC.replaceFirst(fullMatch, resultInRadians.toString());
+        } else {
+          userOutput = 'Error';
+          update();
+          return;
+        }
+      }
+    }
+
+    // Replace "sinh" with the custom calculation
+    userInputFC = userInputFC.replaceAllMapped(
+      RegExp(r'sinh\(([^)]+)\)'),
+      (match) {
+        final innerValue = match.group(1);
+        double? input = double.tryParse(innerValue!);
+        if (input != null) {
+          double result = (math.exp(input) - math.exp(-input)) / 2;
+          return result.toString();
+        } else {
+          return 'Error';
+        }
+      },
+    );
+
+    // Replace "cosh" with the custom calculation
+    userInputFC = userInputFC.replaceAllMapped(
+      RegExp(r'cosh\(([^)]+)\)'),
+      (match) {
+        final innerValue = match.group(1);
+        double? input = double.tryParse(innerValue!);
+        if (input != null) {
+          double result = (math.exp(input) + math.exp(-input)) / 2;
+          return result.toString();
+        } else {
+          return 'Error';
+        }
+      },
+    );
+
+    // Replace "tanh" with the custom calculation
+    userInputFC = userInputFC.replaceAllMapped(
+      RegExp(r'tanh\(([^)]+)\)'),
+      (match) {
+        final innerValue = match.group(1);
+        double? input = double.tryParse(innerValue!);
+        if (input != null) {
+          double result = (math.exp(2 * input) - 1) / (math.exp(2 * input) + 1);
+          return result.toString();
+        } else {
+          return 'Error';
+        }
+      },
+    );
+
+    // Handle the "e^" operation
     if (userInputFC.contains("e^")) {
       // Extract the portion after "e^" and calculate the result
       String inputAfterExponent = userInputFC.split("e^")[1];
@@ -123,6 +242,7 @@ class ScientificController extends GetxController {
       } else {
         // If it's not an integer, keep it as a double with 2 decimal places
         userOutput = eval.toString();
+        userInput = eval.toString();
       }
       // userOutput = eval.toString();
       // userInput = eval.toString();
@@ -131,6 +251,7 @@ class ScientificController extends GetxController {
     } catch (e) {
       userOutput = 'Error';
     }
+    cursorPosition = userInput.length;
     update();
   }
 
@@ -165,6 +286,11 @@ class ScientificController extends GetxController {
       userInput += "^";
     }
 
+    // /// yˣ button
+    // else if (buttons[index] == 'yˣ') {
+    //   userInput += "^";
+    // }
+
     /// 10ˣ button
     else if (buttons[index] == '10ˣ') {
       if (userInput.isNotEmpty) {
@@ -191,21 +317,21 @@ class ScientificController extends GetxController {
       }
     }
 
-    /// eˣ button
-    else if (buttons[index] == 'eˣ') {
-      // if (userInput.isNotEmpty) {
-      double? input = double.tryParse(userInput);
-      if (input != null) {
-        double result = math.exp(input);
-        userInput = "e^$userInput";
-        // userOutput = '0';
+    /// eˣ button or yˣ button
+    else if (buttons[index] == 'eˣ' || buttons[index] == 'yˣ') {
+      if (isToggleOn.value) {
+        userInput += "^";
       } else {
-        userInput = 'e^';
-        // userOutput = "Not a Number";
+        double? input = double.tryParse(userInput);
+        if (input != null) {
+          double result = math.exp(input);
+          userInput = "e^$userInput";
+          // userOutput = '0';
+        } else {
+          userInput = 'e^';
+          // userOutput = "Not a Number";
+        }
       }
-      // } else {
-      //   userOutput = "0";
-      // }
     }
 
     /// 2√x button
@@ -341,6 +467,26 @@ class ScientificController extends GetxController {
       tanButtonPressed();
     }
 
+    /// sinh button
+    else if (buttons[index] == 'sinh') {
+      sinhButtonPressed();
+    }
+
+    /// cosh button
+    else if (buttons[index] == 'cosh') {
+      coshButtonPressed();
+    }
+
+    /// tanh button
+    else if (buttons[index] == 'tanh') {
+      tanhButtonPressed();
+    }
+
+    /// Rand button
+    else if (buttons[index] == 'Rand') {
+      randButtonPressed();
+    }
+
     /// . button
     else if (buttons[index] == '.') {
       if (dotAllowed) {
@@ -403,10 +549,85 @@ class ScientificController extends GetxController {
     update();
   }
 
+  bool isOperator(String str) {
+    return ['%', '/', 'x', '-', '.', '+'].contains(str);
+  }
+
+  void updateCursorPosition(int position) {
+    cursorPosition = position;
+    // You can use this cursor position to manipulate your userInput string
+  }
+
   /// Update userOutput based on the current userInput.
   void evaluateLiveOutput() {
     String userInputFC =
         userInput.replaceAll("x", "*").replaceAll('π', '${math.pi}');
+    handleTrigonometricOperation("sin", userInputFC);
+    handleTrigonometricOperation("cos", userInputFC);
+    handleTrigonometricOperation("tan", userInputFC);
+
+    // Handle the "sin" operation
+    if (userInputFC.contains("sin")) {
+      final matches = RegExp(r'sin\(([^)]+)\)').allMatches(userInputFC);
+      for (var match in matches) {
+        final fullMatch = match.group(0).toString();
+        final innerValue = match.group(1);
+        double? input = double.tryParse(innerValue!);
+        if (input != null) {
+          final isDegMode = buttonText.value == "Deg";
+          final resultInRadians =
+              isDegMode ? math.sin(input) : math.sin(input * math.pi / 180);
+          userInputFC =
+              userInputFC.replaceFirst(fullMatch, resultInRadians.toString());
+        } else {
+          userOutput = 'Error';
+          update();
+          return;
+        }
+      }
+    }
+
+    // Handle the "cos" operation
+    if (userInputFC.contains("cos")) {
+      final matches = RegExp(r'cos\(([^)]+)\)').allMatches(userInputFC);
+      for (var match in matches) {
+        final fullMatch = match.group(0).toString();
+        final innerValue = match.group(1);
+        double? input = double.tryParse(innerValue!);
+        if (input != null) {
+          final isDegMode = buttonText.value == "Deg";
+          final resultInRadians =
+              isDegMode ? math.cos(input) : math.cos(input * math.pi / 180);
+          userInputFC =
+              userInputFC.replaceFirst(fullMatch, resultInRadians.toString());
+        } else {
+          userOutput = 'Error';
+          update();
+          return;
+        }
+      }
+    }
+    // Handle the "tan" operation
+    if (userInputFC.contains("tan")) {
+      final matches = RegExp(r'tan\(([^)]+)\)').allMatches(userInputFC);
+      for (var match in matches) {
+        final fullMatch = match.group(0).toString();
+        final innerValue = match.group(1);
+        double? input = double.tryParse(innerValue!);
+        if (input != null) {
+          final isDegMode = buttonText.value == "Deg";
+          final resultInRadians =
+              isDegMode ? math.tan(input) : math.tan(input * math.pi / 180);
+          userInputFC =
+              userInputFC.replaceFirst(fullMatch, resultInRadians.toString());
+        } else {
+          userOutput = 'Error';
+          update();
+          return;
+        }
+      }
+    }
+
     try {
       Parser p = Parser();
       Expression exp = p.parse(userInputFC);
@@ -449,19 +670,25 @@ class ScientificController extends GetxController {
     }
   }
 
-  bool isOperator(String str) {
-    return ['%', '/', 'x', '-', '.', '+'].contains(str);
+  ///Rand button operation Manage
+  void randButtonPressed() {
+    // Generate a random number between 0 and 1
+    final random = Random();
+    final randomNumber = random.nextDouble();
+
+    // Update both user input and output with the random number
+    userInput = randomNumber.toString();
+    userOutput = randomNumber.toString();
+
+    // Call update() to notify the UI to refresh
+    update();
   }
 
-  void updateCursorPosition(int position) {
-    cursorPosition = position;
-    // You can use this cursor position to manipulate your userInput string
-  }
-
+  ///manage click of sin button --how input will display--manage conditions
   void sinButtonPressed() {
     // Find the beginning of the current number or operator.
     final startIndex = userInput.isNotEmpty
-        ? userInput.lastIndexOf(RegExp(r'[+\-*/]')) + 1
+        ? userInput.lastIndexOf(RegExp(r'[+\-x/]')) + 1
         : 0;
 
     // Check if there's a number before sin
@@ -485,10 +712,11 @@ class ScientificController extends GetxController {
     evaluateLiveOutput();
   }
 
+  ///manage click of cos button --how input will display--manage conditions
   void cosButtonPressed() {
     // Find the beginning of the current number or operator.
     final startIndex = userInput.isNotEmpty
-        ? userInput.lastIndexOf(RegExp(r'[+\-*/]')) + 1
+        ? userInput.lastIndexOf(RegExp(r'[+\-x/]')) + 1
         : 0;
 
     // Check if there's a number before cos
@@ -512,10 +740,11 @@ class ScientificController extends GetxController {
     evaluateLiveOutput();
   }
 
+  ///manage click of tan button --how input will display--manage conditions
   void tanButtonPressed() {
     // Find the beginning of the current number or operator.
     final startIndex = userInput.isNotEmpty
-        ? userInput.lastIndexOf(RegExp(r'[+\-*/]')) + 1
+        ? userInput.lastIndexOf(RegExp(r'[+\-x/]')) + 1
         : 0;
 
     // Check if there's a number before tan
@@ -537,5 +766,132 @@ class ScientificController extends GetxController {
 
     // Evaluate the updated expression.
     evaluateLiveOutput();
+  }
+
+  ///manage click of sinh button --how input will display--manage conditions
+  void sinhButtonPressed() {
+    // Find the beginning of the current number or operator.
+    final startIndex = userInput.isNotEmpty
+        ? userInput.lastIndexOf(RegExp(r'[+\-x/]')) + 1
+        : 0;
+
+    // Check if there's a number before sinh
+    final isNumberBeforeSinh = startIndex < userInput.length &&
+        RegExp(r'\d').hasMatch(userInput[startIndex]);
+
+    // If there's a number before sinh, insert "*sinh("; otherwise, insert "sinh(".
+    if (isNumberBeforeSinh) {
+      userInput = userInput.substring(0, startIndex) +
+          "${userInput.substring(startIndex)}*sinh(";
+    } else {
+      userInput = userInput + "sinh(";
+    }
+
+    // Update the cursor position to be inside the "sinh()" function.
+    int newCursorPosition = startIndex +
+        (isNumberBeforeSinh ? 6 : 5); // 6 is the length of "*sinh()".
+    updateCursorPosition(newCursorPosition);
+
+    // Evaluate the updated expression.
+    evaluateLiveOutput();
+  }
+
+  ///manage click of cosh button --how input will display--manage conditions
+  void coshButtonPressed() {
+    // Find the beginning of the current number or operator.
+    final startIndex = userInput.isNotEmpty
+        ? userInput.lastIndexOf(RegExp(r'[+\-x/]')) + 1
+        : 0;
+
+    // Check if there's a number before cosh
+    final isNumberBeforeCosh = startIndex < userInput.length &&
+        RegExp(r'\d').hasMatch(userInput[startIndex]);
+
+    // If there's a number before cosh, insert "*cosh("; otherwise, insert "cosh(".
+    if (isNumberBeforeCosh) {
+      userInput = userInput.substring(0, startIndex) +
+          "${userInput.substring(startIndex)}*cosh(";
+    } else {
+      userInput = userInput + "cosh(";
+    }
+
+    // Update the cursor position to be inside the "cosh()" function.
+    int newCursorPosition = startIndex +
+        (isNumberBeforeCosh ? 6 : 5); // 6 is the length of "*cosh()".
+    updateCursorPosition(newCursorPosition);
+
+    // Evaluate the updated expression.
+    evaluateLiveOutput();
+  }
+
+  ///manage click of tanh button --how input will display--manage conditions
+  void tanhButtonPressed() {
+    // Find the beginning of the current number or operator.
+    final startIndex = userInput.isNotEmpty
+        ? userInput.lastIndexOf(RegExp(r'[+\-x/]')) + 1
+        : 0;
+
+    // Check if there's a number before tanh
+    final isNumberBeforeTanh = startIndex < userInput.length &&
+        RegExp(r'\d').hasMatch(userInput[startIndex]);
+
+    // If there's a number before tanh, insert "*tanh("; otherwise, insert "tanh(".
+    if (isNumberBeforeTanh) {
+      userInput = userInput.substring(0, startIndex) +
+          "${userInput.substring(startIndex)}*tanh(";
+    } else {
+      userInput = userInput + "tanh(";
+    }
+
+    // Update the cursor position to be inside the "tanh()" function.
+    int newCursorPosition = startIndex +
+        (isNumberBeforeTanh ? 6 : 5); // 6 is the length of "*tanh()".
+    updateCursorPosition(newCursorPosition);
+
+    // Evaluate the updated expression.
+    evaluateLiveOutput();
+  }
+
+  ///handling result of Rad and Deg of sin cos and tan
+  void handleTrigonometricOperation(String operation, String userInputFC) {
+    final trigonometricRegExp = RegExp('$operation\\(([^)]+)\\)');
+    if (userInputFC.contains(trigonometricRegExp)) {
+      final matches = trigonometricRegExp.allMatches(userInputFC);
+      for (var match in matches) {
+        final fullMatch = match.group(0).toString();
+        final innerValue = match.group(1);
+        double? input = double.tryParse(innerValue!);
+        if (input != null) {
+          final isDegMode = buttonText.value == "Deg";
+          double result;
+          if (isDegMode) {
+            if (operation == "sin") {
+              result = math.sin(input);
+            } else if (operation == "cos") {
+              result = math.cos(input);
+            } else if (operation == "tan") {
+              result = math.tan(input);
+            } else {
+              result = 0.0; // Handle other trigonometric operations if needed
+            }
+          } else {
+            if (operation == "sin") {
+              result = math.sin(input * math.pi / 180);
+            } else if (operation == "cos") {
+              result = math.cos(input * math.pi / 180);
+            } else if (operation == "tan") {
+              result = math.tan(input * math.pi / 180);
+            } else {
+              result = 0.0; // Handle other trigonometric operations if needed
+            }
+          }
+          userInputFC = userInputFC.replaceFirst(fullMatch, result.toString());
+        } else {
+          userOutput = 'Error';
+          update();
+          return;
+        }
+      }
+    }
   }
 }
