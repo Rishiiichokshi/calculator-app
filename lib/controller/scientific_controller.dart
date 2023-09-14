@@ -62,172 +62,49 @@ class ScientificController extends GetxController {
         .replaceAll("2√x", "sqrt")
         .replaceAll("∛x", "pow($userInput, 1/3)") // Cube root calculation
         .replaceAll("10ˣ", "pow(10,")
+        .replaceAll("2ˣ", "pow(2,")
         .replaceAll('eˣ', 'exp')
         .replaceAll("+/-", "-")
         .replaceAll("1/x", "1/")
         .replaceAll('X!', '!')
         .replaceAll('e', '${math.e}')
         .replaceAll('π', '${math.pi}');
-    handleTrigonometricOperation("sin", userInputFC);
-    handleTrigonometricOperation("cos", userInputFC);
-    handleTrigonometricOperation("tan", userInputFC);
-
-    // Handle the "sin" operation
+    if (userInputFC.contains("acos")) {
+      userInputFC = calculateArccosine(userInputFC);
+    }
+    if (userInputFC.contains("asin")) {
+      userInputFC = calculateArcsine(userInputFC);
+    }
+    if (userInputFC.contains("atan")) {
+      userInputFC = calculateInverseTangent(userInputFC);
+    }
     if (userInputFC.contains("sin")) {
-      final matches = RegExp(r'sin\(([^)]+)\)').allMatches(userInputFC);
-      for (var match in matches) {
-        final fullMatch = match.group(0).toString();
-        final innerValue = match.group(1);
-        double? input = double.tryParse(innerValue!);
-        if (input != null) {
-          final isDegMode = buttonText.value == "Deg";
-          final resultInRadians =
-              isDegMode ? math.sin(input) : math.sin(input * math.pi / 180);
-          userInputFC =
-              userInputFC.replaceFirst(fullMatch, resultInRadians.toString());
-        } else {
-          userOutput = 'Error';
-          update();
-          return;
-        }
-      }
+      userInputFC = calculateSine(userInputFC);
     }
-
-    // Handle the "cos" operation
     if (userInputFC.contains("cos")) {
-      final matches = RegExp(r'cos\(([^)]+)\)').allMatches(userInputFC);
-      for (var match in matches) {
-        final fullMatch = match.group(0).toString();
-        final innerValue = match.group(1);
-        double? input = double.tryParse(innerValue!);
-        if (input != null) {
-          final isDegMode = buttonText.value == "Deg";
-          final resultInRadians =
-              isDegMode ? math.cos(input) : math.cos(input * math.pi / 180);
-          userInputFC =
-              userInputFC.replaceFirst(fullMatch, resultInRadians.toString());
-        } else {
-          userOutput = 'Error';
-          update();
-          return;
-        }
-      }
+      userInputFC = calculateCosine(userInputFC);
     }
-
-    // Handle the "tan" operation
     if (userInputFC.contains("tan")) {
-      final matches = RegExp(r'tan\(([^)]+)\)').allMatches(userInputFC);
-      for (var match in matches) {
-        final fullMatch = match.group(0).toString();
-        final innerValue = match.group(1);
-        double? input = double.tryParse(innerValue!);
-        if (input != null) {
-          final isDegMode = buttonText.value == "Deg";
-          final resultInRadians =
-              isDegMode ? math.tan(input) : math.tan(input * math.pi / 180);
-          userInputFC =
-              userInputFC.replaceFirst(fullMatch, resultInRadians.toString());
-        } else {
-          userOutput = 'Error';
-          update();
-          return;
-        }
-      }
+      userInputFC = calculateTangent(userInputFC);
+    }
+    if (userInputFC.contains("asinh")) {
+      userInputFC = calculateInverseSinh(userInputFC);
+    }
+    if (userInputFC.contains("acosh")) {
+      userInputFC = calculateArcCoshRadian(userInputFC);
+    }
+    if (userInputFC.contains("atanh")) {
+      userInputFC = calculateArcTanhRadian(userInputFC);
     }
 
-    // Replace "sinh" with the custom calculation
-    userInputFC = userInputFC.replaceAllMapped(
-      RegExp(r'sinh\(([^)]+)\)'),
-      (match) {
-        final innerValue = match.group(1);
-        double? input = double.tryParse(innerValue!);
-        if (input != null) {
-          double result = (math.exp(input) - math.exp(-input)) / 2;
-          return result.toString();
-        } else {
-          return 'Error';
-        }
-      },
-    );
-
-    // Replace "cosh" with the custom calculation
-    userInputFC = userInputFC.replaceAllMapped(
-      RegExp(r'cosh\(([^)]+)\)'),
-      (match) {
-        final innerValue = match.group(1);
-        double? input = double.tryParse(innerValue!);
-        if (input != null) {
-          double result = (math.exp(input) + math.exp(-input)) / 2;
-          return result.toString();
-        } else {
-          return 'Error';
-        }
-      },
-    );
-
-    // Replace "tanh" with the custom calculation
-    userInputFC = userInputFC.replaceAllMapped(
-      RegExp(r'tanh\(([^)]+)\)'),
-      (match) {
-        final innerValue = match.group(1);
-        double? input = double.tryParse(innerValue!);
-        if (input != null) {
-          double result = (math.exp(2 * input) - 1) / (math.exp(2 * input) + 1);
-          return result.toString();
-        } else {
-          return 'Error';
-        }
-      },
-    );
-
-    // Handle the "e^" operation
-    if (userInputFC.contains("e^")) {
-      // Extract the portion after "e^" and calculate the result
-      String inputAfterExponent = userInputFC.split("e^")[1];
-      double? input = double.tryParse(inputAfterExponent);
-      if (input != null) {
-        double result = math.exp(input);
-        userOutput = result.toString();
-      } else {
-        userOutput = 'Error';
-      }
-    }
-
-    // Handle the "log₁₀" operation
-    if (userInputFC.contains("log₁₀")) {
-      final logMatches = RegExp(r'log₁₀\(([^)]+)\)').allMatches(userInputFC);
-      for (var match in logMatches) {
-        final fullMatch = match.group(0).toString();
-        final innerValue = match.group(1);
-        double? input = double.tryParse(innerValue!);
-        if (input != null && input > 0) {
-          double result = math.log(input) / math.log(10);
-          userInputFC = userInputFC.replaceFirst(fullMatch, result.toString());
-        } else {
-          userOutput = "Invalid input";
-          update();
-          return;
-        }
-      }
-    }
-
-    // Handle the "In" operation
-    if (userInputFC.contains("In(")) {
-      final inMatches = RegExp(r'In\(([^)]+)\)').allMatches(userInputFC);
-      for (var match in inMatches) {
-        final fullMatch = match.group(0).toString();
-        final innerValue = match.group(1);
-        double? input = double.tryParse(innerValue!);
-        if (input != null && input > 0) {
-          double result = math.log(input);
-          userInputFC = userInputFC.replaceFirst(fullMatch, result.toString());
-        } else {
-          userOutput = "Invalid input";
-          update();
-          return;
-        }
-      }
-    }
+    userInputFC = calculateSinh(userInputFC);
+    userInputFC = calculateCosh(userInputFC);
+    userInputFC = calculateTanh(userInputFC);
+    userInputFC = calculateExponential(userInputFC);
+    userInputFC = calculateLogBase10(userInputFC);
+    userInputFC = calculateLogBase2(userInputFC);
+    userInputFC = calculateNaturalLog(userInputFC);
+    userInputFC = handleYSqrtXExpression(userInputFC);
 
     try {
       Parser p = Parser();
@@ -286,42 +163,69 @@ class ScientificController extends GetxController {
       userInput += "^";
     }
 
-    // /// yˣ button
-    // else if (buttons[index] == 'yˣ') {
-    //   userInput += "^";
-    // }
-
-    /// 10ˣ button
-    else if (buttons[index] == '10ˣ') {
-      if (userInput.isNotEmpty) {
-        userInput = "10^$userInput";
-      } else {
-        userOutput = "0";
+    /// 10ˣ button or 2ˣ button
+    else if (buttons[index] == '10ˣ' || buttons[index] == '2ˣ') {
+      //2ˣ button
+      if (isToggleOn.value) {
+        if (userInput.isNotEmpty) {
+          userInput = "2^$userInput";
+        } else {
+          userOutput = "0";
+        }
+      }
+      // 10ˣ button
+      else {
+        if (userInput.isNotEmpty) {
+          userInput = "10^$userInput";
+        } else {
+          userOutput = "0";
+        }
       }
     }
 
-    /// "log₁₀" button
-    else if (buttons[index] == 'log₁₀') {
-      if (userInput.isNotEmpty) {
-        double? input = double.tryParse(userInput);
-        if (input != null && input > 0) {
-          double result =
-              math.log(input) / math.log(10); // Calculate the base-10 logarithm
-          userInput = "log₁₀($userInput)";
-          userOutput = result.toString();
+    /// "log₁₀" button or log₂ button
+    else if (buttons[index] == 'log₁₀' || buttons[index] == 'log₂') {
+      // log₂  button
+      if (isToggleOn.value) {
+        if (userInput.isNotEmpty) {
+          double? input = double.tryParse(userInput);
+          if (input != null && input > 0) {
+            double result = math.log(input) / math.log(2);
+            userInput = "log₂($userInput)";
+            userOutput = result.toString();
+          } else {
+            userOutput = "Invalid input";
+          }
         } else {
-          userOutput = "Invalid input";
+          userOutput = "Not a Number";
         }
-      } else {
-        userOutput = "Not a Number";
+      }
+      // log₁₀ button
+      else {
+        if (userInput.isNotEmpty) {
+          double? input = double.tryParse(userInput);
+          if (input != null && input > 0) {
+            double result = math.log(input) /
+                math.log(10); // Calculate the base-10 logarithm
+            userInput = "log₁₀($userInput)";
+            userOutput = result.toString();
+          } else {
+            userOutput = "Invalid input";
+          }
+        } else {
+          userOutput = "Not a Number";
+        }
       }
     }
 
     /// eˣ button or yˣ button
     else if (buttons[index] == 'eˣ' || buttons[index] == 'yˣ') {
+      // yˣ button
       if (isToggleOn.value) {
         userInput += "^";
-      } else {
+      }
+      //eˣ button
+      else {
         double? input = double.tryParse(userInput);
         if (input != null) {
           double result = math.exp(input);
@@ -331,6 +235,115 @@ class ScientificController extends GetxController {
           userInput = 'e^';
           // userOutput = "Not a Number";
         }
+      }
+    }
+
+    /// In button or logᵧ
+    else if (buttons[index] == 'In' || buttons[index] == 'logᵧ') {
+      // logᵧ button
+      if (isToggleOn.value) {
+        // final logBaseY =
+        //     math.log(inputNumber) / math.log(y);
+        userInput += 'log';
+      }
+      // In button
+      else {
+        if (userInput.isNotEmpty) {
+          double? input = double.tryParse(userInput);
+          if (input != null && input > 0) {
+            double result = math.log(input);
+            userInput = "In($userInput)";
+            userOutput = result.toString();
+          } else {
+            userOutput = "Invalid input";
+          }
+        } else {
+          userOutput = "Not a Number";
+        }
+      }
+    }
+
+    /// sin button or  sin⁻¹ button
+    else if (buttons[index] == 'sin' || buttons[index] == 'sin⁻¹') {
+      if (isToggleOn.value) {
+        if (userInput.isEmpty) {
+          userInput += "asin(";
+        } else {
+          // Handle the case when there is user input
+          userInput += "*asin(";
+        }
+      } else {
+        sinButtonPressed();
+      }
+    }
+
+    /// cos button or cos⁻¹ button
+    else if (buttons[index] == 'cos' || buttons[index] == 'cos⁻¹') {
+      if (isToggleOn.value) {
+        if (userInput.isEmpty) {
+          userInput += "acos(";
+        } else {
+          // Handle the case when there is user input
+          userInput += "*acos(";
+        }
+      } else {
+        cosButtonPressed();
+      }
+    }
+
+    /// tan button or tan⁻¹ button
+    else if (buttons[index] == 'tan' || buttons[index] == 'tan⁻¹') {
+      if (isToggleOn.value) {
+        if (userInput.isEmpty) {
+          userInput += "atan(";
+        } else {
+          // Handle the case when there is user input
+          userInput += "*atan(";
+        }
+      } else {
+        tanButtonPressed();
+      }
+    }
+
+    /// sinh button or sinh⁻¹ button
+    else if (buttons[index] == 'sinh' || buttons[index] == 'sinh⁻¹') {
+      if (isToggleOn.value) {
+        if (userInput.isEmpty) {
+          userInput += "asinh(";
+        } else {
+          // Handle the case when there is user input
+          userInput += "*asinh(";
+        }
+      } else {
+        sinhButtonPressed();
+      }
+    }
+
+    /// cosh button or cosh⁻¹ button
+    else if (buttons[index] == 'cosh' || buttons[index] == 'cosh⁻¹') {
+      if (isToggleOn.value) {
+        if (userInput.isEmpty) {
+          userInput += "acosh(";
+        } else {
+          // Handle the case when there is user input
+          userInput += "*acosh(";
+        }
+      } else {
+        coshButtonPressed();
+      }
+    }
+
+    /// tanh button or tanh⁻¹ button
+    else if (buttons[index] == 'tanh' || buttons[index] == 'tanh⁻¹') {
+      if (isToggleOn.value) {
+        if (userInput.isEmpty) {
+          userInput += "atanh(";
+        } else {
+          // Handle the case when there is user input
+          userInput += "*atanh(";
+        }
+      } else {
+        tanhButtonPressed();
       }
     }
 
@@ -351,22 +364,6 @@ class ScientificController extends GetxController {
     /// y√x button
     else if (buttons[index] == 'y√x') {
       userInput += "√"; // Add y√x symbol
-    }
-
-    /// In button
-    else if (buttons[index] == 'In') {
-      if (userInput.isNotEmpty) {
-        double? input = double.tryParse(userInput);
-        if (input != null && input > 0) {
-          double result = math.log(input);
-          userInput = "In($userInput)";
-          userOutput = result.toString();
-        } else {
-          userOutput = "Invalid input";
-        }
-      } else {
-        userOutput = "Not a Number";
-      }
     }
 
     /// +/- button
@@ -452,36 +449,6 @@ class ScientificController extends GetxController {
       }
     }
 
-    /// sin button
-    else if (buttons[index] == 'sin') {
-      sinButtonPressed();
-    }
-
-    /// cos button
-    else if (buttons[index] == 'cos') {
-      cosButtonPressed();
-    }
-
-    /// tan button
-    else if (buttons[index] == 'tan') {
-      tanButtonPressed();
-    }
-
-    /// sinh button
-    else if (buttons[index] == 'sinh') {
-      sinhButtonPressed();
-    }
-
-    /// cosh button
-    else if (buttons[index] == 'cosh') {
-      coshButtonPressed();
-    }
-
-    /// tanh button
-    else if (buttons[index] == 'tanh') {
-      tanhButtonPressed();
-    }
-
     /// Rand button
     else if (buttons[index] == 'Rand') {
       randButtonPressed();
@@ -562,71 +529,44 @@ class ScientificController extends GetxController {
   void evaluateLiveOutput() {
     String userInputFC =
         userInput.replaceAll("x", "*").replaceAll('π', '${math.pi}');
-    handleTrigonometricOperation("sin", userInputFC);
-    handleTrigonometricOperation("cos", userInputFC);
-    handleTrigonometricOperation("tan", userInputFC);
 
-    // Handle the "sin" operation
+    if (userInputFC.contains("acos")) {
+      userInputFC = calculateArccosine(userInputFC);
+    }
+    if (userInputFC.contains("atan")) {
+      userInputFC = calculateInverseTangent(userInputFC);
+    }
+    if (userInputFC.contains("asin")) {
+      userInputFC = calculateArcsine(userInputFC);
+    }
     if (userInputFC.contains("sin")) {
-      final matches = RegExp(r'sin\(([^)]+)\)').allMatches(userInputFC);
-      for (var match in matches) {
-        final fullMatch = match.group(0).toString();
-        final innerValue = match.group(1);
-        double? input = double.tryParse(innerValue!);
-        if (input != null) {
-          final isDegMode = buttonText.value == "Deg";
-          final resultInRadians =
-              isDegMode ? math.sin(input) : math.sin(input * math.pi / 180);
-          userInputFC =
-              userInputFC.replaceFirst(fullMatch, resultInRadians.toString());
-        } else {
-          userOutput = 'Error';
-          update();
-          return;
-        }
-      }
+      userInputFC = calculateSine(userInputFC);
+    }
+    if (userInputFC.contains("cos")) {
+      userInputFC = calculateCosine(userInputFC);
+    }
+    if (userInputFC.contains("tan")) {
+      userInputFC = calculateTangent(userInputFC);
+    }
+    if (userInputFC.contains("asinh")) {
+      userInputFC = calculateInverseSinh(userInputFC);
+    }
+    if (userInputFC.contains("acosh")) {
+      userInputFC = calculateArcCoshRadian(userInputFC);
     }
 
-    // Handle the "cos" operation
-    if (userInputFC.contains("cos")) {
-      final matches = RegExp(r'cos\(([^)]+)\)').allMatches(userInputFC);
-      for (var match in matches) {
-        final fullMatch = match.group(0).toString();
-        final innerValue = match.group(1);
-        double? input = double.tryParse(innerValue!);
-        if (input != null) {
-          final isDegMode = buttonText.value == "Deg";
-          final resultInRadians =
-              isDegMode ? math.cos(input) : math.cos(input * math.pi / 180);
-          userInputFC =
-              userInputFC.replaceFirst(fullMatch, resultInRadians.toString());
-        } else {
-          userOutput = 'Error';
-          update();
-          return;
-        }
-      }
+    if (userInputFC.contains("atanh")) {
+      userInputFC = calculateArcTanhRadian(userInputFC);
     }
-    // Handle the "tan" operation
-    if (userInputFC.contains("tan")) {
-      final matches = RegExp(r'tan\(([^)]+)\)').allMatches(userInputFC);
-      for (var match in matches) {
-        final fullMatch = match.group(0).toString();
-        final innerValue = match.group(1);
-        double? input = double.tryParse(innerValue!);
-        if (input != null) {
-          final isDegMode = buttonText.value == "Deg";
-          final resultInRadians =
-              isDegMode ? math.tan(input) : math.tan(input * math.pi / 180);
-          userInputFC =
-              userInputFC.replaceFirst(fullMatch, resultInRadians.toString());
-        } else {
-          userOutput = 'Error';
-          update();
-          return;
-        }
-      }
-    }
+
+    userInputFC = calculateSinh(userInputFC);
+    userInputFC = calculateCosh(userInputFC);
+    userInputFC = calculateTanh(userInputFC);
+    userInputFC = calculateExponential(userInputFC);
+    userInputFC = calculateLogBase10(userInputFC);
+    userInputFC = calculateLogBase2(userInputFC);
+    userInputFC = calculateNaturalLog(userInputFC);
+    userInputFC = handleYSqrtXExpression(userInputFC);
 
     try {
       Parser p = Parser();
@@ -670,6 +610,79 @@ class ScientificController extends GetxController {
     }
   }
 
+  ///calculate e^ and return the result as a string
+  String calculateExponential(String userInputFC) {
+    if (userInputFC.contains("e^")) {
+      // Extract the portion after "e^" and calculate the result
+      String inputAfterExponent = userInputFC.split("e^")[1];
+      double? input = double.tryParse(inputAfterExponent);
+      if (input != null) {
+        double result = math.exp(input);
+        return result.toString();
+      } else {
+        return 'Error';
+      }
+    }
+    return userInputFC;
+  }
+
+  ///calculate log10 and replace it in the input string
+  String calculateLogBase10(String userInputFC) {
+    final logMatches = RegExp(r'log₁₀\(([^)]+)\)').allMatches(userInputFC);
+    for (var match in logMatches) {
+      final fullMatch = match.group(0).toString();
+      final innerValue = match.group(1);
+      double? input = double.tryParse(innerValue!);
+      if (input != null && input > 0) {
+        double result = math.log(input) / math.log(10);
+        userInputFC = userInputFC.replaceFirst(fullMatch, result.toString());
+      } else {
+        userOutput = "Invalid input";
+        update();
+        return userInputFC;
+      }
+    }
+    return userInputFC;
+  }
+
+  ///calculate log2 and replace it in the input string
+  String calculateLogBase2(String userInputFC) {
+    final logMatches = RegExp(r'log₂\(([^)]+)\)').allMatches(userInputFC);
+    for (var match in logMatches) {
+      final fullMatch = match.group(0).toString();
+      final innerValue = match.group(1);
+      double? input = double.tryParse(innerValue!);
+      if (input != null && input > 0) {
+        double result = math.log(input) / math.log(2);
+        userInputFC = userInputFC.replaceFirst(fullMatch, result.toString());
+      } else {
+        userOutput = "Invalid input";
+        update();
+        return userInputFC;
+      }
+    }
+    return userInputFC;
+  }
+
+  ///calculate In and replace it in the input string
+  String calculateNaturalLog(String userInputFC) {
+    final lnMatches = RegExp(r'ln\(([^)]+)\)').allMatches(userInputFC);
+    for (var match in lnMatches) {
+      final fullMatch = match.group(0).toString();
+      final innerValue = match.group(1);
+      double? input = double.tryParse(innerValue!);
+      if (input != null && input > 0) {
+        double result = math.log(input);
+        userInputFC = userInputFC.replaceFirst(fullMatch, result.toString());
+      } else {
+        userOutput = "Invalid input";
+        update();
+        return userInputFC;
+      }
+    }
+    return userInputFC;
+  }
+
   ///Rand button operation Manage
   void randButtonPressed() {
     // Generate a random number between 0 and 1
@@ -684,6 +697,7 @@ class ScientificController extends GetxController {
     update();
   }
 
+  //sin
   ///manage click of sin button --how input will display--manage conditions
   void sinButtonPressed() {
     // Find the beginning of the current number or operator.
@@ -712,6 +726,29 @@ class ScientificController extends GetxController {
     evaluateLiveOutput();
   }
 
+  /// calculate sin and convert to either radians or degrees
+  String calculateSine(String userInputFC) {
+    final matches = RegExp(r'sin\(([^)]+)\)').allMatches(userInputFC);
+    for (var match in matches) {
+      final fullMatch = match.group(0).toString();
+      final innerValue = match.group(1);
+      double? input = double.tryParse(innerValue!);
+      if (input != null) {
+        final isDegMode = buttonText.value == "Deg";
+        final resultInRadians =
+            isDegMode ? math.sin(input) : math.sin(input * math.pi / 180);
+        userInputFC =
+            userInputFC.replaceFirst(fullMatch, resultInRadians.toString());
+      } else {
+        userOutput = 'Error';
+        update();
+        return userInputFC;
+      }
+    }
+    return userInputFC;
+  }
+
+  //cos
   ///manage click of cos button --how input will display--manage conditions
   void cosButtonPressed() {
     // Find the beginning of the current number or operator.
@@ -740,6 +777,29 @@ class ScientificController extends GetxController {
     evaluateLiveOutput();
   }
 
+  ///calculate cos and convert to either radians or degrees
+  String calculateCosine(String userInputFC) {
+    final matches = RegExp(r'cos\(([^)]+)\)').allMatches(userInputFC);
+    for (var match in matches) {
+      final fullMatch = match.group(0).toString();
+      final innerValue = match.group(1);
+      double? input = double.tryParse(innerValue!);
+      if (input != null) {
+        final isDegMode = buttonText.value == "Deg";
+        final resultInRadians =
+            isDegMode ? math.cos(input) : math.cos(input * math.pi / 180);
+        userInputFC =
+            userInputFC.replaceFirst(fullMatch, resultInRadians.toString());
+      } else {
+        userOutput = 'Error';
+        update();
+        return userInputFC;
+      }
+    }
+    return userInputFC;
+  }
+
+  //tan
   ///manage click of tan button --how input will display--manage conditions
   void tanButtonPressed() {
     // Find the beginning of the current number or operator.
@@ -768,6 +828,29 @@ class ScientificController extends GetxController {
     evaluateLiveOutput();
   }
 
+  ///calculate tan and convert to either radians or degrees
+  String calculateTangent(String userInputFC) {
+    final matches = RegExp(r'tan\(([^)]+)\)').allMatches(userInputFC);
+    for (var match in matches) {
+      final fullMatch = match.group(0).toString();
+      final innerValue = match.group(1);
+      double? input = double.tryParse(innerValue!);
+      if (input != null) {
+        final isDegMode = buttonText.value == "Deg";
+        final resultInRadians =
+            isDegMode ? math.tan(input) : math.tan(input * math.pi / 180);
+        userInputFC =
+            userInputFC.replaceFirst(fullMatch, resultInRadians.toString());
+      } else {
+        userOutput = 'Error';
+        update();
+        return userInputFC;
+      }
+    }
+    return userInputFC;
+  }
+
+  //sinh
   ///manage click of sinh button --how input will display--manage conditions
   void sinhButtonPressed() {
     // Find the beginning of the current number or operator.
@@ -796,6 +879,25 @@ class ScientificController extends GetxController {
     evaluateLiveOutput();
   }
 
+  ///calculate sinh and replace it in the input string
+  String calculateSinh(String userInputFC) {
+    userInputFC = userInputFC.replaceAllMapped(
+      RegExp(r'sinh\(([^)]+)\)'),
+      (match) {
+        final innerValue = match.group(1);
+        double? input = double.tryParse(innerValue!);
+        if (input != null) {
+          double result = (math.exp(input) - math.exp(-input)) / 2;
+          return result.toString();
+        } else {
+          return 'Error';
+        }
+      },
+    );
+    return userInputFC;
+  }
+
+  //cosh
   ///manage click of cosh button --how input will display--manage conditions
   void coshButtonPressed() {
     // Find the beginning of the current number or operator.
@@ -824,6 +926,25 @@ class ScientificController extends GetxController {
     evaluateLiveOutput();
   }
 
+  /// calculate cosh and replace it in the input string
+  String calculateCosh(String userInputFC) {
+    userInputFC = userInputFC.replaceAllMapped(
+      RegExp(r'cosh\(([^)]+)\)'),
+      (match) {
+        final innerValue = match.group(1);
+        double? input = double.tryParse(innerValue!);
+        if (input != null) {
+          double result = (math.exp(input) + math.exp(-input)) / 2;
+          return result.toString();
+        } else {
+          return 'Error';
+        }
+      },
+    );
+    return userInputFC;
+  }
+
+  //tanh
   ///manage click of tanh button --how input will display--manage conditions
   void tanhButtonPressed() {
     // Find the beginning of the current number or operator.
@@ -852,46 +973,174 @@ class ScientificController extends GetxController {
     evaluateLiveOutput();
   }
 
-  ///handling result of Rad and Deg of sin cos and tan
-  void handleTrigonometricOperation(String operation, String userInputFC) {
-    final trigonometricRegExp = RegExp('$operation\\(([^)]+)\\)');
-    if (userInputFC.contains(trigonometricRegExp)) {
-      final matches = trigonometricRegExp.allMatches(userInputFC);
-      for (var match in matches) {
-        final fullMatch = match.group(0).toString();
+  ///calculate tanh and replace it in the input string
+  String calculateTanh(String userInputFC) {
+    userInputFC = userInputFC.replaceAllMapped(
+      RegExp(r'tanh\(([^)]+)\)'),
+      (match) {
         final innerValue = match.group(1);
         double? input = double.tryParse(innerValue!);
         if (input != null) {
-          final isDegMode = buttonText.value == "Deg";
-          double result;
-          if (isDegMode) {
-            if (operation == "sin") {
-              result = math.sin(input);
-            } else if (operation == "cos") {
-              result = math.cos(input);
-            } else if (operation == "tan") {
-              result = math.tan(input);
-            } else {
-              result = 0.0; // Handle other trigonometric operations if needed
-            }
-          } else {
-            if (operation == "sin") {
-              result = math.sin(input * math.pi / 180);
-            } else if (operation == "cos") {
-              result = math.cos(input * math.pi / 180);
-            } else if (operation == "tan") {
-              result = math.tan(input * math.pi / 180);
-            } else {
-              result = 0.0; // Handle other trigonometric operations if needed
-            }
-          }
-          userInputFC = userInputFC.replaceFirst(fullMatch, result.toString());
+          double result = (math.exp(2 * input) - 1) / (math.exp(2 * input) + 1);
+          return result.toString();
         } else {
-          userOutput = 'Error';
-          update();
-          return;
+          return 'Error';
         }
+      },
+    );
+    return userInputFC;
+  }
+
+  //2nd page buttons
+
+  /// tanh⁻¹ in radians and replace it in the input string
+  String calculateArcTanhRadian(String userInputFC) {
+    final atanhRegExp = RegExp(r'atanh\(([^)]+)\)');
+    final matches = atanhRegExp.allMatches(userInputFC);
+    for (var match in matches) {
+      final fullMatch = match.group(0).toString(); // Convert to non-null string
+      final argument = match.group(1); // Captured argument
+      try {
+        final argValue = double.parse(argument!);
+        if (argValue < -1.0 || argValue > 1.0) {
+          throw Exception('Invalid Input');
+        }
+        final resultInRadians = 0.5 * math.log((1 + argValue) / (1 - argValue));
+        userInputFC =
+            userInputFC.replaceFirst(fullMatch, resultInRadians.toString());
+      } catch (e) {
+        // Handle the case where the argument is not a valid number or out of range
+        userInputFC = userInputFC.replaceFirst(fullMatch, 'Invalid Input');
       }
     }
+    return userInputFC;
+  }
+
+  /// tan⁻¹ convert to either radians or degrees
+  String calculateInverseTangent(String userInputFC) {
+    final atanRegExp = RegExp(r'atan\(([^)]+)\)');
+    final matches = atanRegExp.allMatches(userInputFC);
+    for (var match in matches) {
+      final fullMatch = match.group(0).toString(); // Convert to non-null string
+      final argument = match.group(1); // Captured argument
+      try {
+        final argValue = double.parse(argument!);
+        final resultInRadians = atan(argValue);
+        final result = (buttonText.value == "Rad")
+            ? ((resultInRadians * 180) / pi).toString()
+            : resultInRadians.toString();
+        userInputFC = userInputFC.replaceFirst(fullMatch, result);
+      } catch (e) {
+        // Handle the case where the argument is not a valid number
+        userInputFC = userInputFC.replaceFirst(fullMatch, 'Invalid Input');
+      }
+    }
+    return userInputFC;
+  }
+
+  /// sin⁻¹ and convert to either radians or degrees
+  String calculateArcsine(String userInputFC) {
+    final asinRegExp = RegExp(r'asin\(([^)]+)\)');
+    final matches = asinRegExp.allMatches(userInputFC);
+    for (var match in matches) {
+      final fullMatch = match.group(0).toString(); // Convert to non-null string
+      final argument = match.group(1); // Captured argument
+      try {
+        final argValue = double.parse(argument!);
+        final resultInRadians = asin(argValue);
+        final result = (buttonText.value == "Rad")
+            ? ((resultInRadians * 180) / pi).toString()
+            : resultInRadians.toString();
+        userInputFC = userInputFC.replaceFirst(fullMatch, result);
+      } catch (e) {
+        // Handle the case where the argument is not a valid number
+        userInputFC = userInputFC.replaceFirst(fullMatch, 'Invalid Input');
+      }
+    }
+    return userInputFC;
+  }
+
+  /// sinh⁻¹and replace it in the input string
+  String calculateInverseSinh(String userInputFC) {
+    final asinhRegExp = RegExp(r'asinh\(([^)]+)\)');
+    final matches = asinhRegExp.allMatches(userInputFC);
+    for (var match in matches) {
+      final fullMatch = match.group(0).toString(); // Convert to non-null string
+      final argument = match.group(1); // Captured argument
+      try {
+        final argValue = double.parse(argument!);
+        final resultInRadians =
+            math.log(argValue + math.sqrt(argValue * argValue + 1));
+        userInputFC =
+            userInputFC.replaceFirst(fullMatch, resultInRadians.toString());
+      } catch (e) {
+        // Handle the case where the argument is not a valid number
+        userInputFC = userInputFC.replaceFirst(fullMatch, 'Invalid Input');
+      }
+    }
+    return userInputFC;
+  }
+
+  /// cos⁻¹ and convert to either radians or degrees
+  String calculateArccosine(String userInputFC) {
+    final acosRegExp = RegExp(r'acos\(([^)]+)\)');
+    final matches = acosRegExp.allMatches(userInputFC);
+    for (var match in matches) {
+      final fullMatch = match.group(0).toString(); // Convert to non-null string
+      final argument = match.group(1); // Captured argument
+      try {
+        final argValue = double.parse(argument!);
+        final resultInRadians = acos(argValue);
+        final result = (buttonText.value == "Rad")
+            ? ((resultInRadians * 180) / pi).toString()
+            : resultInRadians.toString();
+        userInputFC = userInputFC.replaceFirst(fullMatch, result);
+      } catch (e) {
+        // Handle the case where the argument is not a valid number
+        userInputFC = userInputFC.replaceFirst(fullMatch, 'Invalid Input');
+      }
+    }
+    return userInputFC;
+  }
+
+  /// cosh⁻¹ in radians and replace it in the input string
+  String calculateArcCoshRadian(String userInputFC) {
+    final acoshRegExp = RegExp(r'acosh\(([^)]+)\)');
+    final matches = acoshRegExp.allMatches(userInputFC);
+    for (var match in matches) {
+      final fullMatch = match.group(0).toString(); // Convert to non-null string
+      final argument = match.group(1); // Captured argument
+      try {
+        final argValue = double.parse(argument!);
+        if (argValue < 1.0) {
+          throw Exception('Invalid Input');
+        }
+        final resultInRadians =
+            math.log(argValue + math.sqrt(argValue * argValue - 1));
+        userInputFC =
+            userInputFC.replaceFirst(fullMatch, resultInRadians.toString());
+      } catch (e) {
+        // Handle the case where the argument is not a valid number or out of range
+        userInputFC = userInputFC.replaceFirst(fullMatch, 'Invalid Input');
+      }
+    }
+    return userInputFC;
+  }
+
+  /// y√x function handle
+  String handleYSqrtXExpression(String input) {
+    final ySqrtXRegExp = RegExp(r'(\d+)√(\d+)');
+    final matches = ySqrtXRegExp.allMatches(input);
+    String result = input; // Initialize the result with the original input
+
+    for (var match in matches) {
+      final fullMatch = match.group(0).toString(); // Convert to non-null string
+      final y = match.group(1); // Captured y
+      final x = match.group(2); // Captured x
+      final expressionResult = "($x)^(1/$y)";
+      result = result.replaceFirst(fullMatch, expressionResult);
+    }
+
+    return result;
   }
 }

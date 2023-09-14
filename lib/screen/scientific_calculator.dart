@@ -109,276 +109,267 @@ class _ScientificCalculatorState extends State<ScientificCalculator> {
   Expanded inPutSection(
       ThemeController themeController, ScientificController controller) {
     return Expanded(
-        flex: 2,
-        child: Container(
-          padding: const EdgeInsets.all(3),
-          decoration: BoxDecoration(
-              color: themeController.isDark
-                  ? DarkColors.sheetBgColor
-                  : LightColors.sheetBgColor,
-              borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(15), topRight: Radius.circular(15))),
-          child: GridView.builder(
-              padding:
-                  EdgeInsets.only(top: 1.h, bottom: 1.h, left: 3.w, right: 3.w),
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: buttons.length,
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 10,
-                  mainAxisExtent: 4.3.h,
-                  mainAxisSpacing: 1.5.w,
-                  crossAxisSpacing: 2.9.w),
-              itemBuilder: (contex, index) {
-                switch (index) {
-                  /// CLEAR BTN
-                  case 6:
-                    return ScientificButton(
-                        buttonTapped: () {
-                          controller.clearInputAndOutput();
-                        },
-                        color: themeController.isDark
-                            ? DarkColors.btnBgColor
-                            : LightColors.btnBgColor,
-                        textColor: themeController.isDark
-                            ? DarkColors.leftOperatorColor
-                            : LightColors.leftOperatorColor,
-                        text: buttons[index]);
+      flex: 2,
+      child: Container(
+        padding: const EdgeInsets.all(3),
+        decoration: BoxDecoration(
+            color: themeController.isDark
+                ? DarkColors.sheetBgColor
+                : LightColors.sheetBgColor,
+            borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(15), topRight: Radius.circular(15))),
+        child: GridView.builder(
+            padding:
+                EdgeInsets.only(top: 1.h, bottom: 1.h, left: 3.w, right: 3.w),
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: buttons.length,
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 10,
+                mainAxisExtent: 4.3.h,
+                mainAxisSpacing: 1.5.w,
+                crossAxisSpacing: 2.9.w),
+            itemBuilder: (contex, index) {
+              switch (index) {
+                /// CLEAR BTN
+                case 6:
+                  return ScientificButton(
+                      buttonTapped: () {
+                        controller.clearInputAndOutput();
+                      },
+                      color: themeController.isDark
+                          ? DarkColors.btnBgColor
+                          : LightColors.btnBgColor,
+                      textColor: themeController.isDark
+                          ? DarkColors.leftOperatorColor
+                          : LightColors.leftOperatorColor,
+                      text: buttons[index]);
 
-                  /// DELETE BTN
-                  case 7:
-                    return ScientificButton(
-                        buttonTapped: () {
-                          controller.deleteBtnAction();
-                        },
-                        color: themeController.isDark
-                            ? DarkColors.btnBgColor
-                            : LightColors.btnBgColor,
-                        textColor: themeController.isDark
-                            ? DarkColors.leftOperatorColor
-                            : LightColors.leftOperatorColor,
-                        text: buttons[index]);
+                /// DELETE BTN
+                case 7:
+                  return ScientificButton(
+                      buttonTapped: () {
+                        controller.deleteBtnAction();
+                      },
+                      color: themeController.isDark
+                          ? DarkColors.btnBgColor
+                          : LightColors.btnBgColor,
+                      textColor: themeController.isDark
+                          ? DarkColors.leftOperatorColor
+                          : LightColors.leftOperatorColor,
+                      text: buttons[index]);
 
-                  // /// 2nd BTN
-                  // case 10:
-                  //   return Obx(() => ScientificButton(
-                  //       buttonTapped: () {
-                  //         controller.toggleButton();
-                  //       },
-                  //       color: themeController.isDark
-                  //           ? DarkColors.btnBgColor
-                  //           : LightColors.btnBgColor,
-                  //       textColor: controller.isToggleOn.value
-                  //           ? DarkColors.leftOperatorColor
-                  //           : (themeController.isDark
-                  //               ? Colors.white
-                  //               : Colors.black),
-                  //       text: buttons[index]));
-                  //
-                  // /// eˣ to yˣ  BTN
-                  // case 14:
-                  //   return Obx(() => ScientificButton(
-                  //       buttonTapped: () {
-                  //         controller.onBtnTapped(buttons, index);
-                  //       },
-                  //       color: themeController.isDark
-                  //           ? DarkColors.btnBgColor
-                  //           : LightColors.btnBgColor,
-                  //       textColor: themeController.isDark
-                  //           ? Colors.white
-                  //           : Colors.black,
-                  //       text: controller.isToggleOn.value
-                  //           ? 'yˣ'
-                  //           : buttons[index]));
-                  //
-                  // ///  10ˣ to 2ˣ BTN
-                  // case 15:
-                  //   return Obx(() => ScientificButton(
-                  //       buttonTapped: () {
-                  //         controller.onBtnTapped(buttons, index);
-                  //       },
-                  //       color: themeController.isDark
-                  //           ? DarkColors.btnBgColor
-                  //           : LightColors.btnBgColor,
-                  //       textColor: themeController.isDark
-                  //           ? Colors.white
-                  //           : Colors.black,
-                  //       text: controller.isToggleOn.value
-                  //           ? '2ˣ'
-                  //           : buttons[index]));
-                  //
-                  // ///  In to  logᵧ BTN
-                  // case 24:
-                  //   return Obx(() => ScientificButton(
-                  //       buttonTapped: () {
-                  //         controller.onBtnTapped(buttons, index);
-                  //       },
-                  //       color: themeController.isDark
-                  //           ? DarkColors.btnBgColor
-                  //           : LightColors.btnBgColor,
-                  //       textColor: themeController.isDark
-                  //           ? Colors.white
-                  //           : Colors.black,
-                  //       text: controller.isToggleOn.value
-                  //           ? ' logᵧ'
-                  //           : buttons[index]));
-                  //
-                  // ///  log₁₀ to  log₂ BTN
-                  // case 25:
-                  //   return Obx(() => ScientificButton(
-                  //       buttonTapped: () {
-                  //         controller.onBtnTapped(buttons, index);
-                  //       },
-                  //       color: themeController.isDark
-                  //           ? DarkColors.btnBgColor
-                  //           : LightColors.btnBgColor,
-                  //       textColor: themeController.isDark
-                  //           ? Colors.white
-                  //           : Colors.black,
-                  //       text: controller.isToggleOn.value
-                  //           ? ' log₂'
-                  //           : buttons[index]));
-                  //
-                  // ///  sin to  sin⁻¹ BTN
-                  // case 31:
-                  //   return Obx(() => ScientificButton(
-                  //       buttonTapped: () {
-                  //         controller.onBtnTapped(buttons, index);
-                  //       },
-                  //       color: themeController.isDark
-                  //           ? DarkColors.btnBgColor
-                  //           : LightColors.btnBgColor,
-                  //       textColor: themeController.isDark
-                  //           ? Colors.white
-                  //           : Colors.black,
-                  //       text: controller.isToggleOn.value
-                  //           ? 'sin⁻¹'
-                  //           : buttons[index]));
-                  //
-                  // ///  cos to  cos⁻¹ BTN
-                  // case 32:
-                  //   return Obx(() => ScientificButton(
-                  //       buttonTapped: () {
-                  //         controller.onBtnTapped(buttons, index);
-                  //       },
-                  //       color: themeController.isDark
-                  //           ? DarkColors.btnBgColor
-                  //           : LightColors.btnBgColor,
-                  //       textColor: themeController.isDark
-                  //           ? Colors.white
-                  //           : Colors.black,
-                  //       text: controller.isToggleOn.value
-                  //           ? 'cos⁻¹'
-                  //           : buttons[index]));
-                  //
-                  // ///  tan to  tan⁻¹ BTN
-                  // case 33:
-                  //   return Obx(() => ScientificButton(
-                  //       buttonTapped: () {
-                  //         controller.onBtnTapped(buttons, index);
-                  //       },
-                  //       color: themeController.isDark
-                  //           ? DarkColors.btnBgColor
-                  //           : LightColors.btnBgColor,
-                  //       textColor: themeController.isDark
-                  //           ? Colors.white
-                  //           : Colors.black,
-                  //       text: controller.isToggleOn.value
-                  //           ? 'tan⁻¹'
-                  //           : buttons[index]));
-                  //
-                  // ///  sinh to  sinh⁻¹ BTN
-                  // case 41:
-                  //   return Obx(() => ScientificButton(
-                  //       buttonTapped: () {
-                  //         controller.onBtnTapped(buttons, index);
-                  //       },
-                  //       color: themeController.isDark
-                  //           ? DarkColors.btnBgColor
-                  //           : LightColors.btnBgColor,
-                  //       textColor: themeController.isDark
-                  //           ? Colors.white
-                  //           : Colors.black,
-                  //       text: controller.isToggleOn.value
-                  //           ? 'sinh⁻¹'
-                  //           : buttons[index]));
-                  //
-                  // ///  cosh to  cosh⁻¹ BTN
-                  // case 42:
-                  //   return Obx(() => ScientificButton(
-                  //       buttonTapped: () {
-                  //         controller.onBtnTapped(buttons, index);
-                  //       },
-                  //       color: themeController.isDark
-                  //           ? DarkColors.btnBgColor
-                  //           : LightColors.btnBgColor,
-                  //       textColor: themeController.isDark
-                  //           ? Colors.white
-                  //           : Colors.black,
-                  //       text: controller.isToggleOn.value
-                  //           ? 'cosh⁻¹'
-                  //           : buttons[index]));
-                  //
-                  // ///  tanh to  tanh⁻¹ BTN
-                  // case 43:
-                  //   return Obx(() => ScientificButton(
-                  //       buttonTapped: () {
-                  //         controller.onBtnTapped(buttons, index);
-                  //       },
-                  //       color: themeController.isDark
-                  //           ? DarkColors.btnBgColor
-                  //           : LightColors.btnBgColor,
-                  //       textColor: themeController.isDark
-                  //           ? Colors.white
-                  //           : Colors.black,
-                  //       text: controller.isToggleOn.value
-                  //           ? 'tanh⁻¹'
-                  //           : buttons[index]));
+                /// 2nd BTN
+                case 10:
+                  return Obx(() => ScientificButton(
+                      buttonTapped: () {
+                        controller.toggleButton();
+                      },
+                      color: themeController.isDark
+                          ? DarkColors.btnBgColor
+                          : LightColors.btnBgColor,
+                      textColor: controller.isToggleOn.value
+                          ? (themeController.isDark
+                              ? DarkColors.leftOperatorColor
+                              : LightColors.leftOperatorColor)
+                          : (themeController.isDark
+                              ? Colors.white
+                              : Colors.black),
+                      text: buttons[index]));
 
-                  /// Rad/ Deg BTN
-                  case 40:
-                    return Obx(() => ScientificButton(
-                        buttonTapped: () {
-                          controller.changeButtonText();
-                        },
-                        color: themeController.isDark
-                            ? DarkColors.btnBgColor
-                            : LightColors.btnBgColor,
-                        textColor: themeController.isDark
-                            ? DarkColors.leftOperatorColor
-                            : LightColors.leftOperatorColor,
-                        text: controller.buttonText.value));
+                /// eˣ to yˣ  BTN
+                case 14:
+                  return Obx(() => ScientificButton(
+                      buttonTapped: () {
+                        controller.onBtnTapped(buttons, index);
+                      },
+                      color: themeController.isDark
+                          ? DarkColors.btnBgColor
+                          : LightColors.btnBgColor,
+                      textColor:
+                          themeController.isDark ? Colors.white : Colors.black,
+                      text:
+                          controller.isToggleOn.value ? 'yˣ' : buttons[index]));
 
-                  /// EQUAL BTN
-                  case 49:
-                    return ScientificButton(
-                        buttonTapped: () {
-                          controller.equalPressed();
-                        },
-                        color: themeController.isDark
-                            ? DarkColors.btnBgColor
-                            : LightColors.btnBgColor,
-                        textColor: themeController.isDark
-                            ? DarkColors.leftOperatorColor
-                            : LightColors.leftOperatorColor,
-                        text: buttons[index]);
+                ///  10ˣ to 2ˣ BTN
+                case 15:
+                  return Obx(() => ScientificButton(
+                      buttonTapped: () {
+                        controller.onBtnTapped(buttons, index);
+                      },
+                      color: themeController.isDark
+                          ? DarkColors.btnBgColor
+                          : LightColors.btnBgColor,
+                      textColor:
+                          themeController.isDark ? Colors.white : Colors.black,
+                      text:
+                          controller.isToggleOn.value ? '2ˣ' : buttons[index]));
 
-                  default:
-                    return ScientificButton(
-                        buttonTapped: () {
-                          controller.onBtnTapped(buttons, index);
-                        },
-                        color: themeController.isDark
-                            ? DarkColors.btnBgColor
-                            : LightColors.btnBgColor,
-                        textColor: isOperator(buttons[index])
-                            ? LightColors.operatorColor
-                            : themeController.isDark
-                                ? Colors.white
-                                : Colors.black,
-                        text: buttons[index]);
-                }
-              }),
-        ));
+                ///  In to  logᵧ BTN
+                case 24:
+                  return Obx(() => ScientificButton(
+                      buttonTapped: () {
+                        controller.onBtnTapped(buttons, index);
+                      },
+                      color: themeController.isDark
+                          ? DarkColors.btnBgColor
+                          : LightColors.btnBgColor,
+                      textColor:
+                          themeController.isDark ? Colors.white : Colors.black,
+                      text: controller.isToggleOn.value
+                          ? ' logᵧ'
+                          : buttons[index]));
+
+                ///  log₁₀ to  log₂ BTN
+                case 25:
+                  return Obx(() => ScientificButton(
+                      buttonTapped: () {
+                        controller.onBtnTapped(buttons, index);
+                      },
+                      color: themeController.isDark
+                          ? DarkColors.btnBgColor
+                          : LightColors.btnBgColor,
+                      textColor:
+                          themeController.isDark ? Colors.white : Colors.black,
+                      text: controller.isToggleOn.value
+                          ? ' log₂'
+                          : buttons[index]));
+
+                ///  sin to  sin⁻¹ BTN
+                case 31:
+                  return Obx(() => ScientificButton(
+                      buttonTapped: () {
+                        controller.onBtnTapped(buttons, index);
+                      },
+                      color: themeController.isDark
+                          ? DarkColors.btnBgColor
+                          : LightColors.btnBgColor,
+                      textColor:
+                          themeController.isDark ? Colors.white : Colors.black,
+                      text: controller.isToggleOn.value
+                          ? 'sin⁻¹'
+                          : buttons[index]));
+
+                ///  cos to  cos⁻¹ BTN
+                case 32:
+                  return Obx(() => ScientificButton(
+                      buttonTapped: () {
+                        controller.onBtnTapped(buttons, index);
+                      },
+                      color: themeController.isDark
+                          ? DarkColors.btnBgColor
+                          : LightColors.btnBgColor,
+                      textColor:
+                          themeController.isDark ? Colors.white : Colors.black,
+                      text: controller.isToggleOn.value
+                          ? 'cos⁻¹'
+                          : buttons[index]));
+
+                ///  tan to  tan⁻¹ BTN
+                case 33:
+                  return Obx(() => ScientificButton(
+                      buttonTapped: () {
+                        controller.onBtnTapped(buttons, index);
+                      },
+                      color: themeController.isDark
+                          ? DarkColors.btnBgColor
+                          : LightColors.btnBgColor,
+                      textColor:
+                          themeController.isDark ? Colors.white : Colors.black,
+                      text: controller.isToggleOn.value
+                          ? 'tan⁻¹'
+                          : buttons[index]));
+
+                ///  sinh to  sinh⁻¹ BTN
+                case 41:
+                  return Obx(() => ScientificButton(
+                      buttonTapped: () {
+                        controller.onBtnTapped(buttons, index);
+                      },
+                      color: themeController.isDark
+                          ? DarkColors.btnBgColor
+                          : LightColors.btnBgColor,
+                      textColor:
+                          themeController.isDark ? Colors.white : Colors.black,
+                      text: controller.isToggleOn.value
+                          ? 'sinh⁻¹'
+                          : buttons[index]));
+
+                ///  cosh to  cosh⁻¹ BTN
+                case 42:
+                  return Obx(() => ScientificButton(
+                      buttonTapped: () {
+                        controller.onBtnTapped(buttons, index);
+                      },
+                      color: themeController.isDark
+                          ? DarkColors.btnBgColor
+                          : LightColors.btnBgColor,
+                      textColor:
+                          themeController.isDark ? Colors.white : Colors.black,
+                      text: controller.isToggleOn.value
+                          ? 'cosh⁻¹'
+                          : buttons[index]));
+
+                ///  tanh to  tanh⁻¹ BTN
+                case 43:
+                  return Obx(() => ScientificButton(
+                      buttonTapped: () {
+                        controller.onBtnTapped(buttons, index);
+                      },
+                      color: themeController.isDark
+                          ? DarkColors.btnBgColor
+                          : LightColors.btnBgColor,
+                      textColor:
+                          themeController.isDark ? Colors.white : Colors.black,
+                      text: controller.isToggleOn.value
+                          ? 'tanh⁻¹'
+                          : buttons[index]));
+
+                /// Rad/ Deg BTN
+                case 40:
+                  return Obx(() => ScientificButton(
+                      buttonTapped: () {
+                        controller.changeButtonText();
+                      },
+                      color: themeController.isDark
+                          ? DarkColors.btnBgColor
+                          : LightColors.btnBgColor,
+                      textColor: themeController.isDark
+                          ? DarkColors.leftOperatorColor
+                          : LightColors.leftOperatorColor,
+                      text: controller.buttonText.value));
+
+                /// EQUAL BTN
+                case 49:
+                  return ScientificButton(
+                      buttonTapped: () {
+                        controller.equalPressed();
+                      },
+                      color: themeController.isDark
+                          ? DarkColors.btnBgColor
+                          : LightColors.btnBgColor,
+                      textColor: themeController.isDark
+                          ? DarkColors.leftOperatorColor
+                          : LightColors.leftOperatorColor,
+                      text: buttons[index]);
+
+                default:
+                  return ScientificButton(
+                      buttonTapped: () {
+                        controller.onBtnTapped(buttons, index);
+                      },
+                      color: themeController.isDark
+                          ? DarkColors.btnBgColor
+                          : LightColors.btnBgColor,
+                      textColor: isOperator(buttons[index])
+                          ? LightColors.operatorColor
+                          : themeController.isDark
+                              ? Colors.white
+                              : Colors.black,
+                      text: buttons[index]);
+              }
+            }),
+      ),
+    );
   }
 
   /// Out put Section - Show Result
