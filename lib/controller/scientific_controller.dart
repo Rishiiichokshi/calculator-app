@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:get/get.dart';
 import 'dart:math' as math;
+import 'dart:math';
 
 import 'package:math_expressions/math_expressions.dart';
 
@@ -12,6 +13,7 @@ class ScientificController extends GetxController {
   var isNegative = false;
   int cursorPosition = 0;
   RxString buttonText = "Rad".obs;
+  double memoryValue = 0;
 
   /// Declare a flag to track if a dot is present in the current number
   bool dotAllowed = true;
@@ -38,17 +40,20 @@ class ScientificController extends GetxController {
     print('====$userInput');
     print('====userInputFC===$userInputFC');
 
-    ///  y√x
-    // Handle the "y√x" expression by capturing both inputs and inserting them
-    final ySqrtXRegExp = RegExp(r'(\d+)√(\d+)');
-    final matches = ySqrtXRegExp.allMatches(userInputFC);
-    for (var match in matches) {
-      final fullMatch = match.group(0).toString(); // Convert to non-null string
-      final y = match.group(1); // Captured y
-      final x = match.group(2); // Captured x
-      final result = "($x)^(1/$y)";
-      userInputFC = userInputFC.replaceFirst(fullMatch, result);
-    }
+    // ///  y√x
+    // // Handle the "y√x" expression by capturing both inputs and inserting them
+    // final ySqrtXRegExp = RegExp(r'(\d+)√(\d+)');
+    // final matches = ySqrtXRegExp.allMatches(userInputFC);
+    // for (var match in matches) {
+    //   final fullMatch = match.group(0).toString(); // Convert to non-null string
+    //   final y = match.group(1); // Captured y
+    //   final x = match.group(2); // Captured x
+    //   final result = "($x)^(1/$y)";
+    //   userInputFC = userInputFC.replaceFirst(fullMatch, result);
+    // }
+
+    //eˣ
+    userInputFC = calculateExponential(userInputFC);
 
     userInputFC = userInputFC
         .replaceAll("x", "*")
@@ -60,7 +65,7 @@ class ScientificController extends GetxController {
         .replaceAll("EE", "*10^")
         .replaceAll("xʸ", "^")
         .replaceAll("2√x", "sqrt")
-        .replaceAll("∛x", "pow($userInput, 1/3)") // Cube root calculation
+        .replaceAll("∛x", "pow($userInput, 1/3)")
         .replaceAll("10ˣ", "pow(10,")
         .replaceAll("2ˣ", "pow(2,")
         .replaceAll('eˣ', 'exp')
@@ -69,6 +74,7 @@ class ScientificController extends GetxController {
         .replaceAll('X!', '!')
         .replaceAll('e', '${math.e}')
         .replaceAll('π', '${math.pi}');
+
     if (userInputFC.contains("acos")) {
       userInputFC = calculateArccosine(userInputFC);
     }
@@ -97,14 +103,24 @@ class ScientificController extends GetxController {
       userInputFC = calculateArcTanhRadian(userInputFC);
     }
 
+    //sinh
     userInputFC = calculateSinh(userInputFC);
+    //cosh
     userInputFC = calculateCosh(userInputFC);
+    //tanh
     userInputFC = calculateTanh(userInputFC);
-    userInputFC = calculateExponential(userInputFC);
+    // log₁₀
     userInputFC = calculateLogBase10(userInputFC);
+    // log₂
     userInputFC = calculateLogBase2(userInputFC);
+    //ln
     userInputFC = calculateNaturalLog(userInputFC);
+    //y√x
     userInputFC = handleYSqrtXExpression(userInputFC);
+    //yˣ
+    userInputFC = handleYPowerXExpression(userInputFC);
+    //logᵧ
+    userInputFC = handleYLogXExpression(userInputFC);
 
     try {
       Parser p = Parser();
@@ -126,6 +142,7 @@ class ScientificController extends GetxController {
       print('===ParcerUserOutput: $userOutput');
       print('===ParceruserInputFC: $userInputFC');
     } catch (e) {
+      print('===Equal press Error ==Error: $e');
       userOutput = 'Error';
     }
     cursorPosition = userInput.length;
@@ -150,17 +167,53 @@ class ScientificController extends GetxController {
   void onBtnTapped(List<String> buttons, int index) {
     /// x² button
     if (buttons[index] == 'x²') {
-      userInput += "^2";
+      if (userInput.isEmpty) {
+        userOutput = '0';
+      } else {
+        userInput += "^2";
+      }
     }
 
     /// x³ button
     else if (buttons[index] == 'x³') {
-      userInput += "^3";
+      if (userInput.isEmpty) {
+        userOutput = '0';
+      } else {
+        userInput += "^3";
+      }
     }
 
     /// xʸ button
     else if (buttons[index] == 'xʸ') {
-      userInput += "^";
+      if (userInput.isEmpty) {
+        userOutput = '0';
+      } else {
+        userInput += "^";
+      }
+    }
+
+    /// mc button
+    else if (buttons[index] == 'mc') {
+      clearMemory();
+      print('mc button-----$memoryValue');
+    }
+
+    /// m+ button
+    else if (buttons[index] == 'm+') {
+      onMPlusButtonPressed(double.parse(userOutput));
+      print('m+ button-----$memoryValue');
+    }
+
+    /// m- button
+    else if (buttons[index] == 'm-') {
+      onMMinusButtonPressed(double.parse(userOutput));
+      print('m- button-----$memoryValue');
+    }
+
+    /// mr button
+    else if (buttons[index] == 'mr') {
+      onMRButtonPressed();
+      print('mr button-----$memoryValue');
     }
 
     /// 10ˣ button or 2ˣ button
@@ -176,7 +229,15 @@ class ScientificController extends GetxController {
       // 10ˣ button
       else {
         if (userInput.isNotEmpty) {
-          userInput = "10^$userInput";
+          // userInput = "10^$userInput";
+          // print('----userInput 10x----$userInput');
+          // print('----userOutput 10x----$userOutput');
+          double base = 10.0; // The base for 10ˣ
+          double exponent = (double.tryParse(userInput) ?? 0.0)
+              .toDouble(); // Parse the exponent from userInput, default to 0 if parsing fails, and cast it to double
+          num result = math.pow(base, exponent); // Calculate the result
+          userInput = result.toString(); // Update userInput with the result
+          userOutput = userInput;
         } else {
           userOutput = "0";
         }
@@ -222,19 +283,36 @@ class ScientificController extends GetxController {
     else if (buttons[index] == 'eˣ' || buttons[index] == 'yˣ') {
       // yˣ button
       if (isToggleOn.value) {
-        userInput += "^";
+        if (userInput.isEmpty) {
+          userOutput = '0';
+        } else {
+          userInput += "^";
+        }
       }
       //eˣ button
       else {
-        double? input = double.tryParse(userInput);
-        if (input != null) {
-          double result = math.exp(input);
-          userInput = "e^$userInput";
-          // userOutput = '0';
+        if (userInput.isEmpty) {
+          userOutput = '0';
         } else {
-          userInput = 'e^';
-          // userOutput = "Not a Number";
+          userInput = "e^$userInput";
+          calculateExponential(userInput);
+          print('====eˣ output====$userOutput');
         }
+
+        // if (userInput.isEmpty) {
+        //   userOutput = '0';
+        // } else {
+        //   double? input = dousble.tryParse(userInput);
+        //   if (input != null) {
+        //     double result = math.exp(input);
+        //     userInput = "e^$userInput";
+        //     userOutput = result.toString();
+        //     // userOutput = '0';
+        //   } else {
+        //     userInput = 'e^';
+        //     // userOutput = "Not a Number";
+        //   }
+        // }
       }
     }
 
@@ -242,9 +320,11 @@ class ScientificController extends GetxController {
     else if (buttons[index] == 'In' || buttons[index] == 'logᵧ') {
       // logᵧ button
       if (isToggleOn.value) {
-        // final logBaseY =
-        //     math.log(inputNumber) / math.log(y);
-        userInput += 'log';
+        if (userInput.isEmpty) {
+          userOutput = '0';
+        } else {
+          userInput += 'log';
+        }
       }
       // In button
       else {
@@ -358,12 +438,20 @@ class ScientificController extends GetxController {
 
     /// ∛x button
     else if (buttons[index] == '∛x') {
-      userInput += "^(1/3)"; // Add cube root symbol
+      if (userInput.isNotEmpty) {
+        userInput += "^(1/3)"; // Add cube root symbol
+      } else {
+        userOutput = "0";
+      }
     }
 
     /// y√x button
     else if (buttons[index] == 'y√x') {
-      userInput += "√"; // Add y√x symbol
+      if (userInput.isNotEmpty) {
+        userInput += "√"; // Add y√x symbol
+      } else {
+        userOutput = "0";
+      }
     }
 
     /// +/- button
@@ -391,7 +479,11 @@ class ScientificController extends GetxController {
 
     /// X! button
     else if (buttons[index] == 'X!') {
-      userInput += "!";
+      if (userInput.isNotEmpty) {
+        userInput += "!";
+      } else {
+        userOutput = '0';
+      }
     }
 
     /// π button
@@ -460,11 +552,12 @@ class ScientificController extends GetxController {
         if (userInput.isEmpty) {
           userInput = '0.';
         } else if (RegExp(r'\d$').hasMatch(userInput) &&
-            //this will not able to add . if there is already i mean if value is already double
+            //this will not able to add .
+            // if there is already i mean if value is already double
             !userInput.contains('.')) {
           userInput += '.';
         }
-        // Set the dotAllowed flag to false to prevent additional dots
+// Set the dotAllowed flag to false to prevent additional dots
         dotAllowed = false;
       }
     }
@@ -527,8 +620,11 @@ class ScientificController extends GetxController {
 
   /// Update userOutput based on the current userInput.
   void evaluateLiveOutput() {
-    String userInputFC =
-        userInput.replaceAll("x", "*").replaceAll('π', '${math.pi}');
+    String userInputFC = userInput
+        .replaceAll("x", "*")
+        .replaceAll('π', '${math.pi}')
+        .replaceAll("EE", "*10^")
+        .replaceAll('e', '${math.e}');
 
     if (userInputFC.contains("acos")) {
       userInputFC = calculateArccosine(userInputFC);
@@ -554,7 +650,6 @@ class ScientificController extends GetxController {
     if (userInputFC.contains("acosh")) {
       userInputFC = calculateArcCoshRadian(userInputFC);
     }
-
     if (userInputFC.contains("atanh")) {
       userInputFC = calculateArcTanhRadian(userInputFC);
     }
@@ -567,6 +662,8 @@ class ScientificController extends GetxController {
     userInputFC = calculateLogBase2(userInputFC);
     userInputFC = calculateNaturalLog(userInputFC);
     userInputFC = handleYSqrtXExpression(userInputFC);
+    userInputFC = handleYPowerXExpression(userInputFC);
+    userInputFC = handleYLogXExpression(userInputFC);
 
     try {
       Parser p = Parser();
@@ -583,7 +680,7 @@ class ScientificController extends GetxController {
 
       print('===LiveOutput: $userOutput');
     } catch (e) {
-      print('===Error: $e');
+      print('===evalute live output ==Error: $e');
     }
     update();
   }
@@ -618,6 +715,7 @@ class ScientificController extends GetxController {
       double? input = double.tryParse(inputAfterExponent);
       if (input != null) {
         double result = math.exp(input);
+        userOutput = result.toString();
         return result.toString();
       } else {
         return 'Error';
@@ -1137,10 +1235,135 @@ class ScientificController extends GetxController {
       final fullMatch = match.group(0).toString(); // Convert to non-null string
       final y = match.group(1); // Captured y
       final x = match.group(2); // Captured x
-      final expressionResult = "($x)^(1/$y)";
+      final expressionResult = "($y)^(1/$x)";
       result = result.replaceFirst(fullMatch, expressionResult);
     }
 
     return result;
   }
+
+  /// yˣ function handle
+  String handleYPowerXExpression(String input) {
+    final yPowerXRegExp =
+        RegExp(r'(\d+)\^(\d+)'); // Updated pattern to include ^
+    String result = input;
+
+    final matches = yPowerXRegExp.allMatches(input);
+    for (var match in matches) {
+      final fullMatch = match.group(0).toString();
+      final yStr = match.group(1);
+      final xStr = match.group(2);
+
+      if (yStr != null && xStr != null) {
+        final y = double.parse(yStr);
+        final x = double.parse(xStr);
+        final expressionResult = (pow(x, y)).toString(); // Calculate "y^x"
+        result = result.replaceFirst(fullMatch, expressionResult);
+        // print("Full Match: $fullMatch");
+        // print("y: $y, x: $x");
+        // print("Expression Result: $expressionResult");
+      }
+    }
+
+    return result;
+  }
+
+  ///logᵧ function handle
+  String handleYLogXExpression(String input) {
+    final yLogXRegExp =
+        RegExp(r'(\d+)log(\d+)'); // Define the pattern for "ylogx"
+    String result = input;
+
+    final matches = yLogXRegExp.allMatches(input);
+    for (var match in matches) {
+      final fullMatch = match.group(0).toString();
+      final yStr = match.group(1);
+      final xStr = match.group(2);
+
+      if (yStr != null && xStr != null) {
+        final y = double.parse(yStr);
+        final x = double.parse(xStr);
+
+        // Calculate "second input log base first input"
+        final expressionResult = (math.log(y) / math.log(x)).toString();
+
+        result = result.replaceFirst(fullMatch, expressionResult);
+        print("Full Match: $fullMatch");
+        print("y: $y, x: $x");
+        print("Expression Result: $expressionResult");
+      }
+    }
+
+    return result;
+  }
+
+  /// clear memory (MC)
+  void clearMemory() {
+    memoryValue = 0;
+    update(); // Notify the UI to update
+  }
+
+  // Function to add result to memory (M+)
+  void addToMemory(double result) {
+    memoryValue += result;
+    update(); // Notify the UI to update
+  }
+
+  // Function to subtract result from memory (M-)
+  void subtractFromMemory(double result) {
+    memoryValue -= result;
+    update(); // Notify the UI to update
+  }
+
+  // Function to recall value from memory (MR)
+  double recallMemory() {
+    return memoryValue;
+  }
+
+  /// M+ button
+  void onMPlusButtonPressed(double result) {
+    addToMemory(result);
+  }
+
+  ///  M- button
+  void onMMinusButtonPressed(double result) {
+    subtractFromMemory(result);
+  }
+
+  /// MR button
+  void onMRButtonPressed() {
+    // Get the value from memory
+    double valueFromMemory = recallMemory();
+
+    // Use the valueFromMemory in your calculations or update the display
+    // For example, you can set it as the user input or display it in the output
+    userInput = valueFromMemory.toString();
+    userOutput = valueFromMemory.toString();
+  }
+
+  // void memoryClear() {
+  //   memoryValue = ""; // Clear the memory
+  // }
+  //
+  // void memoryAdd() {
+  //   if (userOutput != 'Error') {
+  //     double result =
+  //         double.tryParse(userOutput) ?? 0.0; // Parse the current result
+  //     memoryValue = (double.tryParse(memoryValue) ?? 0.0 + result)
+  //         .toString(); // Add the result to memory
+  //   }
+  // }
+  //
+  // void memorySubtract() {
+  //   if (userOutput != 'Error') {
+  //     double result =
+  //         double.tryParse(userOutput) ?? 0.0; // Parse the current result
+  //     memoryValue = (double.tryParse(memoryValue) ?? 0.0 - result)
+  //         .toString(); // Subtract the result from memory
+  //   }
+  // }
+  //
+  // String memoryRecall() {
+  //   return memoryValue;
+  // }
 }

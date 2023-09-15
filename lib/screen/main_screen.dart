@@ -64,18 +64,19 @@ class MainScreen extends StatelessWidget {
     return Expanded(
         flex: 2,
         child: Container(
-          padding: const EdgeInsets.all(3),
+          padding: EdgeInsets.all(1.w),
           decoration: BoxDecoration(
               color: themeController.isDark
                   ? DarkColors.sheetBgColor
                   : LightColors.sheetBgColor,
-              borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(30), topRight: Radius.circular(30))),
+              borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(8.w),
+                  topRight: Radius.circular(8.w))),
           child: GridView.builder(
               physics: const NeverScrollableScrollPhysics(),
               itemCount: buttons.length,
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 4, mainAxisExtent: 11.3.h),
+                  crossAxisCount: 4, mainAxisExtent: 12.6.h),
               itemBuilder: (contex, index) {
                 switch (index) {
                   /// CLEAR BTN
@@ -151,13 +152,13 @@ class MainScreen extends StatelessWidget {
         ///Theme change light and dark
         Container(
           alignment: Alignment.topCenter,
-          width: 100,
-          height: 45,
+          width: 26.w,
+          height: 5.9.h,
           decoration: BoxDecoration(
               color: themeController.isDark
                   ? DarkColors.sheetBgColor
                   : LightColors.sheetBgColor,
-              borderRadius: BorderRadius.circular(20)),
+              borderRadius: BorderRadius.circular(13.w)),
           child: Center(
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -169,11 +170,11 @@ class MainScreen extends StatelessWidget {
                   child: Icon(
                     Icons.light_mode_outlined,
                     color: themeController.isDark ? Colors.grey : Colors.black,
-                    size: 25,
+                    size: 22.sp,
                   ),
                 ),
-                const SizedBox(
-                  width: 10,
+                SizedBox(
+                  width: 4.w,
                 ),
                 GestureDetector(
                   onTap: () {
@@ -182,7 +183,7 @@ class MainScreen extends StatelessWidget {
                   child: Icon(
                     Icons.dark_mode_outlined,
                     color: themeController.isDark ? Colors.white : Colors.grey,
-                    size: 25,
+                    size: 22.sp,
                   ),
                 )
               ],
@@ -207,9 +208,7 @@ class MainScreen extends StatelessWidget {
                       fontSize: 18.sp),
                 ),
               ),
-              const SizedBox(
-                height: 10,
-              ),
+              SizedBox(height: 1.h),
               Container(
                 alignment: Alignment.bottomRight,
                 child: Text(
@@ -225,7 +224,7 @@ class MainScreen extends StatelessWidget {
                         color: themeController.isDark
                             ? Colors.white
                             : Colors.black,
-                        fontSize: 32)),
+                        fontSize: 30.sp)),
               ),
             ],
           ),

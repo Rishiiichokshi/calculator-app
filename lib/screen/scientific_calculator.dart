@@ -111,13 +111,13 @@ class _ScientificCalculatorState extends State<ScientificCalculator> {
     return Expanded(
       flex: 2,
       child: Container(
-        padding: const EdgeInsets.all(3),
+        padding: EdgeInsets.all(1.w),
         decoration: BoxDecoration(
             color: themeController.isDark
                 ? DarkColors.sheetBgColor
                 : LightColors.sheetBgColor,
-            borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(15), topRight: Radius.circular(15))),
+            borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(4.w), topRight: Radius.circular(4.w))),
         child: GridView.builder(
             padding:
                 EdgeInsets.only(top: 1.h, bottom: 1.h, left: 3.w, right: 3.w),
@@ -125,7 +125,7 @@ class _ScientificCalculatorState extends State<ScientificCalculator> {
             itemCount: buttons.length,
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 10,
-                mainAxisExtent: 4.3.h,
+                mainAxisExtent: 10.w,
                 mainAxisSpacing: 1.5.w,
                 crossAxisSpacing: 2.9.w),
             itemBuilder: (contex, index) {
@@ -390,7 +390,7 @@ class _ScientificCalculatorState extends State<ScientificCalculator> {
                 color: themeController.isDark
                     ? DarkColors.sheetBgColor
                     : LightColors.sheetBgColor,
-                borderRadius: BorderRadius.circular(20)),
+                borderRadius: BorderRadius.circular(13.w)),
             child: Center(
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
