@@ -125,7 +125,7 @@ class _ScientificCalculatorState extends State<ScientificCalculator> {
             itemCount: buttons.length,
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 10,
-                mainAxisExtent: 10.w,
+                mainAxisExtent: 9.5.w,
                 mainAxisSpacing: 1.5.w,
                 crossAxisSpacing: 2.9.w),
             itemBuilder: (contex, index) {

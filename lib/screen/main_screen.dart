@@ -76,7 +76,7 @@ class MainScreen extends StatelessWidget {
               physics: const NeverScrollableScrollPhysics(),
               itemCount: buttons.length,
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 4, mainAxisExtent: 12.6.h),
+                  crossAxisCount: 4, mainAxisExtent: 23.w),
               itemBuilder: (contex, index) {
                 switch (index) {
                   /// CLEAR BTN
