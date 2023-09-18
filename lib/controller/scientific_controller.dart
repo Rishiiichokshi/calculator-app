@@ -149,6 +149,10 @@ class ScientificController extends GetxController {
     update();
   }
 
+  bool isDigit(String char) {
+    return RegExp(r'\d').hasMatch(char);
+  }
+
   /// Clear Button Pressed Func
   clearInputAndOutput() {
     userInput = "";
@@ -547,18 +551,45 @@ class ScientificController extends GetxController {
     }
 
     /// . button
+    // else if (buttons[index] == '.') {
+    //   if (dotAllowed) {
+    //     if (userInput.isEmpty) {
+    //       userInput = '0.';
+    //     } else if (RegExp(r'\d$').hasMatch(userInput) &&
+    //         //this will not able to add .
+    //         // if there is already i mean if value is already double
+    //         !userInput.contains('.')) {
+    //       userInput += '.';
+    //     }
+    //     // Set the dotAllowed flag to false to prevent
+    //     // additional dots
+    //     dotAllowed = false;
+    //   }
+    // }
     else if (buttons[index] == '.') {
-      if (dotAllowed) {
-        if (userInput.isEmpty) {
-          userInput = '0.';
-        } else if (RegExp(r'\d$').hasMatch(userInput) &&
-            //this will not able to add .
-            // if there is already i mean if value is already double
-            !userInput.contains('.')) {
+      // if (userInput.isEmpty) {
+      //   // If there is no input yet, start with '0.'
+      //   userInput = '0.';
+      // } else {
+      //   final parts = userInput.split(RegExp(r'[+\-*/]'));
+      //   final lastPart = parts.last;
+      //   if (!lastPart.contains('.')) {
+      //     // Only add a dot if the last part doesn't already contain a dot
+      //     userInput += '.';
+      //   }
+      // }
+      if (userInput.isEmpty ||
+          userInput.endsWith('.') ||
+          !isDigit(userInput[userInput.length - 1])) {
+        // If there is no input yet, start with '0.'
+        userInput += '0.';
+      } else {
+        final parts = userInput.split(RegExp(r'[+\-*/]'));
+        final lastPart = parts.last;
+        if (!lastPart.contains('.')) {
+          // Only add a dot if the last part doesn't already contain a dot
           userInput += '.';
         }
-// Set the dotAllowed flag to false to prevent additional dots
-        dotAllowed = false;
       }
     }
 
@@ -603,6 +634,7 @@ class ScientificController extends GetxController {
     /// other  buttons
     else {
       userInput += buttons[index];
+      // lastCharIsOperator = isOperator(buttons[index]);
     }
 
     evaluateLiveOutput();

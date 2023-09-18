@@ -64,16 +64,32 @@ class CalculateController extends GetxController {
       userInput += buttons[index];
     }
 
+    // /// . button
+    // else if (buttons[index] == '.') {
+    //   if (dotAllowed) {
+    //     if (userInput.isEmpty) {
+    //       userInput = '0.';
+    //     } else if (RegExp(r'\d$').hasMatch(userInput)) {
+    //       userInput += '.';
+    //     }
+    //     // Set the dotAllowed flag to false to prevent additional dots
+    //     dotAllowed = false;
+    //   }
+    // }
     /// . button
     else if (buttons[index] == '.') {
-      if (dotAllowed) {
-        if (userInput.isEmpty) {
-          userInput = '0.';
-        } else if (RegExp(r'\d$').hasMatch(userInput)) {
+      if (userInput.isEmpty ||
+          userInput.endsWith('.') ||
+          !isDigit(userInput[userInput.length - 1])) {
+        // If there is no input yet, start with '0.'
+        userInput += '0.';
+      } else {
+        final parts = userInput.split(RegExp(r'[+\-*/]'));
+        final lastPart = parts.last;
+        if (!lastPart.contains('.')) {
+          // Only add a dot if the last part doesn't already contain a dot
           userInput += '.';
         }
-        // Set the dotAllowed flag to false to prevent additional dots
-        dotAllowed = false;
       }
     }
 
@@ -160,5 +176,9 @@ class CalculateController extends GetxController {
       userOutput = "0.00";
       update();
     }
+  }
+
+  bool isDigit(String char) {
+    return RegExp(r'\d').hasMatch(char);
   }
 }

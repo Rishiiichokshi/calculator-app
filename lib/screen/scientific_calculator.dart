@@ -431,15 +431,18 @@ class _ScientificCalculatorState extends State<ScientificCalculator> {
             child: Column(
               children: [
                 ///userInput
-                Container(
+                Align(
                   alignment: Alignment.centerRight,
-                  child: Text(
-                    controller.userInput,
-                    style: TextStyle(
-                        color: themeController.isDark
-                            ? Colors.white
-                            : Colors.black,
-                        fontSize: 17.sp),
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Text(
+                      controller.userInput,
+                      style: TextStyle(
+                          color: themeController.isDark
+                              ? Colors.white
+                              : Colors.black,
+                          fontSize: 17.sp),
+                    ),
                   ),
                 ),
                 // const SizedBox(
@@ -463,20 +466,23 @@ class _ScientificCalculatorState extends State<ScientificCalculator> {
                         ),
                       ),
                     ),
-                    Container(
-                      alignment: Alignment.bottomRight,
-                      child: Text(
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Text(
 
-                          ///remove.00
-                          controller.userOutput.endsWith(".00")
-                              ? controller.userOutput.substring(
-                                  0, controller.userOutput.length - 3)
-                              : controller.userOutput,
-                          style: TextStyle(
-                              color: themeController.isDark
-                                  ? Colors.white
-                                  : Colors.black,
-                              fontSize: 24.sp)),
+                            ///remove.00
+                            controller.userOutput.endsWith(".00")
+                                ? controller.userOutput.substring(
+                                    0, controller.userOutput.length - 3)
+                                : controller.userOutput,
+                            style: TextStyle(
+                                color: themeController.isDark
+                                    ? Colors.white
+                                    : Colors.black,
+                                fontSize: 24.sp)),
+                      ),
                     ),
                   ],
                 ),

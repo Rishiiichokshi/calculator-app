@@ -73,10 +73,15 @@ class MainScreen extends StatelessWidget {
                   topLeft: Radius.circular(8.w),
                   topRight: Radius.circular(8.w))),
           child: GridView.builder(
+              padding:
+                  EdgeInsets.only(top: 1.h, bottom: 1.h, left: 3.w, right: 3.w),
               physics: const NeverScrollableScrollPhysics(),
               itemCount: buttons.length,
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 4, mainAxisExtent: 23.w),
+                crossAxisCount: 4,
+                mainAxisExtent: 11.5.h,
+                // mainAxisSpacing: 0,
+              ),
               itemBuilder: (contex, index) {
                 switch (index) {
                   /// CLEAR BTN
@@ -146,91 +151,108 @@ class MainScreen extends StatelessWidget {
   Expanded outPutSection(
       ThemeController themeController, CalculateController controller) {
     return Expanded(
-        child: Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        ///Theme change light and dark
-        Container(
-          alignment: Alignment.topCenter,
-          width: 26.w,
-          height: 5.9.h,
-          decoration: BoxDecoration(
-              color: themeController.isDark
-                  ? DarkColors.sheetBgColor
-                  : LightColors.sheetBgColor,
-              borderRadius: BorderRadius.circular(13.w)),
-          child: Center(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+      child: Column(
+        // mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          ///Theme change light and dark
+          SizedBox(height: 1.h),
+          Container(
+            alignment: Alignment.topCenter,
+            width: 26.w,
+            height: 5.9.h,
+            decoration: BoxDecoration(
+                color: themeController.isDark
+                    ? DarkColors.sheetBgColor
+                    : LightColors.sheetBgColor,
+                borderRadius: BorderRadius.circular(13.w)),
+            child: Center(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      themeController.lightTheme();
+                    },
+                    child: Icon(
+                      Icons.light_mode_outlined,
+                      color:
+                          themeController.isDark ? Colors.grey : Colors.black,
+                      size: 22.sp,
+                    ),
+                  ),
+                  SizedBox(
+                    width: 4.w,
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      themeController.darkTheme();
+                    },
+                    child: Icon(
+                      Icons.dark_mode_outlined,
+                      color:
+                          themeController.isDark ? Colors.white : Colors.grey,
+                      size: 22.sp,
+                    ),
+                  )
+                ],
+              ),
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.only(right: 6.w, top: 10.h),
+            child: Column(
+              // crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                GestureDetector(
-                  onTap: () {
-                    themeController.lightTheme();
-                  },
-                  child: Icon(
-                    Icons.light_mode_outlined,
-                    color: themeController.isDark ? Colors.grey : Colors.black,
-                    size: 22.sp,
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Text(
+                      ///remove.00
+                      (controller.userInput.endsWith(".00")
+                          ? controller.userInput
+                              .substring(0, controller.userInput.length - 3)
+                          : controller.userInput),
+                      style: TextStyle(
+                          color: themeController.isDark
+                              ? Colors.white
+                              : Colors.black,
+                          fontSize: 18.sp),
+                      maxLines: 1,
+                      // overflow: TextOverflow.clip,
+                    ),
                   ),
                 ),
-                SizedBox(
-                  width: 4.w,
-                ),
-                GestureDetector(
-                  onTap: () {
-                    themeController.darkTheme();
-                  },
-                  child: Icon(
-                    Icons.dark_mode_outlined,
-                    color: themeController.isDark ? Colors.white : Colors.grey,
-                    size: 22.sp,
+                SizedBox(height: 1.h),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Text(
+                      ///remove.00
+                      controller.userOutput.isEmpty
+                          ? "0.00"
+                          : (controller.userOutput.endsWith(".00")
+                              ? controller.userOutput.substring(
+                                  0, controller.userOutput.length - 3)
+                              : controller.userOutput),
+                      style: TextStyle(
+                          color: themeController.isDark
+                              ? Colors.white
+                              : Colors.black,
+                          fontSize: 30.sp),
+                      maxLines: 1,
+                      // overflow: TextOverflow.clip,
+                    ),
                   ),
-                )
+                ),
               ],
             ),
           ),
-        ),
-        Padding(
-          padding: EdgeInsets.only(right: 6.w, top: 10.h),
-          child: Column(
-            children: [
-              Container(
-                alignment: Alignment.centerRight,
-                child: Text(
-                  ///remove.00
-                  (controller.userInput.endsWith(".00")
-                      ? controller.userInput
-                          .substring(0, controller.userInput.length - 3)
-                      : controller.userInput),
-                  style: TextStyle(
-                      color:
-                          themeController.isDark ? Colors.white : Colors.black,
-                      fontSize: 18.sp),
-                ),
-              ),
-              SizedBox(height: 1.h),
-              Container(
-                alignment: Alignment.bottomRight,
-                child: Text(
-
-                    ///remove.00
-                    controller.userOutput.isEmpty
-                        ? "0.00"
-                        : (controller.userOutput.endsWith(".00")
-                            ? controller.userOutput
-                                .substring(0, controller.userOutput.length - 3)
-                            : controller.userOutput),
-                    style: TextStyle(
-                        color: themeController.isDark
-                            ? Colors.white
-                            : Colors.black,
-                        fontSize: 30.sp)),
-              ),
-            ],
-          ),
-        ),
-      ],
-    ));
+        ],
+      ),
+    );
   }
 
   ///
