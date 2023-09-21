@@ -1,10 +1,9 @@
-import 'package:calculator_app/screen/scientific_calculator.dart';
-import 'package:device_preview/device_preview.dart';
+import 'package:calculator_app/screen/calculator/main_screen.dart';
+import 'package:calculator_app/screen/calculator/scientific_calculator.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
 import '../bindings/my_bindings.dart';
-import '../screen/main_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -27,7 +26,7 @@ class MyApp extends StatelessWidget {
                 if (orientation == Orientation.portrait) {
                   return MainScreen();
                 } else {
-                  return ScientificCalculator();
+                  return const ScientificCalculator();
                 }
               },
             ),

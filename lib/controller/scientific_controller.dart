@@ -1,6 +1,6 @@
-import 'dart:developer';
 import 'dart:math';
 
+import 'package:calculator_app/utils/string_utils.dart';
 import 'package:get/get.dart';
 import 'dart:math' as math;
 import 'dart:math';
@@ -24,7 +24,7 @@ class ScientificController extends GetxController {
   //2nd button toggle
   void toggleButton() {
     isToggleOn.value = !isToggleOn.value;
-    print(isToggleOn);
+    logs(isToggleOn as String);
     update(); // Notify the UI to update after the toggle
   }
 
@@ -37,8 +37,8 @@ class ScientificController extends GetxController {
   equalPressed() {
     String userInputFC = userInput;
 
-    print('====$userInput');
-    print('====userInputFC===$userInputFC');
+    logs('====$userInput');
+    logs('====userInputFC===$userInputFC');
 
     // ///  y√x
     // // Handle the "y√x" expression by capturing both inputs and inserting them
@@ -139,10 +139,10 @@ class ScientificController extends GetxController {
       }
       // userOutput = eval.toString();
       // userInput = eval.toString();
-      print('===ParcerUserOutput: $userOutput');
-      print('===ParceruserInputFC: $userInputFC');
+      logs('===ParcerUserOutput: $userOutput');
+      logs('===ParceruserInputFC: $userInputFC');
     } catch (e) {
-      print('===Equal press Error ==Error: $e');
+      logs('===Equal press Error ==Error: $e');
       userOutput = 'Error';
     }
     cursorPosition = userInput.length;
@@ -199,25 +199,25 @@ class ScientificController extends GetxController {
     /// mc button
     else if (buttons[index] == 'mc') {
       clearMemory();
-      print('mc button-----$memoryValue');
+      logs('mc button-----$memoryValue');
     }
 
     /// m+ button
     else if (buttons[index] == 'm+') {
       onMPlusButtonPressed(double.parse(userOutput));
-      print('m+ button-----$memoryValue');
+      logs('m+ button-----$memoryValue');
     }
 
     /// m- button
     else if (buttons[index] == 'm-') {
       onMMinusButtonPressed(double.parse(userOutput));
-      print('m- button-----$memoryValue');
+      logs('m- button-----$memoryValue');
     }
 
     /// mr button
     else if (buttons[index] == 'mr') {
       onMRButtonPressed();
-      print('mr button-----$memoryValue');
+      logs('mr button-----$memoryValue');
     }
 
     /// 10ˣ button or 2ˣ button
@@ -234,8 +234,8 @@ class ScientificController extends GetxController {
       else {
         if (userInput.isNotEmpty) {
           // userInput = "10^$userInput";
-          // print('----userInput 10x----$userInput');
-          // print('----userOutput 10x----$userOutput');
+          // logs('----userInput 10x----$userInput');
+          // logs('----userOutput 10x----$userOutput');
           double base = 10.0; // The base for 10ˣ
           double exponent = (double.tryParse(userInput) ?? 0.0)
               .toDouble(); // Parse the exponent from userInput, default to 0 if parsing fails, and cast it to double
@@ -300,7 +300,7 @@ class ScientificController extends GetxController {
         } else {
           userInput = "e^$userInput";
           calculateExponential(userInput);
-          print('====eˣ output====$userOutput');
+          logs('====eˣ output====$userOutput');
         }
 
         // if (userInput.isEmpty) {
@@ -505,7 +505,7 @@ class ScientificController extends GetxController {
           userInput += '*π';
         }
       } else {
-        // If the input is empty, print the value of π
+        // If the input is empty, display the value of π
         userOutput = math.pi.toString();
       }
     }
@@ -525,7 +525,7 @@ class ScientificController extends GetxController {
           userInput += '*e';
         }
       } else {
-        // If the input is empty, print the value of 'e'
+        // If the input is empty, display the value of 'e'
         userOutput = math.e.toString();
       }
     }
@@ -710,9 +710,9 @@ class ScientificController extends GetxController {
         userOutput = eval.toString();
       }
 
-      print('===LiveOutput: $userOutput');
+      logs('===LiveOutput: $userOutput');
     } catch (e) {
-      print('===evalute live output ==Error: $e');
+      logs('===evalute live output ==Error: $e');
     }
     update();
   }
@@ -841,10 +841,10 @@ class ScientificController extends GetxController {
 
     // If there's a number before sin, insert "*sin("; otherwise, insert "sin(".
     if (isNumberBeforeSin) {
-      userInput = userInput.substring(0, startIndex) +
-          "${userInput.substring(startIndex)}*sin(";
+      userInput =
+          "${userInput.substring(0, startIndex)}${userInput.substring(startIndex)}*sin(";
     } else {
-      userInput = userInput + "sin(";
+      userInput = "${userInput}sin(";
     }
 
     // Update the cursor position to be inside the "sin()" function.
@@ -892,10 +892,10 @@ class ScientificController extends GetxController {
 
     // If there's a number before cos, insert "*cos("; otherwise, insert "cos(".
     if (isNumberBeforeCos) {
-      userInput = userInput.substring(0, startIndex) +
-          "${userInput.substring(startIndex)}*cos(";
+      userInput =
+          "${userInput.substring(0, startIndex)}${userInput.substring(startIndex)}*cos(";
     } else {
-      userInput = userInput + "cos(";
+      userInput = "${userInput}cos(";
     }
 
     // Update the cursor position to be inside the "cos()" function.
@@ -943,10 +943,10 @@ class ScientificController extends GetxController {
 
     // If there's a number before tan, insert "*tan("; otherwise, insert "tan(".
     if (isNumberBeforeTan) {
-      userInput = userInput.substring(0, startIndex) +
-          "${userInput.substring(startIndex)}*tan(";
+      userInput =
+          "${userInput.substring(0, startIndex)}${userInput.substring(startIndex)}*tan(";
     } else {
-      userInput = userInput + "tan(";
+      userInput = "${userInput}tan(";
     }
 
     // Update the cursor position to be inside the "tan()" function.
@@ -994,10 +994,10 @@ class ScientificController extends GetxController {
 
     // If there's a number before sinh, insert "*sinh("; otherwise, insert "sinh(".
     if (isNumberBeforeSinh) {
-      userInput = userInput.substring(0, startIndex) +
-          "${userInput.substring(startIndex)}*sinh(";
+      userInput =
+          "${userInput.substring(0, startIndex)}${userInput.substring(startIndex)}*sinh(";
     } else {
-      userInput = userInput + "sinh(";
+      userInput = "${userInput}sinh(";
     }
 
     // Update the cursor position to be inside the "sinh()" function.
@@ -1041,10 +1041,10 @@ class ScientificController extends GetxController {
 
     // If there's a number before cosh, insert "*cosh("; otherwise, insert "cosh(".
     if (isNumberBeforeCosh) {
-      userInput = userInput.substring(0, startIndex) +
-          "${userInput.substring(startIndex)}*cosh(";
+      userInput =
+          "${userInput.substring(0, startIndex)}${userInput.substring(startIndex)}*cosh(";
     } else {
-      userInput = userInput + "cosh(";
+      userInput = "${userInput}cosh(";
     }
 
     // Update the cursor position to be inside the "cosh()" function.
@@ -1088,10 +1088,10 @@ class ScientificController extends GetxController {
 
     // If there's a number before tanh, insert "*tanh("; otherwise, insert "tanh(".
     if (isNumberBeforeTanh) {
-      userInput = userInput.substring(0, startIndex) +
-          "${userInput.substring(startIndex)}*tanh(";
+      userInput =
+          "${userInput.substring(0, startIndex)}${userInput.substring(startIndex)}*tanh(";
     } else {
-      userInput = userInput + "tanh(";
+      userInput = "${userInput}tanh(";
     }
 
     // Update the cursor position to be inside the "tanh()" function.
@@ -1291,9 +1291,9 @@ class ScientificController extends GetxController {
         final x = double.parse(xStr);
         final expressionResult = (pow(x, y)).toString(); // Calculate "y^x"
         result = result.replaceFirst(fullMatch, expressionResult);
-        // print("Full Match: $fullMatch");
-        // print("y: $y, x: $x");
-        // print("Expression Result: $expressionResult");
+        // logs("Full Match: $fullMatch");
+        // logs("y: $y, x: $x");
+        // logs("Expression Result: $expressionResult");
       }
     }
 
@@ -1320,9 +1320,9 @@ class ScientificController extends GetxController {
         final expressionResult = (math.log(y) / math.log(x)).toString();
 
         result = result.replaceFirst(fullMatch, expressionResult);
-        print("Full Match: $fullMatch");
-        print("y: $y, x: $x");
-        print("Expression Result: $expressionResult");
+        logs("Full Match: $fullMatch");
+        logs("y: $y, x: $x");
+        logs("Expression Result: $expressionResult");
       }
     }
 

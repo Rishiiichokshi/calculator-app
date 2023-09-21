@@ -12,4 +12,14 @@ class ThemeController extends GetxController {
     isDark = true;
     update();
   }
+
+  toggleTheme() {
+    isDark = !isDark; // Toggle the theme
+    if (isDark) {
+      darkTheme();
+    } else {
+      lightTheme();
+    }
+    update();
+  }
 }

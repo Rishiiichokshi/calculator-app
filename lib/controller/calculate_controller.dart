@@ -1,6 +1,8 @@
 import 'package:get/get_state_manager/src/simple/get_controllers.dart';
 import 'package:math_expressions/math_expressions.dart';
 
+import '../utils/string_utils.dart';
+
 class CalculateController extends GetxController {
   var userInput = "";
   var userOutput = "0";
@@ -122,7 +124,7 @@ class CalculateController extends GetxController {
         userOutput = eval.toString();
       } catch (e) {
         // userOutput = 'Error';
-        print(e);
+        logs(e.toString());
       }
     }
     evaluateLiveOutput();
@@ -149,9 +151,9 @@ class CalculateController extends GetxController {
         // If it's not an integer, keep it as a double with 2 decimal places
         userOutput = eval.toString();
       }
-      print('===LiveOutput: $userOutput');
+      logs('===LiveOutput: $userOutput');
     } catch (e) {
-      print('===Error: $e');
+      logs('===Error: $e');
     }
     update();
   }
