@@ -44,11 +44,11 @@ class _CurrencyConverterScreenState extends State<CurrencyConverterScreen> {
         backgroundColor: themeController.isDark
             ? DarkColors.scaffoldBgColor
             : LightColors.scaffoldBgColor,
-        leading: Icon(
-          Icons.currency_exchange,
-          color:
-              themeController.isDark ? CommonColors.white : CommonColors.black,
-        ),
+        // leading: Icon(
+        //   Icons.currency_exchange,
+        //   color:
+        //       themeController.isDark ? CommonColors.white : CommonColors.black,
+        // ),
         title: Text(
           'Currency Convertor',
           style: TextStyle(

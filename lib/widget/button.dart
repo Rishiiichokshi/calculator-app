@@ -3,6 +3,7 @@ import 'package:sizer/sizer.dart';
 
 class CustomButton extends StatelessWidget {
   final Color color;
+  final FontWeight? fontWeight;
   final Color textColor;
   final double? fontSize;
   final String text;
@@ -15,6 +16,7 @@ class CustomButton extends StatelessWidget {
     required this.text,
     required this.buttonTapped,
     this.fontSize,
+    this.fontWeight,
   }) : super(key: key);
 
   @override
@@ -33,7 +35,7 @@ class CustomButton extends StatelessWidget {
             style: TextStyle(
                 color: textColor,
                 fontSize: fontSize ?? 14.sp,
-                fontWeight: FontWeight.bold),
+                fontWeight: fontWeight ?? FontWeight.bold),
           ),
         ),
       ),

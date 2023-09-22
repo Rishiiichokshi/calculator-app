@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:sizer/sizer.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 
 import '../../controller/theme_controller.dart';
 import '../../utils/colors.dart';
@@ -37,6 +38,7 @@ class _TestConversionCardState extends State<TestConversionCard> {
   int selectedIndex = 0;
   bool isConvert = false;
   var themeController = Get.find<ThemeController>();
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
@@ -101,10 +103,13 @@ class _TestConversionCardState extends State<TestConversionCard> {
     });
   }
 
-  // ///live converter with new container
+  ///working code of bottomsheet
   // Future<void> _showCurrencyOptions(BuildContext context) async {
   //   await showModalBottomSheet<void>(
   //     context: context,
+  //     backgroundColor: themeController.isDark
+  //         ? DarkColors.btnBgColor
+  //         : LightColors.sheetBgColor,
   //     builder: (BuildContext context) {
   //       return ListView(
   //         children: widget.currencies.keys.map((value) {
@@ -112,22 +117,40 @@ class _TestConversionCardState extends State<TestConversionCard> {
   //             (data) => data.dropdownValue == value,
   //           );
   //
+  //           // Check if the currency is the default currency (USD)
+  //           bool isDefaultCurrency = value == defaultCurrency;
+  //
   //           return ListTile(
   //             title: Row(
   //               children: [
-  //                 Text('$value - ${widget.currencies[value]}'),
-  //                 Spacer(),
+  //                 SizedBox(
+  //                   width: 79.w,
+  //                   child: Text(
+  //                     '$value - ${widget.currencies[value]}',
+  //                     overflow: TextOverflow.ellipsis,
+  //                     maxLines: 1,
+  //                     style: TextStyle(
+  //                       color: themeController.isDark
+  //                           ? CommonColors.white
+  //                           : CommonColors.black,
+  //                     ),
+  //                   ),
+  //                 ),
   //                 if (isSelected)
   //                   IconButton(
   //                     icon: Icon(
   //                       Icons.check,
-  //                       color: Colors.white,
+  //                       color: themeController.isDark
+  //                           ? CommonColors.white
+  //                           : CommonColors.black,
   //                     ),
   //                     onPressed: () {
   //                       setState(() {
-  //                         conversionDataList.removeWhere(
-  //                           (data) => data.dropdownValue == value,
-  //                         );
+  //                         if (!isDefaultCurrency) {
+  //                           conversionDataList.removeWhere(
+  //                             (data) => data.dropdownValue == value,
+  //                           );
+  //                         }
   //                       });
   //                     },
   //                   ),
@@ -138,7 +161,9 @@ class _TestConversionCardState extends State<TestConversionCard> {
   //                 if (!isSelected) {
   //                   ConversionData newData = ConversionData();
   //                   newData.amountController.addListener(() {
-  //                     updateConversionData(newData);
+  //                     if (isConvert) {
+  //                       updateConversionData(newData);
+  //                     }
   //                   });
   //
   //                   newData.dropdownValue = value;
@@ -161,6 +186,21 @@ class _TestConversionCardState extends State<TestConversionCard> {
   //                   }
   //
   //                   conversionDataList.add(newData);
+  //                 } else {
+  //                   // If the currency is already selected, remove it
+  //                   if (!isDefaultCurrency) {
+  //                     conversionDataList.removeWhere(
+  //                       (data) => data.dropdownValue == value,
+  //                     );
+  //                   } else if (isDefaultCurrency) {
+  //                     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+  //                       content: Text(
+  //                         'You Can\'t remove default currency!!',
+  //                         style: TextStyle(color: Colors.white),
+  //                       ),
+  //                       backgroundColor: Colors.black54,
+  //                     ));
+  //                   }
   //                 }
   //               });
   //               Navigator.pop(context); // Close the bottom sheet
@@ -172,109 +212,174 @@ class _TestConversionCardState extends State<TestConversionCard> {
   //   );
   // }
 
+  ///search
   Future<void> _showCurrencyOptions(BuildContext context) async {
+    // Create a TextEditingController for the search field
+    TextEditingController searchController = TextEditingController();
+
+    // Initialize a list to store filtered currencies
+    List<dynamic> filteredCurrencies = List.from(widget.currencies.keys);
+
     await showModalBottomSheet<void>(
       context: context,
       backgroundColor: themeController.isDark
           ? DarkColors.btnBgColor
           : LightColors.sheetBgColor,
       builder: (BuildContext context) {
-        return ListView(
-          children: widget.currencies.keys.map((value) {
-            bool isSelected = conversionDataList.any(
-              (data) => data.dropdownValue == value,
-            );
-
-            // Check if the currency is the default currency (USD)
-            bool isDefaultCurrency = value == defaultCurrency;
-
-            return ListTile(
-              title: Row(
-                children: [
-                  SizedBox(
-                    width: 75.w,
-                    child: Text(
-                      '$value - ${widget.currencies[value]}',
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 1,
-                      style: TextStyle(
+        return StatefulBuilder(
+          builder: (context, setState1) {
+            return Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: TextFormField(
+                    cursorColor: LightColors.leftOperatorColor,
+                    style: TextStyle(
                         color: themeController.isDark
-                            ? CommonColors.white
-                            : CommonColors.black,
+                            ? Colors.white
+                            : Colors.black),
+                    controller: searchController,
+                    decoration: InputDecoration(
+                      hintText: 'Search Currency',
+                      focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(
+                              color: themeController.isDark
+                                  ? DarkColors.leftOperatorColor
+                                  : DarkColors.leftOperatorColor)),
+                      hintStyle: TextStyle(
+                          color: themeController.isDark
+                              ? Colors.grey
+                              : Colors.grey),
+                      suffixIcon: IconButton(
+                          onPressed: () {
+                            searchController.clear();
+                          },
+                          icon: Icon(
+                            Icons.close,
+                            color: themeController.isDark
+                                ? Colors.grey
+                                : Colors.grey,
+                          )),
+                      prefixIcon: Icon(
+                        Icons.search,
+                        color:
+                            themeController.isDark ? Colors.grey : Colors.grey,
                       ),
                     ),
+                    onChanged: (value) {
+                      setState1(() {
+                        // Update the filteredCurrencies list based on user input
+                        filteredCurrencies = widget.currencies.keys
+                            .where((currency) => currency
+                                .toLowerCase()
+                                .contains(value.toLowerCase()))
+                            .toList();
+                      });
+                    },
                   ),
-                  if (isSelected)
-                    IconButton(
-                      icon: Icon(
-                        Icons.check,
-                        color: themeController.isDark
-                            ? CommonColors.white
-                            : CommonColors.black,
-                      ),
-                      onPressed: () {
-                        setState(() {
-                          if (!isDefaultCurrency) {
-                            conversionDataList.removeWhere(
-                              (data) => data.dropdownValue == value,
-                            );
-                          }
-                        });
-                      },
-                    ),
-                ],
-              ),
-              onTap: () {
-                setState(() {
-                  if (!isSelected) {
-                    ConversionData newData = ConversionData();
-                    newData.amountController.addListener(() {
-                      if (isConvert) {
-                        updateConversionData(newData);
-                      }
-                    });
-
-                    newData.dropdownValue = value;
-
-                    // Calculate the conversion when adding a new currency
-                    String conversionResult = Utils.convert(
-                      widget.rates,
-                      conversionDataList[selectedIndex].amountController.text,
-                      conversionDataList[selectedIndex].dropdownValue,
-                      newData.dropdownValue,
-                    );
-
-                    double? convertedAmount = double.tryParse(conversionResult);
-
-                    if (convertedAmount != null) {
-                      newData.amountController.text = conversionResult;
-                      newData.convertedAmount = convertedAmount;
-                    } else {
-                      // Handle the case where the conversionResult is not a valid double
-                    }
-
-                    conversionDataList.add(newData);
-                  } else {
-                    // If the currency is already selected, remove it
-                    if (!isDefaultCurrency) {
-                      conversionDataList.removeWhere(
+                ),
+                Expanded(
+                  child: ListView(
+                    children: filteredCurrencies.map((value) {
+                      bool isSelected = conversionDataList.any(
                         (data) => data.dropdownValue == value,
                       );
-                    } else if (isDefaultCurrency) {
-                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                        content: Text(
-                          'You Can\'t remove default currency!!',
-                          style: TextStyle(color: Colors.white),
+
+                      bool isDefaultCurrency = value == defaultCurrency;
+
+                      return ListTile(
+                        title: Row(
+                          children: [
+                            SizedBox(
+                              width: 79.w,
+                              child: Text(
+                                '$value - ${widget.currencies[value]}',
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 1,
+                                style: TextStyle(
+                                  color: themeController.isDark
+                                      ? CommonColors.white
+                                      : CommonColors.black,
+                                ),
+                              ),
+                            ),
+                            if (isSelected)
+                              IconButton(
+                                icon: Icon(
+                                  Icons.check,
+                                  color: themeController.isDark
+                                      ? CommonColors.white
+                                      : CommonColors.black,
+                                ),
+                                onPressed: () {
+                                  setState1(() {
+                                    if (!isDefaultCurrency) {
+                                      conversionDataList.removeWhere(
+                                        (data) => data.dropdownValue == value,
+                                      );
+                                    }
+                                  });
+                                },
+                              ),
+                          ],
                         ),
-                        backgroundColor: Colors.black54,
-                      ));
-                    }
-                  }
-                });
-                Navigator.pop(context); // Close the bottom sheet
-              },
+                        onTap: () {
+                          setState1(() {
+                            if (!isSelected) {
+                              ConversionData newData = ConversionData();
+                              newData.amountController.addListener(() {
+                                if (isConvert) {
+                                  updateConversionData(newData);
+                                }
+                              });
+
+                              newData.dropdownValue = value;
+
+                              String conversionResult = Utils.convert(
+                                widget.rates,
+                                conversionDataList[selectedIndex]
+                                    .amountController
+                                    .text,
+                                conversionDataList[selectedIndex].dropdownValue,
+                                newData.dropdownValue,
+                              );
+
+                              double? convertedAmount =
+                                  double.tryParse(conversionResult);
+
+                              if (convertedAmount != null) {
+                                newData.amountController.text =
+                                    conversionResult.toString();
+                                newData.convertedAmount = convertedAmount;
+                              }
+
+                              conversionDataList.add(newData);
+                            } else {
+                              if (!isDefaultCurrency) {
+                                conversionDataList.removeWhere(
+                                  (data) => data.dropdownValue == value,
+                                );
+                              } else if (isDefaultCurrency) {
+                                ScaffoldMessenger.of(context)
+                                    .showSnackBar(const SnackBar(
+                                  content: Text(
+                                    'You Can\'t remove default currency!!',
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                  backgroundColor: Colors.black54,
+                                ));
+                              }
+                            }
+                          });
+                          Navigator.pop(context);
+                        },
+                      );
+                    }).toList(),
+                  ),
+                ),
+              ],
             );
-          }).toList(),
+          },
         );
       },
     );
@@ -310,11 +415,11 @@ class _TestConversionCardState extends State<TestConversionCard> {
 
     return SingleChildScrollView(
       child: Padding(
-        padding: const EdgeInsets.all(20),
+        padding: EdgeInsets.all(7.w),
         child: Column(
           children: [
             SizedBox(
-              height: 75.h,
+              height: 73.h,
               child: ListView.builder(
                 shrinkWrap: true,
                 itemCount: conversionDataList.length,
@@ -344,7 +449,7 @@ class _TestConversionCardState extends State<TestConversionCard> {
                                 flex: 6,
                                 child: DropdownButton<String>(
                                   borderRadius: BorderRadius.circular(4.w),
-                                  menuMaxHeight: 80.h,
+                                  menuMaxHeight: 50.h,
                                   value: data.dropdownValue,
                                   icon: Icon(
                                     Icons.arrow_drop_down_rounded,
@@ -484,7 +589,7 @@ class _TestConversionCardState extends State<TestConversionCard> {
                 ),
               ),
             ),
-            const SizedBox(height: 20),
+            SizedBox(height: 4.h),
           ],
         ),
       ),

@@ -100,6 +100,13 @@
             </list>
           </value>
         </entry>
+        <entry key="flutter_slidable">
+          <value>
+            <list>
+              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/flutter_slidable-3.0.0/lib" />
+            </list>
+          </value>
+        </entry>
         <entry key="flutter_test">
           <value>
             <list>
@@ -409,6 +416,7 @@
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/ffi-2.1.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/file-6.1.4/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/flutter_lints-2.0.3/lib" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/flutter_slidable-3.0.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/freezed_annotation-2.4.1/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/get-4.6.5/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/http-1.1.0/lib" />

@@ -133,7 +133,8 @@ class MainScreen extends StatelessWidget {
                         buttonTapped: () {
                           controller.onBtnTapped(buttons, index);
                         },
-                        fontSize: isOperator(buttons[index]) ? 19.sp : 14.sp,
+                        fontWeight: FontWeight.bold,
+                        fontSize: isOperator(buttons[index]) ? 19.sp : 16.sp,
                         color: themeController.isDark
                             ? DarkColors.btnBgColor
                             : LightColors.btnBgColor,
@@ -163,122 +164,106 @@ class MainScreen extends StatelessWidget {
             padding: const EdgeInsets.all(8.0),
             child: Row(
               children: [
-                // Container(
-                //   alignment: Alignment.topCenter,
-                //   width: 26.w,
-                //   height: 5.9.h,
-                //   decoration: BoxDecoration(
-                //       color: themeController.isDark
-                //           ? DarkColors.sheetBgColor
-                //           : LightColors.sheetBgColor,
-                //       borderRadius: BorderRadius.circular(13.w)),
-                //   child: Center(
-                //     child: Row(
-                //       mainAxisAlignment: MainAxisAlignment.center,
-                //       children: [
-                //         GestureDetector(
-                //           onTap: () {
-                //             themeController.lightTheme();
-                //           },
-                //           child: Icon(
-                //             Icons.light_mode_outlined,
-                //             color: themeController.isDark
-                //                 ? Colors.grey
-                //                 : Colors.black,
-                //             size: 22.sp,
-                //           ),
-                //         ),
-                //         SizedBox(
-                //           width: 4.w,
-                //         ),
-                //         GestureDetector(
-                //           onTap: () {
-                //             themeController.darkTheme();
-                //           },
-                //           child: Icon(
-                //             Icons.dark_mode_outlined,
-                //             color: themeController.isDark
-                //                 ? Colors.white
-                //                 : Colors.grey,
-                //             size: 22.sp,
-                //           ),
-                //         )
-                //       ],
-                //     ),
-                //   ),
-                // ),
                 const Spacer(),
-                PopupMenuButton<int>(
-                  itemBuilder: (BuildContext context) => <PopupMenuEntry<int>>[
-                    PopupMenuItem<int>(
-                      value: 0,
-                      child: Row(
-                        children: [
-                          Icon(
-                              themeController.isDark
-                                  ? Icons.light_mode_outlined
-                                  : Icons.dark_mode_outlined,
-                              color: themeController.isDark
-                                  ? Colors.black
-                                  : Colors.black),
-                          SizedBox(width: 3.w),
-                          Text(
-                            themeController.isDark
-                                ? 'Light Theme'
-                                : 'Dark Theme',
-                            style: TextStyle(
-                              color: themeController.isDark
-                                  ? Colors.black
-                                  : Colors.black,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    PopupMenuItem<int>(
-                      value: 1,
-                      child: Row(
-                        children: [
-                          Icon(
-                            Icons.currency_exchange,
-                            color: themeController.isDark
-                                ? Colors.black
-                                : Colors.black,
-                          ),
-                          SizedBox(width: 3.w),
-                          Text(
-                            'Currency Converter',
-                            style: TextStyle(
-                              color: themeController.isDark
-                                  ? Colors.black
-                                  : Colors.black,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                  onSelected: (int value) {
-                    if (value == 0) {
-                      // Handle Theme selection
-                      themeController
-                          .toggleTheme(); // Call the toggleTheme method
-                    } else if (value == 1) {
-                      // Handle Currency Converter selection
+                IconButton(
+                    onPressed: () {
                       Get.to(const CurrencyConverterScreen());
-                    }
+                    },
+                    icon: Icon(
+                      Icons.currency_exchange_outlined,
+                      color:
+                          themeController.isDark ? Colors.white : Colors.black,
+                    )),
+                IconButton(
+                  onPressed: () {
+                    themeController
+                        .toggleTheme(); // Call the toggleTheme method
                   },
-                  child: Icon(
-                    Icons.more_vert,
-                    color: themeController.isDark ? Colors.grey : Colors.black,
-                    size: 22.sp,
+                  icon: Icon(
+                    themeController.isDark
+                        ? Icons.light_mode_outlined
+                        : Icons.dark_mode_outlined,
+                    color: themeController.isDark ? Colors.white : Colors.black,
                   ),
-                )
+                ),
+                IconButton(
+                  onPressed: () {},
+                  icon: Icon(
+                    Icons.settings,
+                    color: themeController.isDark ? Colors.white : Colors.black,
+                  ),
+                ),
+                // PopupMenuButton<int>(
+                //   itemBuilder: (BuildContext context) => <PopupMenuEntry<int>>[
+                //     PopupMenuItem<int>(
+                //       value: 0,
+                //       child: Row(
+                //         children: [
+                //           Icon(
+                //               themeController.isDark
+                //                   ? Icons.light_mode_outlined
+                //                   : Icons.dark_mode_outlined,
+                //               color: themeController.isDark
+                //                   ? Colors.black
+                //                   : Colors.black),
+                //           SizedBox(width: 3.w),
+                //           Text(
+                //             themeController.isDark
+                //                 ? 'Light Theme'
+                //                 : 'Dark Theme',
+                //             style: TextStyle(
+                //               color: themeController.isDark
+                //                   ? Colors.black
+                //                   : Colors.black,
+                //             ),
+                //           ),
+                //         ],
+                //       ),
+                //     ),
+                //     PopupMenuItem<int>(
+                //       value: 1,
+                //       child: Row(
+                //         children: [
+                //           Icon(
+                //             Icons.currency_exchange,
+                //             color: themeController.isDark
+                //                 ? Colors.black
+                //                 : Colors.black,
+                //           ),
+                //           SizedBox(width: 3.w),
+                //           Text(
+                //             'Currency Converter',
+                //             style: TextStyle(
+                //               color: themeController.isDark
+                //                   ? Colors.black
+                //                   : Colors.black,
+                //             ),
+                //           ),
+                //         ],
+                //       ),
+                //     ),
+                //   ],
+                //   onSelected: (int value) {
+                //     if (value == 0) {
+                //       // Handle Theme selection
+                //       themeController
+                //           .toggleTheme(); // Call the toggleTheme method
+                //     } else if (value == 1) {
+                //       // Handle Currency Converter selection
+                //       Get.to(const CurrencyConverterScreen());
+                //     }
+                //   },
+                //   child: Icon(
+                //     Icons.more_vert,
+                //     color: themeController.isDark ? Colors.grey : Colors.black,
+                //     size: 22.sp,
+                //   ),
+                // )
               ],
             ),
           ),
           Padding(
-            padding: EdgeInsets.only(right: 6.w, top: 10.h),
+            padding: EdgeInsets.only(right: 6.w, top: 11.h),
             child: Column(
               // crossAxisAlignment: CrossAxisAlignment.end,
               children: [

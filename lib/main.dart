@@ -19,6 +19,9 @@ class MyApp extends StatelessWidget {
         return SafeArea(
           child: GetMaterialApp(
             debugShowCheckedModeBanner: false,
+            // theme: ThemeData(
+            //   fontFamily: 'Poppins',
+            // ),
             initialBinding: MyBindings(),
             title: "Flutter Calculator",
             home: OrientationBuilder(

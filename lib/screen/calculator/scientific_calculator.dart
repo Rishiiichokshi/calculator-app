@@ -31,7 +31,8 @@ class _ScientificCalculatorState extends State<ScientificCalculator> {
     "DEL",
     "%",
     "/",
-    "2ⁿᵈ",
+    // "2ⁿᵈ",
+    "2nd",
     "x²",
     "x³",
     "xʸ",
@@ -378,11 +379,13 @@ class _ScientificCalculatorState extends State<ScientificCalculator> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
+          SizedBox(height: 1.h),
+
           ///Theme change light and dark
           Container(
             alignment: Alignment.topCenter,
             width: 26.w,
-            height: 5.3.h,
+            height: 5.2.h,
             decoration: BoxDecoration(
                 color: themeController.isDark
                     ? DarkColors.sheetBgColor
@@ -424,7 +427,9 @@ class _ScientificCalculatorState extends State<ScientificCalculator> {
 
           ///output
           Padding(
-            padding: EdgeInsets.only(right: 6.w, top: 1.h),
+            padding: EdgeInsets.only(
+              right: 6.w,
+            ),
             child: Column(
               children: [
                 ///userInput
@@ -438,7 +443,7 @@ class _ScientificCalculatorState extends State<ScientificCalculator> {
                           color: themeController.isDark
                               ? Colors.white
                               : Colors.black,
-                          fontSize: 17.sp),
+                          fontSize: 15.sp),
                     ),
                   ),
                 ),
@@ -450,7 +455,9 @@ class _ScientificCalculatorState extends State<ScientificCalculator> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Padding(
-                      padding: EdgeInsets.only(left: 6.w, top: 1.h),
+                      padding: EdgeInsets.only(
+                        left: 6.w,
+                      ),
                       child: Obx(
                         () => Text(
                           controller.buttonText.value == "Deg" ? "Rad" : "",
@@ -478,7 +485,7 @@ class _ScientificCalculatorState extends State<ScientificCalculator> {
                                 color: themeController.isDark
                                     ? Colors.white
                                     : Colors.black,
-                                fontSize: 24.sp)),
+                                fontSize: 22.sp)),
                       ),
                     ),
                   ],
