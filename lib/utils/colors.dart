@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 /// Dark Colors
 class DarkColors {
   static const scaffoldBgColor = Color(0xff22252D);
+  static const currencyScaffoldBgColor = Color(0xff171420);
+  static const bottomSheetColor = Color(0xff1B1822);
   static const sheetBgColor = Color(0xff292D36);
   static const btnBgColor = Color.fromARGB(255, 33, 36, 42);
   static const leftOperatorColor = Color.fromARGB(255, 7, 255, 209);

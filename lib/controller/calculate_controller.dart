@@ -18,9 +18,19 @@ class CalculateController extends GetxController {
     Expression exp = p.parse(userInputFC);
     ContextModel ctx = ContextModel();
     double eval = exp.evaluate(EvaluationType.REAL, ctx);
+    if (eval % 1 == 0) {
+      // If the result is an integer, convert it to an integer and then to a string
+      userOutput = eval.toInt().toString();
+      userInput = eval.toInt().toString();
+    } else {
+      // If it's not an integer, keep it as a double with 2 decimal places
+      userOutput = eval.toString();
+      userInput = eval.toInt().toString();
+    }
 
-    userOutput = eval.toString();
-    userInput = eval.toString();
+    // userOutput = eval.toString();
+    // userInput = eval.toString();
+
     update();
   }
 

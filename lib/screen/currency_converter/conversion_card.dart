@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
-import 'package:sizer/sizer.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:get/get.dart';
+import 'package:sizer/sizer.dart';
 
 import '../../controller/theme_controller.dart';
 import '../../utils/colors.dart';
@@ -11,12 +10,16 @@ import '../../utils/colors.dart';
 class TestConversionCard extends StatefulWidget {
   final Map rates;
   final Map currencies;
+  final Key scaffoldKey;
+  final Function(String) onCurrencySelected;
 
   const TestConversionCard({
-    Key? key,
+    super.key,
     required this.rates,
     required this.currencies,
-  }) : super(key: key);
+    required this.scaffoldKey,
+    required this.onCurrencySelected,
+  });
 
   @override
   _TestConversionCardState createState() => _TestConversionCardState();
@@ -38,7 +41,6 @@ class _TestConversionCardState extends State<TestConversionCard> {
   int selectedIndex = 0;
   bool isConvert = false;
   var themeController = Get.find<ThemeController>();
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
@@ -58,6 +60,7 @@ class _TestConversionCardState extends State<TestConversionCard> {
     });
   }
 
+  ///updating rates as per entered data
   void updateConversionData(ConversionData updatedData) {
     if (isConvert) {
       for (var data in conversionDataList) {
@@ -84,6 +87,7 @@ class _TestConversionCardState extends State<TestConversionCard> {
     setState(() {});
   }
 
+  ///adding new container on press of add currency
   void addConversionData() {
     setState(() {
       ConversionData newData = ConversionData();
@@ -219,15 +223,25 @@ class _TestConversionCardState extends State<TestConversionCard> {
 
     // Initialize a list to store filtered currencies
     List<dynamic> filteredCurrencies = List.from(widget.currencies.keys);
+    final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
     await showModalBottomSheet<void>(
       context: context,
       backgroundColor: themeController.isDark
-          ? DarkColors.btnBgColor
+          ? DarkColors.bottomSheetColor
           : LightColors.sheetBgColor,
       builder: (BuildContext context) {
         return StatefulBuilder(
-          builder: (context, setState1) {
+          key: scaffoldKey,
+          builder: (BuildContext context, StateSetter setState1) {
+            void handleClearSearch() {
+              searchController.clear();
+              // Reset the filteredCurrencies list to show all items
+              filteredCurrencies = List.from(widget.currencies.keys);
+
+              setState1(() {}); // Trigger a rebuild of the bottom sheet's UI
+            }
+
             return Column(
               children: [
                 Padding(
@@ -244,15 +258,16 @@ class _TestConversionCardState extends State<TestConversionCard> {
                       focusedBorder: UnderlineInputBorder(
                           borderSide: BorderSide(
                               color: themeController.isDark
-                                  ? DarkColors.leftOperatorColor
-                                  : DarkColors.leftOperatorColor)),
+                                  ? LightColors.leftOperatorColor
+                                  : LightColors.leftOperatorColor)),
                       hintStyle: TextStyle(
                           color: themeController.isDark
                               ? Colors.grey
                               : Colors.grey),
                       suffixIcon: IconButton(
                           onPressed: () {
-                            searchController.clear();
+                            handleClearSearch();
+                            FocusManager.instance.primaryFocus?.unfocus();
                           },
                           icon: Icon(
                             Icons.close,
@@ -317,6 +332,7 @@ class _TestConversionCardState extends State<TestConversionCard> {
                                       conversionDataList.removeWhere(
                                         (data) => data.dropdownValue == value,
                                       );
+                                      widget.onCurrencySelected(value);
                                     }
                                   });
                                 },
@@ -354,20 +370,34 @@ class _TestConversionCardState extends State<TestConversionCard> {
                               }
 
                               conversionDataList.add(newData);
+                              widget.onCurrencySelected(value);
                             } else {
                               if (!isDefaultCurrency) {
                                 conversionDataList.removeWhere(
                                   (data) => data.dropdownValue == value,
                                 );
+                                widget.onCurrencySelected(value);
                               } else if (isDefaultCurrency) {
-                                ScaffoldMessenger.of(context)
-                                    .showSnackBar(const SnackBar(
-                                  content: Text(
-                                    'You Can\'t remove default currency!!',
-                                    style: TextStyle(color: Colors.white),
-                                  ),
+                                Get.snackbar(
+                                  'Warning',
+                                  'You Can\'t remove default currency!!',
+                                  snackPosition: SnackPosition.BOTTOM,
+                                  dismissDirection: DismissDirection.startToEnd,
+                                  colorText: Colors.white,
                                   backgroundColor: Colors.black54,
-                                ));
+                                  icon: const Icon(
+                                    Icons.add_alert,
+                                    color: Colors.white,
+                                  ),
+                                );
+                                // ScaffoldMessenger.of(context)
+                                //     .showSnackBar(const SnackBar(
+                                //   content: Text(
+                                //     'You Can\'t remove default currency!!',
+                                //     style: TextStyle(color: Colors.white),
+                                //   ),
+                                //   backgroundColor: Colors.black54,
+                                // ));
                               }
                             }
                           });
@@ -393,12 +423,66 @@ class _TestConversionCardState extends State<TestConversionCard> {
     setState(() {});
   }
 
+  ///delete container
   void _deleteConversionData(int index) {
     setState(() {
       if (index != 0) {
         conversionDataList.removeAt(index);
       }
     });
+  }
+
+  ///dialog of delete container
+  void showDeleteConfirmationDialog(BuildContext context, int index) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Delete Currency Converter'),
+          content: const Text(
+              'Are you sure you want to delete this currency converter?'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: const Text('No'),
+            ),
+            TextButton(
+              onPressed: () {
+                if (index != 0) {
+                  _deleteConversionData(index);
+                } else {
+                  Get.snackbar(
+                    'Warning',
+                    'You can\'t delete the default USD converter!',
+                    snackPosition: SnackPosition.BOTTOM,
+                    dismissDirection: DismissDirection.startToEnd,
+                    colorText: Colors.white,
+                    backgroundColor: Colors.black54,
+                    icon: const Icon(
+                      Icons.add_alert,
+                      color: Colors.white,
+                    ),
+                  );
+                  // ScaffoldMessenger.of(context).showSnackBar(
+                  //   const SnackBar(
+                  //     content: Text(
+                  //       'You can\'t delete the default USD converter!',
+                  //       style: TextStyle(color: Colors.white),
+                  //     ),
+                  //     backgroundColor: Colors.black54,
+                  //   ),
+                  // );
+                }
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: const Text('Yes'),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -414,6 +498,7 @@ class _TestConversionCardState extends State<TestConversionCard> {
     var themeController = Get.find<ThemeController>();
 
     return SingleChildScrollView(
+      // physics: ,
       child: Padding(
         padding: EdgeInsets.all(7.w),
         child: Column(
@@ -425,137 +510,190 @@ class _TestConversionCardState extends State<TestConversionCard> {
                 itemCount: conversionDataList.length,
                 itemBuilder: (context, index) {
                   ConversionData data = conversionDataList[index];
-                  return GestureDetector(
-                    onTap: () {
-                      selectConverter(data);
-                    },
-                    child: Column(
+                  return Slidable(
+                    key: const ValueKey(0),
+                    startActionPane: ActionPane(
+                      motion: const ScrollMotion(),
+                      // dismissible: DismissiblePane(onDismissed: () {}),
                       children: [
-                        Container(
-                          width: double.infinity,
-                          padding: EdgeInsets.all(2.5.w),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(4.w),
-                            border: Border.all(
-                              color: data.isSelected
-                                  ? LightColors.leftOperatorColor
-                                  : Colors.grey,
-                              width: data.isSelected ? 0.6.w : 0.2.w,
+                        // A SlidableAction can have an icon and/or a label.
+                        SlidableAction(
+                          onPressed: (context) {
+                            showDeleteConfirmationDialog(context, index);
+                          },
+                          backgroundColor: const Color(0xFFFE4A49),
+                          foregroundColor: Colors.white,
+                          icon: Icons.delete,
+                          label: 'Delete',
+                        ),
+                      ],
+                    ),
+                    child: GestureDetector(
+                      onTap: () {
+                        selectConverter(data);
+                      },
+                      child: Column(
+                        children: [
+                          Container(
+                            width: double.infinity,
+                            padding: EdgeInsets.all(2.5.w),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(4.w),
+                              color: themeController.isDark
+                                  ? DarkColors.bottomSheetColor
+                                  : Colors.white,
+                              border: Border.all(
+                                color: data.isSelected
+                                    ? LightColors.leftOperatorColor
+                                    : Colors.grey,
+                                width: data.isSelected ? 0.6.w : 0.2.w,
+                              ),
+                            ),
+                            child: Row(
+                              children: [
+                                Theme(
+                                  data: Theme.of(context).copyWith(
+                                    // Define the background color for the dropdown menu
+                                    canvasColor: themeController.isDark
+                                        ? DarkColors.bottomSheetColor
+                                        : CommonColors.white,
+                                  ),
+                                  child: Expanded(
+                                    flex: 6,
+                                    child: DropdownButton<String>(
+                                      borderRadius: BorderRadius.circular(4.w),
+                                      menuMaxHeight: 50.h,
+                                      value: data.dropdownValue,
+
+                                      icon: Icon(
+                                        Icons.arrow_drop_down_rounded,
+                                        color: themeController.isDark
+                                            ? LightColors.btnBgColor
+                                            : CommonColors.black,
+                                      ),
+                                      isExpanded: true,
+                                      onChanged: (String? newValue) {
+                                        setState(() {
+                                          if (index == 0) {
+                                            Get.snackbar(
+                                              'Warning',
+                                              'You can\'t change the default currency!',
+                                              snackPosition:
+                                                  SnackPosition.BOTTOM,
+                                              dismissDirection:
+                                                  DismissDirection.endToStart,
+                                              colorText: Colors.white,
+                                              backgroundColor: Colors.black54,
+                                              icon: const Icon(
+                                                Icons.add_alert,
+                                                color: Colors.white,
+                                              ),
+                                            );
+                                          } else {
+                                            // Allow changing currency for subsequent containers
+                                            data.dropdownValue = newValue!;
+                                            if (isConvert) {
+                                              updateConversionData(data);
+                                            }
+                                          }
+                                        });
+                                      },
+                                      onTap: () {
+                                        selectConverter(data);
+                                      },
+                                      underline:
+                                          Container(), // Removes the default underline
+
+                                      items: widget.currencies.keys
+                                          .toList()
+                                          .map<DropdownMenuItem<String>>(
+                                              (value) {
+                                        return DropdownMenuItem<String>(
+                                          value: value,
+                                          child: Text(
+                                            '$value - ${widget.currencies[value]}',
+                                            maxLines: 2,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: TextStyle(
+                                                color: themeController.isDark
+                                                    ? LightColors
+                                                        .leftOperatorColor
+                                                    : LightColors
+                                                        .leftOperatorColor),
+                                          ),
+                                        );
+                                      }).toList(),
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(width: 6.w),
+                                Expanded(
+                                  flex: 2,
+                                  child: TextFormField(
+                                    cursorColor: themeController.isDark
+                                        ? LightColors.leftOperatorColor
+                                        : LightColors.leftOperatorColor,
+                                    style: TextStyle(
+                                        color: themeController.isDark
+                                            ? CommonColors.white
+                                            : CommonColors.black),
+                                    onChanged: (value) {
+                                      // setState(() {});
+                                      // value = data.amountController.text;
+                                    },
+                                    inputFormatters: <TextInputFormatter>[
+                                      FilteringTextInputFormatter.allow(
+                                          RegExp(r'^\d+\.?\d*')),
+                                    ],
+                                    controller: data.amountController,
+                                    enableInteractiveSelection: false,
+                                    keyboardType: TextInputType.number,
+                                    decoration: const InputDecoration(
+                                      hintText: 'eg. 100',
+                                      hintStyle: TextStyle(color: Colors.grey),
+                                      border: InputBorder.none,
+                                    ),
+                                    onTap: () {
+                                      data.amountController.clear();
+                                      selectConverter(data);
+                                    },
+                                    onEditingComplete: () {
+                                      isConvert = true;
+                                      // Handle "Done" button press here
+                                      // You can call your updateConversionData method here
+                                      updateConversionData(data);
+                                      isConvert = false;
+                                      FocusScope.of(context).unfocus();
+                                    },
+                                  ),
+                                ),
+                                SizedBox(width: 1.w),
+                                data.isSelected
+                                    ? Icon(Icons.calculate,
+                                        size: 6.4.w,
+                                        color: themeController.isDark
+                                            ? LightColors.leftOperatorColor
+                                            : LightColors.leftOperatorColor)
+                                    : Icon(
+                                        Icons.more_vert,
+                                        size: 6.4.w,
+                                        color: Colors
+                                            .grey, // Show 3-dot icon when not selected
+                                      ),
+                              ],
                             ),
                           ),
-                          child: Row(
-                            children: [
-                              Expanded(
-                                flex: 6,
-                                child: DropdownButton<String>(
-                                  borderRadius: BorderRadius.circular(4.w),
-                                  menuMaxHeight: 50.h,
-                                  value: data.dropdownValue,
-                                  icon: Icon(
-                                    Icons.arrow_drop_down_rounded,
-                                    color: themeController.isDark
-                                        ? LightColors.btnBgColor
-                                        : CommonColors.black,
-                                  ),
-                                  isExpanded: true,
-                                  onChanged: (String? newValue) {
-                                    setState(() {
-                                      data.dropdownValue = newValue!;
-                                      if (isConvert) {
-                                        updateConversionData(data);
-                                      }
-                                    });
-                                  },
-                                  onTap: () {
-                                    selectConverter(data);
-                                  },
-                                  underline:
-                                      Container(), // Removes the default underline
-
-                                  items: widget.currencies.keys
-                                      .toList()
-                                      .map<DropdownMenuItem<String>>((value) {
-                                    return DropdownMenuItem<String>(
-                                      value: value,
-                                      child: Text(
-                                        '$value - ${widget.currencies[value]}',
-                                        maxLines: 2,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: TextStyle(
-                                            color: themeController.isDark
-                                                ? LightColors.leftOperatorColor
-                                                : LightColors
-                                                    .leftOperatorColor),
-                                      ),
-                                    );
-                                  }).toList(),
-                                ),
-                              ),
-                              SizedBox(width: 6.w),
-                              Expanded(
-                                flex: 2,
-                                child: TextFormField(
-                                  cursorColor: themeController.isDark
-                                      ? LightColors.leftOperatorColor
-                                      : LightColors.leftOperatorColor,
-                                  style: TextStyle(
-                                      color: themeController.isDark
-                                          ? CommonColors.white
-                                          : CommonColors.black),
-                                  onChanged: (value) {
-                                    // setState(() {});
-                                    // value = data.amountController.text;
-                                  },
-                                  inputFormatters: <TextInputFormatter>[
-                                    FilteringTextInputFormatter.allow(
-                                        RegExp(r'^\d+\.?\d*')),
-                                  ],
-                                  controller: data.amountController,
-                                  enableInteractiveSelection: false,
-                                  keyboardType: TextInputType.number,
-                                  decoration: const InputDecoration(
-                                    hintText: 'eg. 100',
-                                    hintStyle: TextStyle(color: Colors.grey),
-                                    border: InputBorder.none,
-                                  ),
-                                  onTap: () {
-                                    data.amountController.clear();
-                                    selectConverter(data);
-                                  },
-                                  onEditingComplete: () {
-                                    isConvert = true;
-                                    // Handle "Done" button press here
-                                    // You can call your updateConversionData method here
-                                    updateConversionData(data);
-                                    isConvert = false;
-                                    FocusScope.of(context).unfocus();
-                                  },
-                                ),
-                              ),
-                              SizedBox(width: 1.w),
-                              data.isSelected
-                                  ? Icon(Icons.calculate,
-                                      size: 6.4.w,
-                                      color: themeController.isDark
-                                          ? LightColors.leftOperatorColor
-                                          : LightColors.leftOperatorColor)
-                                  : Icon(
-                                      Icons.more_vert,
-                                      size: 6.4.w,
-                                      color: Colors
-                                          .grey, // Show 3-dot icon when not selected
-                                    ),
-                            ],
-                          ),
-                        ),
-                        SizedBox(height: 2.h),
-                      ],
+                          SizedBox(height: 2.h),
+                        ],
+                      ),
                     ),
                   );
                 },
               ),
             ),
             SizedBox(height: 3.h),
+
+            /// add currency option
             Align(
               alignment: Alignment.centerLeft,
               child: TextButton(
@@ -566,7 +704,7 @@ class _TestConversionCardState extends State<TestConversionCard> {
                   width: 40.w,
                   padding: EdgeInsets.all(2.w),
                   decoration: BoxDecoration(
-                      color: LightColors.operatorColor.withOpacity(0.3),
+                      color: LightColors.leftOperatorColor,
                       borderRadius: BorderRadius.circular(10.w)),
                   child: Row(
                     children: [
@@ -574,7 +712,7 @@ class _TestConversionCardState extends State<TestConversionCard> {
                         Icons.add,
                         color: themeController.isDark
                             ? CommonColors.white
-                            : CommonColors.black,
+                            : CommonColors.white,
                       ),
                       SizedBox(width: 2.w),
                       Text(
@@ -582,7 +720,7 @@ class _TestConversionCardState extends State<TestConversionCard> {
                         style: TextStyle(
                             color: themeController.isDark
                                 ? CommonColors.white
-                                : CommonColors.black),
+                                : CommonColors.white),
                       ),
                     ],
                   ),

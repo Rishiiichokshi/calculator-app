@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 
 import '../../controller/theme_controller.dart';
 import '../../data/network/api_services.dart';
@@ -19,6 +18,7 @@ class CurrencyConverterScreen extends StatefulWidget {
 class _CurrencyConverterScreenState extends State<CurrencyConverterScreen> {
   late Future<RatesModel> ratesModel;
   late Future<Map> currenciesModel;
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
@@ -31,18 +31,36 @@ class _CurrencyConverterScreenState extends State<CurrencyConverterScreen> {
     currenciesModel = fetchCurrencies();
   }
 
+  // Callback function to handle currency selection
+  void handleCurrencySelected(String selectedCurrency) {
+    // Perform any necessary state updates here
+    // For example, you can update the state and re-fetch data if needed
+    setState(() {
+      // Update the state as needed
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     var themeController = Get.find<ThemeController>();
 
     return Scaffold(
+      key: _scaffoldKey,
       backgroundColor: themeController.isDark
-          ? DarkColors.scaffoldBgColor
+          ? DarkColors.currencyScaffoldBgColor
           : LightColors.scaffoldBgColor,
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
+        leading: IconButton(
+            onPressed: () {
+              Get.back();
+            },
+            icon: Icon(
+              Icons.arrow_back,
+              color: themeController.isDark ? Colors.white : Colors.black,
+            )),
         backgroundColor: themeController.isDark
-            ? DarkColors.scaffoldBgColor
+            ? DarkColors.currencyScaffoldBgColor
             : LightColors.scaffoldBgColor,
         // leading: Icon(
         //   Icons.currency_exchange,
@@ -90,6 +108,8 @@ class _CurrencyConverterScreenState extends State<CurrencyConverterScreen> {
                       return TestConversionCard(
                         rates: snapshot.data!.rates,
                         currencies: index.data!,
+                        scaffoldKey: _scaffoldKey,
+                        onCurrencySelected: handleCurrencySelected,
                       );
                     }
                   });
