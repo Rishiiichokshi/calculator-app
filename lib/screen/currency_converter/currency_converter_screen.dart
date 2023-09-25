@@ -62,11 +62,6 @@ class _CurrencyConverterScreenState extends State<CurrencyConverterScreen> {
         backgroundColor: themeController.isDark
             ? DarkColors.currencyScaffoldBgColor
             : LightColors.scaffoldBgColor,
-        // leading: Icon(
-        //   Icons.currency_exchange,
-        //   color:
-        //       themeController.isDark ? CommonColors.white : CommonColors.black,
-        // ),
         title: Text(
           'Currency Convertor',
           style: TextStyle(
@@ -79,12 +74,11 @@ class _CurrencyConverterScreenState extends State<CurrencyConverterScreen> {
           future: ratesModel,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(
+              return Center(
                 child: CircularProgressIndicator(
-                    // color: themeController.isDark
-                    //     ? CommonColors.white
-                    //     : CommonColors.black
-                    ),
+                    color: themeController.isDark
+                        ? CommonColors.white
+                        : DarkColors.bottomSheetColor),
               );
             } else {
               return FutureBuilder<Map>(

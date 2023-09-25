@@ -747,6 +747,11 @@ class Utils {
         formattedResult =
             formattedResult.substring(0, formattedResult.length - 3);
       }
+      print('=====amount is===$amount');
+      print('----formatted result----$formattedResult');
+      print('----***rates****----$rates');
+      print('----^^^from----$from');
+      print('----###to----$to');
       return formattedResult;
     } catch (e) {
       return 'Invalid input';
