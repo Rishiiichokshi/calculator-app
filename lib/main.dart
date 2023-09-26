@@ -1,5 +1,6 @@
 import 'package:calculator_app/screen/calculator/main_screen.dart';
 import 'package:calculator_app/screen/calculator/scientific_calculator.dart';
+import 'package:calculator_app/utils/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
@@ -19,9 +20,11 @@ class MyApp extends StatelessWidget {
         return SafeArea(
           child: GetMaterialApp(
             debugShowCheckedModeBanner: false,
-            // theme: ThemeData(
-            //   fontFamily: 'Poppins',
-            // ),
+            theme: ThemeData(
+              primaryColor: LightColors.leftOperatorColor,
+              textSelectionTheme: const TextSelectionThemeData(
+                  cursorColor: LightColors.leftOperatorColor),
+            ),
             initialBinding: MyBindings(),
             title: "Flutter Calculator",
             home: OrientationBuilder(

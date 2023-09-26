@@ -1,8 +1,10 @@
+import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
+import 'package:search_choices/search_choices.dart';
 
 import '../../controller/theme_controller.dart';
 import '../../utils/colors.dart';
@@ -546,6 +548,7 @@ class _TestConversionCardState extends State<TestConversionCard> {
                     key: const ValueKey(0),
                     startActionPane: ActionPane(
                       motion: const ScrollMotion(),
+
                       // dismissible: DismissiblePane(onDismissed: () {}),
                       children: [
                         // A SlidableAction can have an icon and/or a label.
@@ -584,99 +587,220 @@ class _TestConversionCardState extends State<TestConversionCard> {
                             ),
                             child: Row(
                               children: [
-                                Theme(
-                                  data: Theme.of(context).copyWith(
-                                    // Define the background color for the dropdown menu
-                                    canvasColor: themeController.isDark
+                                ///without search dropdown
+                                // Theme(
+                                //   data: Theme.of(context).copyWith(
+                                //     // Define the background color for the dropdown menu
+                                //     canvasColor: themeController.isDark
+                                //         ? DarkColors.bottomSheetColor
+                                //         : CommonColors.white,
+                                //   ),
+                                //   child: Expanded(
+                                //     flex: 7,
+                                //     child: DropdownButton<String>(
+                                //       borderRadius: BorderRadius.circular(4.w),
+                                //       menuMaxHeight: 50.h,
+                                //       itemHeight: 6.5.h,
+                                //       value: data.dropdownValue,
+                                //       icon: Icon(
+                                //         Icons.arrow_drop_down_rounded,
+                                //         color: themeController.isDark
+                                //             ? LightColors.btnBgColor
+                                //             : CommonColors.black,
+                                //         size: 15.sp,
+                                //       ),
+                                //       isExpanded: true,
+                                //       onChanged: (String? newValue) {
+                                //         setState(() {
+                                //           if (index == 0) {
+                                //             Get.snackbar(
+                                //               'Warning',
+                                //               'You can\'t change the default currency!',
+                                //               snackPosition:
+                                //                   SnackPosition.BOTTOM,
+                                //               dismissDirection:
+                                //                   DismissDirection.endToStart,
+                                //               titleText: Text(
+                                //                 'Warning',
+                                //                 style: TextStyle(
+                                //                   color: Colors.white,
+                                //                   fontSize: 12.sp,
+                                //                   fontWeight: FontWeight.bold,
+                                //                 ),
+                                //               ),
+                                //               messageText: Text(
+                                //                 'You can\'t change the default currency!',
+                                //                 style: TextStyle(
+                                //                   color: Colors.white,
+                                //                   fontSize: 12.sp,
+                                //                   fontWeight: FontWeight.bold,
+                                //                 ),
+                                //               ),
+                                //               colorText: Colors.white,
+                                //               backgroundColor: Colors.black54,
+                                //               icon: Icon(
+                                //                 Icons.add_alert,
+                                //                 size: 15.sp,
+                                //                 color: Colors.white,
+                                //               ),
+                                //             );
+                                //           } else {
+                                //             // Allow changing currency for subsequent containers
+                                //             data.dropdownValue = newValue!;
+                                //             if (isConvert) {
+                                //               updateConversionData(data);
+                                //             }
+                                //           }
+                                //         });
+                                //       },
+                                //       onTap: () {
+                                //         selectConverter(data);
+                                //       },
+                                //       underline: Container(),
+                                //       items: widget.currencies.keys
+                                //           .toList()
+                                //           .map<DropdownMenuItem<String>>(
+                                //               (value) {
+                                //         return DropdownMenuItem<String>(
+                                //           value: value,
+                                //           child: Text(
+                                //             '$value - ${widget.currencies[value]}',
+                                //             maxLines: 3,
+                                //             overflow: TextOverflow.ellipsis,
+                                //             style: TextStyle(
+                                //                 color: themeController.isDark
+                                //                     ? LightColors
+                                //                         .leftOperatorColor
+                                //                     : LightColors
+                                //                         .leftOperatorColor,
+                                //                 fontSize: 12.sp),
+                                //           ),
+                                //         );
+                                //       }).toList(),
+                                //     ),
+                                //   ),
+                                // ),
+                                Expanded(
+                                  flex: 7,
+                                  child: SearchChoices.single(
+                                    items: widget.currencies.keys
+                                        .toList()
+                                        .map<DropdownMenuItem<String>>((value) {
+                                      return DropdownMenuItem<String>(
+                                        value: value,
+                                        child: Text(
+                                          '$value - ${widget.currencies[value]}',
+                                          maxLines: 3,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: TextStyle(
+                                              color: themeController.isDark
+                                                  ? LightColors
+                                                      .leftOperatorColor
+                                                  : LightColors
+                                                      .leftOperatorColor,
+                                              fontSize: 12.sp),
+                                        ),
+                                      );
+                                    }).toList(),
+                                    value: data.dropdownValue,
+                                    hint: const Padding(
+                                      padding: EdgeInsets.all(3),
+                                      child: DropdownMenuItem(
+                                        child: Text("Select Currency"),
+                                      ),
+                                    ),
+                                    menuBackgroundColor: themeController.isDark
                                         ? DarkColors.bottomSheetColor
                                         : CommonColors.white,
-                                  ),
-                                  child: Expanded(
-                                    flex: 7,
-                                    child: DropdownButton<String>(
-                                      borderRadius: BorderRadius.circular(4.w),
-                                      menuMaxHeight: 50.h,
-                                      itemHeight: 6.5.h,
-                                      value: data.dropdownValue,
 
-                                      icon: Icon(
-                                        Icons.arrow_drop_down_rounded,
-                                        color: themeController.isDark
-                                            ? LightColors.btnBgColor
-                                            : CommonColors.black,
-                                        size: 15.sp,
-                                      ),
-                                      isExpanded: true,
-                                      onChanged: (String? newValue) {
-                                        setState(() {
-                                          if (index == 0) {
-                                            Get.snackbar(
+                                    // searchHint: "Select Currency",
+                                    onChanged: (String? newValue) {
+                                      setState(() {
+                                        if (index == 0) {
+                                          Get.snackbar(
+                                            'Warning',
+                                            'You can\'t change the default currency!',
+                                            snackPosition: SnackPosition.BOTTOM,
+                                            dismissDirection:
+                                                DismissDirection.endToStart,
+                                            titleText: Text(
                                               'Warning',
-                                              'You can\'t change the default currency!',
-                                              snackPosition:
-                                                  SnackPosition.BOTTOM,
-                                              dismissDirection:
-                                                  DismissDirection.endToStart,
-                                              titleText: Text(
-                                                'Warning',
-                                                style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: 12.sp,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                              ),
-                                              messageText: Text(
-                                                'You can\'t change the default currency!',
-                                                style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: 12.sp,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                              ),
-                                              colorText: Colors.white,
-                                              backgroundColor: Colors.black54,
-                                              icon: Icon(
-                                                Icons.add_alert,
-                                                size: 15.sp,
+                                              style: TextStyle(
                                                 color: Colors.white,
+                                                fontSize: 12.sp,
+                                                fontWeight: FontWeight.bold,
                                               ),
-                                            );
-                                          } else {
-                                            // Allow changing currency for subsequent containers
-                                            data.dropdownValue = newValue!;
-                                            if (isConvert) {
-                                              updateConversionData(data);
-                                            }
+                                            ),
+                                            messageText: Text(
+                                              'You can\'t change the default currency!',
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 12.sp,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                            colorText: Colors.white,
+                                            backgroundColor: Colors.black54,
+                                            icon: Icon(
+                                              Icons.add_alert,
+                                              size: 15.sp,
+                                              color: Colors.white,
+                                            ),
+                                          );
+                                        } else {
+                                          // Allow changing currency for subsequent containers
+                                          data.dropdownValue = newValue!;
+                                          if (isConvert) {
+                                            updateConversionData(data);
                                           }
-                                        });
-                                      },
-                                      onTap: () {
-                                        selectConverter(data);
-                                      },
-                                      underline:
-                                          Container(), // Removes the default underline
+                                        }
+                                      });
+                                    },
+                                    isExpanded: true,
 
-                                      items: widget.currencies.keys
-                                          .toList()
-                                          .map<DropdownMenuItem<String>>(
-                                              (value) {
-                                        return DropdownMenuItem<String>(
-                                          value: value,
-                                          child: Text(
-                                            '$value - ${widget.currencies[value]}',
-                                            maxLines: 3,
-                                            overflow: TextOverflow.ellipsis,
-                                            style: TextStyle(
-                                                color: themeController.isDark
-                                                    ? LightColors
-                                                        .leftOperatorColor
-                                                    : LightColors
-                                                        .leftOperatorColor,
-                                                fontSize: 12.sp),
-                                          ),
-                                        );
-                                      }).toList(),
+                                    style: const TextStyle(color: Colors.white),
+                                    // doneButton: Text('Done'),
+                                    searchInputDecoration: InputDecoration(
+                                      icon: Icon(
+                                        Icons.search,
+                                        size: 20.sp,
+                                        color: LightColors.leftOperatorColor,
+                                      ),
+
+                                      focusedBorder: const UnderlineInputBorder(
+                                        borderSide: BorderSide(
+                                          color: LightColors
+                                              .leftOperatorColor, // Set your desired focused border color here
+                                          width: 1.0,
+                                        ),
+                                      ),
+
+                                      // border: OutlineInputBorder(),
                                     ),
+                                    fieldDecoration: BoxDecoration(
+                                      color: themeController.isDark
+                                          ? DarkColors.bottomSheetColor
+                                          : CommonColors.white,
+                                    ),
+                                    displayClearIcon: false,
+                                    iconDisabledColor: Colors.grey,
+                                    iconEnabledColor: Colors.grey,
+
+                                    selectedValueWidgetFn: (selectedValue) {
+                                      return DropdownMenuItem(
+                                        // value: value,
+                                        child: Text(
+                                          '$selectedValue - ${widget.currencies[selectedValue]}',
+                                          style: TextStyle(
+                                            color: themeController.isDark
+                                                ? Colors.white
+                                                : Colors.black,
+                                          ),
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      );
+                                    },
                                   ),
                                 ),
                                 SizedBox(width: 6.w),
