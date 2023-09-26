@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:sizer/sizer.dart';
 
 import '../../controller/theme_controller.dart';
 import '../../data/network/api_services.dart';
@@ -56,15 +57,18 @@ class _CurrencyConverterScreenState extends State<CurrencyConverterScreen> {
               Get.back();
             },
             icon: Icon(
+              size: 5.w,
               Icons.arrow_back,
               color: themeController.isDark ? Colors.white : Colors.black,
             )),
+        centerTitle: true,
         backgroundColor: themeController.isDark
             ? DarkColors.currencyScaffoldBgColor
             : LightColors.scaffoldBgColor,
         title: Text(
           'Currency Convertor',
           style: TextStyle(
+              fontSize: 5.w,
               color: themeController.isDark
                   ? CommonColors.white
                   : CommonColors.black),
@@ -93,6 +97,7 @@ class _CurrencyConverterScreenState extends State<CurrencyConverterScreen> {
                         child: Text(
                           'Error: ${index.error}',
                           style: TextStyle(
+                              fontSize: 10.sp,
                               color: themeController.isDark
                                   ? CommonColors.white
                                   : CommonColors.black),

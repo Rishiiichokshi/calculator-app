@@ -236,10 +236,8 @@ class _TestConversionCardState extends State<TestConversionCard> {
           builder: (BuildContext context, StateSetter setState1) {
             void handleClearSearch() {
               searchController.clear();
-              // Reset the filteredCurrencies list to show all items
               filteredCurrencies = List.from(widget.currencies.keys);
-
-              setState1(() {}); // Trigger a rebuild of the bottom sheet's UI
+              setState1(() {});
             }
 
             return Column(
@@ -249,6 +247,7 @@ class _TestConversionCardState extends State<TestConversionCard> {
                   child: TextFormField(
                     cursorColor: LightColors.leftOperatorColor,
                     style: TextStyle(
+                        fontSize: 15.sp,
                         color: themeController.isDark
                             ? Colors.white
                             : Colors.black),
@@ -261,6 +260,7 @@ class _TestConversionCardState extends State<TestConversionCard> {
                                   ? LightColors.leftOperatorColor
                                   : LightColors.leftOperatorColor)),
                       hintStyle: TextStyle(
+                          fontSize: 12.sp,
                           color: themeController.isDark
                               ? Colors.grey
                               : Colors.grey),
@@ -270,12 +270,14 @@ class _TestConversionCardState extends State<TestConversionCard> {
                             FocusManager.instance.primaryFocus?.unfocus();
                           },
                           icon: Icon(
+                            size: 14.sp,
                             Icons.close,
                             color: themeController.isDark
                                 ? Colors.grey
                                 : Colors.grey,
                           )),
                       prefixIcon: Icon(
+                        size: 14.sp,
                         Icons.search,
                         color:
                             themeController.isDark ? Colors.grey : Colors.grey,
@@ -305,23 +307,23 @@ class _TestConversionCardState extends State<TestConversionCard> {
                       return ListTile(
                         title: Row(
                           children: [
-                            SizedBox(
-                              width: 79.w,
-                              child: Text(
-                                '$value - ${widget.currencies[value]}',
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 1,
-                                style: TextStyle(
-                                  color: themeController.isDark
-                                      ? CommonColors.white
-                                      : CommonColors.black,
-                                ),
+                            Text(
+                              '$value - ${widget.currencies[value]}',
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 1,
+                              style: TextStyle(
+                                fontSize: 12.sp,
+                                color: themeController.isDark
+                                    ? CommonColors.white
+                                    : CommonColors.black,
                               ),
                             ),
+                            Spacer(),
                             if (isSelected)
                               IconButton(
                                 icon: Icon(
                                   Icons.check,
+                                  size: 15.sp,
                                   color: themeController.isDark
                                       ? CommonColors.white
                                       : CommonColors.black,
@@ -380,24 +382,34 @@ class _TestConversionCardState extends State<TestConversionCard> {
                               } else if (isDefaultCurrency) {
                                 Get.snackbar(
                                   'Warning',
+                                  snackStyle: SnackStyle.FLOATING,
                                   'You Can\'t remove default currency!!',
                                   snackPosition: SnackPosition.BOTTOM,
                                   dismissDirection: DismissDirection.startToEnd,
                                   colorText: Colors.white,
                                   backgroundColor: Colors.black54,
-                                  icon: const Icon(
+                                  titleText: Text(
+                                    'Warning',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 7.sp,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  messageText: Text(
+                                    'You Can\'t remove default currency!!',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 7.sp,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  icon: Icon(
+                                    size: 12.sp,
                                     Icons.add_alert,
                                     color: Colors.white,
                                   ),
                                 );
-                                // ScaffoldMessenger.of(context)
-                                //     .showSnackBar(const SnackBar(
-                                //   content: Text(
-                                //     'You Can\'t remove default currency!!',
-                                //     style: TextStyle(color: Colors.white),
-                                //   ),
-                                //   backgroundColor: Colors.black54,
-                                // ));
                               }
                             }
                           });
@@ -438,15 +450,23 @@ class _TestConversionCardState extends State<TestConversionCard> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Delete Currency Converter'),
-          content: const Text(
-              'Are you sure you want to delete this currency converter?'),
+          title: Text(
+            'Delete Currency Converter',
+            style: TextStyle(fontSize: 12.sp),
+          ),
+          content: Text(
+            'Are you sure you want to delete this currency converter?',
+            style: TextStyle(fontSize: 12.sp),
+          ),
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop(); // Close the dialog
               },
-              child: const Text('No'),
+              child: Text(
+                'No',
+                style: TextStyle(fontSize: 12.sp),
+              ),
             ),
             TextButton(
               onPressed: () {
@@ -459,25 +479,37 @@ class _TestConversionCardState extends State<TestConversionCard> {
                     snackPosition: SnackPosition.BOTTOM,
                     dismissDirection: DismissDirection.startToEnd,
                     colorText: Colors.white,
+                    isDismissible: true,
+                    titleText: Text(
+                      'Warning',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 7.sp,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    messageText: Text(
+                      'You Can\'t remove default currency!!',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 7.sp,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                     backgroundColor: Colors.black54,
-                    icon: const Icon(
+                    icon: Icon(
                       Icons.add_alert,
+                      size: 12.sp,
                       color: Colors.white,
                     ),
                   );
-                  // ScaffoldMessenger.of(context).showSnackBar(
-                  //   const SnackBar(
-                  //     content: Text(
-                  //       'You can\'t delete the default USD converter!',
-                  //       style: TextStyle(color: Colors.white),
-                  //     ),
-                  //     backgroundColor: Colors.black54,
-                  //   ),
-                  // );
                 }
                 Navigator.of(context).pop(); // Close the dialog
               },
-              child: const Text('Yes'),
+              child: Text(
+                'Yes',
+                style: TextStyle(fontSize: 12.sp),
+              ),
             ),
           ],
         );
@@ -504,7 +536,7 @@ class _TestConversionCardState extends State<TestConversionCard> {
         child: Column(
           children: [
             SizedBox(
-              height: 73.h,
+              height: 69.h,
               child: ListView.builder(
                 shrinkWrap: true,
                 itemCount: conversionDataList.length,
@@ -521,6 +553,7 @@ class _TestConversionCardState extends State<TestConversionCard> {
                           onPressed: (context) {
                             showDeleteConfirmationDialog(context, index);
                           },
+                          borderRadius: BorderRadius.circular(4.w),
                           backgroundColor: const Color(0xFFFE4A49),
                           foregroundColor: Colors.white,
                           icon: Icons.delete,
@@ -559,10 +592,11 @@ class _TestConversionCardState extends State<TestConversionCard> {
                                         : CommonColors.white,
                                   ),
                                   child: Expanded(
-                                    flex: 6,
+                                    flex: 7,
                                     child: DropdownButton<String>(
                                       borderRadius: BorderRadius.circular(4.w),
                                       menuMaxHeight: 50.h,
+                                      itemHeight: 6.5.h,
                                       value: data.dropdownValue,
 
                                       icon: Icon(
@@ -570,6 +604,7 @@ class _TestConversionCardState extends State<TestConversionCard> {
                                         color: themeController.isDark
                                             ? LightColors.btnBgColor
                                             : CommonColors.black,
+                                        size: 15.sp,
                                       ),
                                       isExpanded: true,
                                       onChanged: (String? newValue) {
@@ -582,10 +617,27 @@ class _TestConversionCardState extends State<TestConversionCard> {
                                                   SnackPosition.BOTTOM,
                                               dismissDirection:
                                                   DismissDirection.endToStart,
+                                              titleText: Text(
+                                                'Warning',
+                                                style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 12.sp,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                              messageText: Text(
+                                                'You can\'t change the default currency!',
+                                                style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 12.sp,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
                                               colorText: Colors.white,
                                               backgroundColor: Colors.black54,
-                                              icon: const Icon(
+                                              icon: Icon(
                                                 Icons.add_alert,
+                                                size: 15.sp,
                                                 color: Colors.white,
                                               ),
                                             );
@@ -612,14 +664,15 @@ class _TestConversionCardState extends State<TestConversionCard> {
                                           value: value,
                                           child: Text(
                                             '$value - ${widget.currencies[value]}',
-                                            maxLines: 2,
+                                            maxLines: 3,
                                             overflow: TextOverflow.ellipsis,
                                             style: TextStyle(
                                                 color: themeController.isDark
                                                     ? LightColors
                                                         .leftOperatorColor
                                                     : LightColors
-                                                        .leftOperatorColor),
+                                                        .leftOperatorColor,
+                                                fontSize: 12.sp),
                                           ),
                                         );
                                       }).toList(),
@@ -634,6 +687,7 @@ class _TestConversionCardState extends State<TestConversionCard> {
                                         ? LightColors.leftOperatorColor
                                         : LightColors.leftOperatorColor,
                                     style: TextStyle(
+                                        fontSize: 12.sp,
                                         color: themeController.isDark
                                             ? CommonColors.white
                                             : CommonColors.black),
@@ -648,9 +702,10 @@ class _TestConversionCardState extends State<TestConversionCard> {
                                     controller: data.amountController,
                                     enableInteractiveSelection: false,
                                     keyboardType: TextInputType.number,
-                                    decoration: const InputDecoration(
+                                    decoration: InputDecoration(
                                       hintText: 'eg. 100',
-                                      hintStyle: TextStyle(color: Colors.grey),
+                                      hintStyle: TextStyle(
+                                          color: Colors.grey, fontSize: 12.sp),
                                       border: InputBorder.none,
                                     ),
                                     onTap: () {
@@ -670,13 +725,13 @@ class _TestConversionCardState extends State<TestConversionCard> {
                                 SizedBox(width: 1.w),
                                 data.isSelected
                                     ? Icon(Icons.calculate,
-                                        size: 6.4.w,
+                                        size: 15.sp,
                                         color: themeController.isDark
                                             ? LightColors.leftOperatorColor
                                             : LightColors.leftOperatorColor)
                                     : Icon(
                                         Icons.more_vert,
-                                        size: 6.4.w,
+                                        size: 15.sp,
                                         color: Colors
                                             .grey, // Show 3-dot icon when not selected
                                       ),
@@ -701,7 +756,7 @@ class _TestConversionCardState extends State<TestConversionCard> {
                   await _showCurrencyOptions(context);
                 },
                 child: Container(
-                  width: 40.w,
+                  width: 45.w,
                   padding: EdgeInsets.all(2.w),
                   decoration: BoxDecoration(
                       color: LightColors.leftOperatorColor,
@@ -710,6 +765,7 @@ class _TestConversionCardState extends State<TestConversionCard> {
                     children: [
                       Icon(
                         Icons.add,
+                        size: 15.sp,
                         color: themeController.isDark
                             ? CommonColors.white
                             : CommonColors.white,
@@ -718,6 +774,7 @@ class _TestConversionCardState extends State<TestConversionCard> {
                       Text(
                         'Add Currency',
                         style: TextStyle(
+                            fontSize: 12.sp,
                             color: themeController.isDark
                                 ? CommonColors.white
                                 : CommonColors.white),

@@ -1,3 +1,4 @@
+import 'package:calculator_app/screen/settings_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
@@ -171,28 +172,36 @@ class MainScreen extends StatelessWidget {
                     },
                     icon: Icon(
                       Icons.currency_exchange_outlined,
+                      size: 18.sp,
                       color:
                           themeController.isDark ? Colors.white : Colors.black,
                     )),
+                SizedBox(width: 1.5.w),
                 IconButton(
                   onPressed: () {
                     themeController
                         .toggleTheme(); // Call the toggleTheme method
                   },
                   icon: Icon(
+                    size: 18.sp,
                     themeController.isDark
                         ? Icons.light_mode_outlined
                         : Icons.dark_mode_outlined,
                     color: themeController.isDark ? Colors.white : Colors.black,
                   ),
                 ),
+                SizedBox(width: 1.5.w),
                 IconButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Get.to(const SettingScreen());
+                  },
                   icon: Icon(
                     Icons.settings,
+                    size: 18.sp,
                     color: themeController.isDark ? Colors.white : Colors.black,
                   ),
                 ),
+                SizedBox(width: 1.5.w),
                 // PopupMenuButton<int>(
                 //   itemBuilder: (BuildContext context) => <PopupMenuEntry<int>>[
                 //     PopupMenuItem<int>(
@@ -263,7 +272,7 @@ class MainScreen extends StatelessWidget {
             ),
           ),
           Padding(
-            padding: EdgeInsets.only(right: 6.w, top: 11.h),
+            padding: EdgeInsets.only(right: 6.w, top: 8.h),
             child: Column(
               // crossAxisAlignment: CrossAxisAlignment.end,
               children: [
