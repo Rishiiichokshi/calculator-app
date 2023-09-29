@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../controller/theme_controller.dart';
-import '../../data/network/api_services.dart';
+import '../../app_services/api_services.dart';
 import '../../model/rates_model.dart';
 import '../../utils/colors.dart';
 import 'conversion_card.dart';

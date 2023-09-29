@@ -1,5 +1,8 @@
-import 'package:calculator_app/screen/settings_screen.dart';
+import 'package:calculator_app/screen/calculator/scientific_calculator.dart';
+import 'package:calculator_app/screen/calculator/widget/custom_button.dart';
+import 'package:calculator_app/screen/generalScreen/settings_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
 
@@ -7,14 +10,18 @@ import 'package:sizer/sizer.dart';
 import '../../controller/theme_controller.dart';
 import '../../controller/calculate_controller.dart';
 import '../../utils/colors.dart';
-import '../../widget/button.dart';
 import '../currency_converter/currency_converter_screen.dart';
 
-class MainScreen extends StatelessWidget {
+class MainScreen extends StatefulWidget {
   MainScreen({
     Key? key,
   }) : super(key: key);
 
+  @override
+  State<MainScreen> createState() => _MainScreenState();
+}
+
+class _MainScreenState extends State<MainScreen> {
   final List<String> buttons = [
     "C",
     "DEL",
@@ -43,21 +50,40 @@ class MainScreen extends StatelessWidget {
     var controller = Get.find<CalculateController>();
     var themeController = Get.find<ThemeController>();
 
-    return GetBuilder<ThemeController>(builder: (context) {
-      return Scaffold(
-        backgroundColor: themeController.isDark
-            ? DarkColors.scaffoldBgColor
-            : LightColors.scaffoldBgColor,
-        body: Column(
-          children: [
-            GetBuilder<CalculateController>(builder: (context) {
-              return outPutSection(themeController, controller);
-            }),
-            inPutSection(themeController, controller),
-          ],
-        ),
+    final isLandscape =
+        MediaQuery.of(context).orientation == Orientation.landscape;
+
+    if (isLandscape) {
+      // Navigate to the ScientificCalculator screen in landscape mode
+      return ScientificCalculator();
+    } else {
+      return WillPopScope(
+        onWillPop: () async {
+          // Get.defaultDialog(
+          //     onConfirm: () {
+          //       // if(Plat≥onConfirm)
+          //       SystemNavigator.pop();
+          //     },
+          //     textConfirm: "Yes");
+          return true;
+        },
+        child: GetBuilder<ThemeController>(builder: (context) {
+          return Scaffold(
+            backgroundColor: themeController.isDark
+                ? DarkColors.scaffoldBgColor
+                : LightColors.scaffoldBgColor,
+            body: Column(
+              children: [
+                GetBuilder<CalculateController>(builder: (context) {
+                  return outPutSection(themeController, controller);
+                }),
+                inPutSection(themeController, controller),
+              ],
+            ),
+          );
+        }),
       );
-    });
+    }
   }
 
   /// In put Section - Enter Numbers

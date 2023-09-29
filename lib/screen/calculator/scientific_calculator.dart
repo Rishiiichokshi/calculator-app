@@ -1,4 +1,4 @@
-import 'package:calculator_app/widget/scientific_button.dart';
+import 'package:calculator_app/screen/calculator/widget/scientific_button.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 // ignore: unnecessary_import
