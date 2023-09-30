@@ -6,6 +6,7 @@ import '../../controller/theme_controller.dart';
 import '../../app_services/api_services.dart';
 import '../../model/rates_model.dart';
 import '../../utils/colors.dart';
+import '../calculator/scientific_calculator.dart';
 import 'conversion_card.dart';
 
 class CurrencyConverterScreen extends StatefulWidget {
@@ -44,76 +45,83 @@ class _CurrencyConverterScreenState extends State<CurrencyConverterScreen> {
   @override
   Widget build(BuildContext context) {
     var themeController = Get.find<ThemeController>();
+    final isLandscape =
+        MediaQuery.of(context).orientation == Orientation.landscape;
 
-    return Scaffold(
-      key: _scaffoldKey,
-      backgroundColor: themeController.isDark
-          ? DarkColors.currencyScaffoldBgColor
-          : LightColors.scaffoldBgColor,
-      resizeToAvoidBottomInset: false,
-      appBar: AppBar(
-        leading: IconButton(
-            onPressed: () {
-              Get.back();
-            },
-            icon: Icon(
-              size: 5.w,
-              Icons.arrow_back,
-              color: themeController.isDark ? Colors.white : Colors.black,
-            )),
-        centerTitle: true,
+    if (isLandscape) {
+      // Navigate to the ScientificCalculator screen in landscape mode
+      return const ScientificCalculator();
+    } else {
+      return Scaffold(
+        key: _scaffoldKey,
         backgroundColor: themeController.isDark
             ? DarkColors.currencyScaffoldBgColor
             : LightColors.scaffoldBgColor,
-        title: Text(
-          'Currency Convertor',
-          style: TextStyle(
-              fontSize: 5.w,
-              color: themeController.isDark
-                  ? CommonColors.white
-                  : CommonColors.black),
+        resizeToAvoidBottomInset: false,
+        appBar: AppBar(
+          leading: IconButton(
+              onPressed: () {
+                Get.back();
+              },
+              icon: Icon(
+                size: 5.w,
+                Icons.arrow_back,
+                color: themeController.isDark ? Colors.white : Colors.black,
+              )),
+          centerTitle: true,
+          backgroundColor: themeController.isDark
+              ? DarkColors.currencyScaffoldBgColor
+              : LightColors.scaffoldBgColor,
+          title: Text(
+            'Currency Convertor',
+            style: TextStyle(
+                fontSize: 5.w,
+                color: themeController.isDark
+                    ? CommonColors.white
+                    : CommonColors.black),
+          ),
         ),
-      ),
-      body: FutureBuilder<RatesModel>(
-          future: ratesModel,
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return Center(
-                child: CircularProgressIndicator(
-                    color: themeController.isDark
-                        ? CommonColors.white
-                        : DarkColors.bottomSheetColor),
-              );
-            } else {
-              return FutureBuilder<Map>(
-                  future: currenciesModel,
-                  builder: (context, index) {
-                    if (index.connectionState == ConnectionState.waiting) {
-                      return const Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    } else if (index.hasError) {
-                      return Center(
-                        child: Text(
-                          'Error: ${index.error}',
-                          style: TextStyle(
-                              fontSize: 10.sp,
-                              color: themeController.isDark
-                                  ? CommonColors.white
-                                  : CommonColors.black),
-                        ),
-                      );
-                    } else {
-                      return TestConversionCard(
-                        rates: snapshot.data!.rates,
-                        currencies: index.data!,
-                        scaffoldKey: _scaffoldKey,
-                        onCurrencySelected: handleCurrencySelected,
-                      );
-                    }
-                  });
-            }
-          }),
-    );
+        body: FutureBuilder<RatesModel>(
+            future: ratesModel,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Center(
+                  child: CircularProgressIndicator(
+                      color: themeController.isDark
+                          ? CommonColors.white
+                          : DarkColors.bottomSheetColor),
+                );
+              } else {
+                return FutureBuilder<Map>(
+                    future: currenciesModel,
+                    builder: (context, index) {
+                      if (index.connectionState == ConnectionState.waiting) {
+                        return const Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      } else if (index.hasError) {
+                        return Center(
+                          child: Text(
+                            'Error: ${index.error}',
+                            style: TextStyle(
+                                fontSize: 10.sp,
+                                color: themeController.isDark
+                                    ? CommonColors.white
+                                    : CommonColors.black),
+                          ),
+                        );
+                      } else {
+                        return TestConversionCard(
+                          rates: snapshot.data!.rates,
+                          currencies: index.data!,
+                          scaffoldKey: _scaffoldKey,
+                          onCurrencySelected: handleCurrencySelected,
+                        );
+                      }
+                    });
+              }
+            }),
+      );
+    }
   }
 }

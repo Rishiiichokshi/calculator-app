@@ -1,8 +1,6 @@
 import 'package:calculator_app/screen/calculator/widget/scientific_button.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-// ignore: unnecessary_import
-import 'package:get/get_core/src/get_main.dart';
 
 import 'package:sizer/sizer.dart';
 
@@ -75,7 +73,6 @@ class _ScientificCalculatorState extends State<ScientificCalculator> {
     "=",
   ];
 
-  //yˣ, 2ˣ,logᵧ, log₂, sin⁻¹, cos⁻¹, tan⁻¹, sinh⁻¹, cosh⁻¹, tanh⁻¹
   bool showRadText = true;
 
   @override

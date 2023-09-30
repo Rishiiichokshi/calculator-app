@@ -2,7 +2,6 @@ import 'package:calculator_app/screen/calculator/scientific_calculator.dart';
 import 'package:calculator_app/screen/calculator/widget/custom_button.dart';
 import 'package:calculator_app/screen/generalScreen/settings_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
 
@@ -13,7 +12,7 @@ import '../../utils/colors.dart';
 import '../currency_converter/currency_converter_screen.dart';
 
 class MainScreen extends StatefulWidget {
-  MainScreen({
+  const MainScreen({
     Key? key,
   }) : super(key: key);
 
@@ -55,7 +54,7 @@ class _MainScreenState extends State<MainScreen> {
 
     if (isLandscape) {
       // Navigate to the ScientificCalculator screen in landscape mode
-      return ScientificCalculator();
+      return const ScientificCalculator();
     } else {
       return WillPopScope(
         onWillPop: () async {

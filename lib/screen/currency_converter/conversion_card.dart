@@ -23,6 +23,7 @@ class TestConversionCard extends StatefulWidget {
   });
 
   @override
+  // ignore: library_private_types_in_public_api
   _TestConversionCardState createState() => _TestConversionCardState();
 }
 
@@ -319,7 +320,7 @@ class _TestConversionCardState extends State<TestConversionCard> {
                                     : CommonColors.black,
                               ),
                             ),
-                            Spacer(),
+                            const Spacer(),
                             if (isSelected)
                               IconButton(
                                 icon: Icon(

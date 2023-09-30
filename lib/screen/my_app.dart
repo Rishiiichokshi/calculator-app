@@ -1,6 +1,7 @@
 import 'package:calculator_app/bindings/my_bindings.dart';
 import 'package:calculator_app/screen/calculator/main_screen.dart';
 import 'package:calculator_app/utils/colors.dart';
+import 'package:calculator_app/utils/string_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -30,7 +31,6 @@ class _MyAppState extends State<MyApp> {
     if (_isFirstLaunch) {
       prefs.setBool('first_launch', false);
     }
-    print('$_isFirstLaunch');
     setState(() {});
   }
 
@@ -47,8 +47,9 @@ class _MyAppState extends State<MyApp> {
                   cursorColor: LightColors.leftOperatorColor),
             ),
             initialBinding: MyBindings(),
-            title: "Flutter Calculator",
-            home: _isFirstLaunch ? OnboardingScreen() : MainScreen(),
+            title: StringUtils.flutterCalculator,
+            home:
+                _isFirstLaunch ? const OnboardingScreen() : const MainScreen(),
           ),
         );
       },
