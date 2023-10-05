@@ -1,3 +1,4 @@
+import 'package:calculator_app/utils/assets_utils.dart';
 import 'package:calculator_app/utils/string_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
@@ -46,7 +47,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 OnboardingPage(
                   sizedBoxHeightAbove: 2.w,
                   sizedBoxHeight: 15.w,
-                  imagepath: 'assets/lottie/animation_ln1na6wb.json',
+                  imagepath: AssetsUtils.scientificLottie,
                   title: StringUtils.titleOneOnboarding,
                   description: StringUtils.descriptionOneOnboarding,
                 ),
@@ -54,7 +55,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Image.asset(
-                      'assets/images/appScreenshot.png',
+                      AssetsUtils.appScreenshot,
                       height: Get.height / 2,
                       width: double.infinity,
                     ),
@@ -79,10 +80,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   ],
                 ),
                 OnboardingPage(
-                  imagepath: 'assets/lottie/animation_ln1pdz3d.json',
+                  imagepath: AssetsUtils.rocketLottie,
                   sizedBoxHeight: 5.w,
                   title: StringUtils.titleThreeOnboarding,
-                  description: StringUtils.titleThreeOnboarding,
+                  description: StringUtils.descriptionThreeOnboarding,
                 ),
               ],
             ),
@@ -111,7 +112,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     }
                   },
                   child: Text(
-                    _currentIndex == 0 || _currentIndex == 1 ? "Skip" : 'Done',
+                    _currentIndex == 0 || _currentIndex == 1
+                        ? StringUtils.skip
+                        : StringUtils.done,
                     style: TextStyle(
                       fontSize: 12.sp,
                       fontWeight: FontWeight.bold,
@@ -152,7 +155,7 @@ class OnboardingPage extends StatelessWidget {
           height: sizedBoxHeightAbove,
         ),
         Lottie.asset(
-          imagepath ?? 'assets/lottie/animation_ln1mzksd.json',
+          imagepath!,
           fit: BoxFit.cover,
         ),
         SizedBox(height: sizedBoxHeight ?? 1.h),
@@ -190,9 +193,9 @@ class CustomDotIndicator extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: List.generate(itemCount, (index) {
         return Container(
-          margin: const EdgeInsets.all(4.0),
-          width: (index == currentIndex) ? 29 : 14,
-          height: 6.0,
+          margin: EdgeInsets.all(1.w),
+          width: (index == currentIndex) ? 6.w : 3.w,
+          height: 2.w,
           decoration: BoxDecoration(
             color: (index == currentIndex) ? Colors.blue : Colors.grey,
             borderRadius: BorderRadius.circular(8.0),

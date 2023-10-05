@@ -1,3 +1,4 @@
+import 'package:calculator_app/utils/string_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -29,7 +30,7 @@ class TestConversionCard extends StatefulWidget {
 
 class ConversionData {
   TextEditingController amountController = TextEditingController();
-  String dropdownValue = 'USD';
+  String dropdownValue = StringUtils.usd;
   String conversion = '';
   double convertedAmount = 0.0;
   bool isSelected = false;
@@ -39,7 +40,7 @@ class _TestConversionCardState extends State<TestConversionCard> {
   List<ConversionData> conversionDataList = [];
   ConversionData data = ConversionData();
   bool isLoading = false;
-  String defaultCurrency = 'USD';
+  String defaultCurrency = StringUtils.usd;
   int selectedIndex = 0;
   bool isConvert = false;
   var themeController = Get.find<ThemeController>();
@@ -255,7 +256,7 @@ class _TestConversionCardState extends State<TestConversionCard> {
                             : Colors.black),
                     controller: searchController,
                     decoration: InputDecoration(
-                      hintText: 'Search Currency',
+                      hintText: StringUtils.searchCurrency,
                       focusedBorder: UnderlineInputBorder(
                           borderSide: BorderSide(
                               color: themeController.isDark
@@ -383,15 +384,15 @@ class _TestConversionCardState extends State<TestConversionCard> {
                                 widget.onCurrencySelected(value);
                               } else if (isDefaultCurrency) {
                                 Get.snackbar(
-                                  'Warning',
+                                  StringUtils.warning,
                                   snackStyle: SnackStyle.FLOATING,
-                                  'You Can\'t remove default currency!!',
+                                  StringUtils.youCantRemoveDefaultCurrency,
                                   snackPosition: SnackPosition.BOTTOM,
                                   dismissDirection: DismissDirection.startToEnd,
                                   colorText: Colors.white,
                                   backgroundColor: Colors.black54,
                                   titleText: Text(
-                                    'Warning',
+                                    StringUtils.warning,
                                     style: TextStyle(
                                       color: Colors.white,
                                       fontSize: 12.sp,
@@ -399,7 +400,7 @@ class _TestConversionCardState extends State<TestConversionCard> {
                                     ),
                                   ),
                                   messageText: Text(
-                                    'You Can\'t remove default currency!!',
+                                    StringUtils.youCantRemoveDefaultCurrency,
                                     style: TextStyle(
                                       color: Colors.white,
                                       fontSize: 12.sp,
@@ -453,11 +454,11 @@ class _TestConversionCardState extends State<TestConversionCard> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text(
-            'Delete Currency Converter',
+            StringUtils.deleteCurrencyConverter,
             style: TextStyle(fontSize: 12.sp),
           ),
           content: Text(
-            'Are you sure you want to delete this currency converter?',
+            StringUtils.areYouSureYouWantToDeleteCurrencyConverter,
             style: TextStyle(fontSize: 12.sp),
           ),
           actions: [
@@ -466,7 +467,7 @@ class _TestConversionCardState extends State<TestConversionCard> {
                 Navigator.of(context).pop(); // Close the dialog
               },
               child: Text(
-                'No',
+                StringUtils.no,
                 style: TextStyle(fontSize: 12.sp),
               ),
             ),
@@ -476,14 +477,14 @@ class _TestConversionCardState extends State<TestConversionCard> {
                   _deleteConversionData(index);
                 } else {
                   Get.snackbar(
-                    'Warning',
-                    'You can\'t delete the default USD converter!',
+                    StringUtils.warning,
+                    StringUtils.youCantDeleteDefaultUsdConverter,
                     snackPosition: SnackPosition.BOTTOM,
                     dismissDirection: DismissDirection.startToEnd,
                     colorText: Colors.white,
                     isDismissible: true,
                     titleText: Text(
-                      'Warning',
+                      StringUtils.warning,
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 12.sp,
@@ -491,7 +492,7 @@ class _TestConversionCardState extends State<TestConversionCard> {
                       ),
                     ),
                     messageText: Text(
-                      'You Can\'t remove default currency!!',
+                      StringUtils.youCantRemoveDefaultCurrency,
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 12.sp,
@@ -509,7 +510,7 @@ class _TestConversionCardState extends State<TestConversionCard> {
                 Navigator.of(context).pop(); // Close the dialog
               },
               child: Text(
-                'Yes',
+                StringUtils.yes,
                 style: TextStyle(fontSize: 12.sp),
               ),
             ),
@@ -562,7 +563,7 @@ class _TestConversionCardState extends State<TestConversionCard> {
                               backgroundColor: const Color(0xFFFE4A49),
                               foregroundColor: Colors.white,
                               icon: Icons.delete,
-                              label: 'Delete',
+                              label: StringUtils.delete,
                             ),
                           ],
                         ),
@@ -706,10 +707,11 @@ class _TestConversionCardState extends State<TestConversionCard> {
                                           );
                                         }).toList(),
                                         value: data.dropdownValue,
-                                        hint: const Padding(
-                                          padding: EdgeInsets.all(3),
+                                        hint: Padding(
+                                          padding: const EdgeInsets.all(3),
                                           child: DropdownMenuItem(
-                                            child: Text("Select Currency"),
+                                            child: Text(
+                                                StringUtils.selectCurrency),
                                           ),
                                         ),
                                         menuBackgroundColor:
@@ -722,14 +724,15 @@ class _TestConversionCardState extends State<TestConversionCard> {
                                           setState(() {
                                             if (index == 0) {
                                               Get.snackbar(
-                                                'Warning',
-                                                'You can\'t change the default currency!',
+                                                StringUtils.warning,
+                                                StringUtils
+                                                    .youCantRemoveDefaultCurrency,
                                                 snackPosition:
                                                     SnackPosition.BOTTOM,
                                                 dismissDirection:
                                                     DismissDirection.endToStart,
                                                 titleText: Text(
-                                                  'Warning',
+                                                  StringUtils.warning,
                                                   style: TextStyle(
                                                     color: Colors.white,
                                                     fontSize: 12.sp,
@@ -737,7 +740,8 @@ class _TestConversionCardState extends State<TestConversionCard> {
                                                   ),
                                                 ),
                                                 messageText: Text(
-                                                  'You can\'t change the default currency!',
+                                                  StringUtils
+                                                      .youCantRemoveDefaultCurrency,
                                                   style: TextStyle(
                                                     color: Colors.white,
                                                     fontSize: 12.sp,
@@ -838,7 +842,7 @@ class _TestConversionCardState extends State<TestConversionCard> {
                                         enableInteractiveSelection: false,
                                         keyboardType: TextInputType.number,
                                         decoration: InputDecoration(
-                                          hintText: 'eg. 100',
+                                          hintText: StringUtils.egHundred,
                                           hintStyle: TextStyle(
                                               color: Colors.grey,
                                               fontSize: 12.sp),
@@ -911,7 +915,7 @@ class _TestConversionCardState extends State<TestConversionCard> {
                       ),
                       SizedBox(width: 2.w),
                       Text(
-                        'Add Currency',
+                        StringUtils.addCurrency,
                         style: TextStyle(
                             fontSize: 12.sp,
                             color: themeController.isDark
@@ -946,7 +950,7 @@ class Utils {
 
       return formattedResult;
     } catch (e) {
-      return 'Invalid input';
+      return StringUtils.invalidInput;
     }
   }
 }

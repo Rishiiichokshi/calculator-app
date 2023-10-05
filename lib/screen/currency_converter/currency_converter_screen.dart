@@ -1,3 +1,4 @@
+import 'package:calculator_app/utils/string_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
@@ -73,7 +74,7 @@ class _CurrencyConverterScreenState extends State<CurrencyConverterScreen> {
               ? DarkColors.currencyScaffoldBgColor
               : LightColors.scaffoldBgColor,
           title: Text(
-            'Currency Convertor',
+            StringUtils.currencyConvertor,
             style: TextStyle(
                 fontSize: 5.w,
                 color: themeController.isDark

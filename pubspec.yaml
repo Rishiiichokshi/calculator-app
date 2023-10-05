@@ -24,6 +24,7 @@ dependencies:
   carousel_slider: ^4.2.1
   shared_preferences: ^2.2.1
   lottie: ^2.6.0
+  tutorial_coach_mark: ^1.2.9
 
 dev_dependencies:
   flutter_test:
@@ -37,24 +38,21 @@ flutter:
   uses-material-design: true
 
   assets:
-    - assets/lottie/animation_ln1mzksd.json
-    - assets/lottie/animation_ln1na6wb.json
-    - assets/lottie/animation_ln1pdz3d.json
-    - assets/lottie/animation_ln1pro2l.json
-    - assets/lottie/swipe.json
-    - assets/lottie/swipeTwo.json
+
+    - assets/lottie/scientific_lottie.json
+    - assets/lottie/rocket.json
     - assets/images/appScreenshot.png
   #   - images/a_dot_ham.jpeg
 
-  fonts:
-    - family: Poppins
-      fonts:
-        - asset: assets/fonts/Poppins-Bold.ttf
-          weight: 700
-        - asset: assets/fonts/Poppins-Light.ttf
-          weight: 300
-        - asset: assets/fonts/Poppins-Regular.ttf
-          weight: 400
+#  fonts:
+#    - family: Poppins
+#      fonts:
+#        - asset: assets/fonts/Poppins-Bold.ttf
+#          weight: 700
+#        - asset: assets/fonts/Poppins-Light.ttf
+#          weight: 300
+#        - asset: assets/fonts/Poppins-Regular.ttf
+#          weight: 400
 
 
   #   - family: Trajan Pro

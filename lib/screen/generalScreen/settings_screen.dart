@@ -1,3 +1,4 @@
+import 'package:calculator_app/utils/string_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
@@ -31,7 +32,7 @@ class SettingScreen extends StatelessWidget {
             ? DarkColors.currencyScaffoldBgColor
             : LightColors.scaffoldBgColor,
         title: Text(
-          'Settings',
+          StringUtils.settings,
           style: TextStyle(
               fontSize: 5.w,
               color: themeController.isDark
@@ -52,7 +53,7 @@ class SettingScreen extends StatelessWidget {
                 ),
                 SizedBox(width: 8.w),
                 Text(
-                  'Privacy Policy',
+                  StringUtils.privacyPolicy,
                   style: TextStyle(
                     fontSize: 14.sp,
                     color: themeController.isDark ? Colors.white : Colors.black,
@@ -72,7 +73,7 @@ class SettingScreen extends StatelessWidget {
                 ),
                 SizedBox(width: 8.w),
                 Text(
-                  'Rating  &  reviews',
+                  StringUtils.ratingAndReviews,
                   style: TextStyle(
                     fontSize: 14.sp,
                     color: themeController.isDark ? Colors.white : Colors.black,
