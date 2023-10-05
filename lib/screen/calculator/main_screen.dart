@@ -1,6 +1,5 @@
-import 'package:calculator_app/screen/calculator/scientific_calculator.dart';
-import 'package:calculator_app/screen/calculator/widget/custom_button.dart';
-import 'package:calculator_app/screen/generalScreen/settings_screen.dart';
+import 'package:alpha_one/screen/calculator/scientific_calculator.dart';
+import 'package:alpha_one/screen/calculator/widget/custom_button.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
@@ -10,6 +9,7 @@ import '../../controller/theme_controller.dart';
 import '../../controller/calculate_controller.dart';
 import '../../utils/colors.dart';
 import '../currency_converter/currency_converter_screen.dart';
+import '../generalScreen/settings_screen.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({

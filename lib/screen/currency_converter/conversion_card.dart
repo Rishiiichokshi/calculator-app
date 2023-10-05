@@ -1,4 +1,3 @@
-import 'package:calculator_app/utils/string_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -8,6 +7,7 @@ import 'package:search_choices/search_choices.dart';
 
 import '../../controller/theme_controller.dart';
 import '../../utils/colors.dart';
+import '../../utils/string_utils.dart';
 
 class TestConversionCard extends StatefulWidget {
   final Map rates;

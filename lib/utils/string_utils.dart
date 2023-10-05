@@ -4,7 +4,7 @@ import 'package:flutter/foundation.dart';
 class StringUtils {
   static String no = "No";
   static String yes = "Yes";
-  static String flutterCalculator = "Flutter Calculator";
+  static String alphaOne = "Alpha One";
   static String titleOneOnboarding = "More than Meets the Eye.";
   static String titleTwoOnboarding = "Currency Conversion Made Easy.";
   static String titleThreeOnboarding = "Ready to Calculate?";

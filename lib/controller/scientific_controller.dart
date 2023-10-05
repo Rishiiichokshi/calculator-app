@@ -1,11 +1,12 @@
 import 'dart:math';
 
-import 'package:calculator_app/utils/string_utils.dart';
 import 'package:get/get.dart';
 import 'dart:math' as math;
 import 'dart:math';
 
 import 'package:math_expressions/math_expressions.dart';
+
+import '../utils/string_utils.dart';
 
 class ScientificController extends GetxController {
   var userInput = "";

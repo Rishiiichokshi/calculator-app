@@ -1,10 +1,10 @@
-import 'package:calculator_app/utils/string_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../controller/theme_controller.dart';
 import '../../utils/colors.dart';
+import '../../utils/string_utils.dart';
 
 class SettingScreen extends StatelessWidget {
   const SettingScreen({super.key});

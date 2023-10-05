@@ -1,4 +1,3 @@
-import 'package:calculator_app/utils/string_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
@@ -7,6 +6,7 @@ import '../../controller/theme_controller.dart';
 import '../../app_services/api_services.dart';
 import '../../model/rates_model.dart';
 import '../../utils/colors.dart';
+import '../../utils/string_utils.dart';
 import '../calculator/scientific_calculator.dart';
 import 'conversion_card.dart';
 

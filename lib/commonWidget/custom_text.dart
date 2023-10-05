@@ -1,7 +1,8 @@
-import 'package:calculator_app/utils/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
+
+import '../utils/colors.dart';
 
 class CustomText extends StatelessWidget {
   final String title;

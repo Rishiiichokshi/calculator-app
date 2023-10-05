@@ -1,11 +1,11 @@
-import 'package:calculator_app/utils/assets_utils.dart';
-import 'package:calculator_app/utils/string_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
 import 'package:lottie/lottie.dart';
 
+import '../../utils/assets_utils.dart';
+import '../../utils/string_utils.dart';
 import '../calculator/main_screen.dart';
 import '../calculator/scientific_calculator.dart';
 
@@ -68,13 +68,17 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       style: TextStyle(
                         fontSize: 18.sp,
                         fontWeight: FontWeight.bold,
+                        fontFamily: 'Poppins',
                       ),
                     ),
                     SizedBox(height: 2.w),
                     Text(
                       StringUtils.descriptionTwoOnboarding,
                       style: TextStyle(
-                          fontSize: 13.sp, fontWeight: FontWeight.w400),
+                        fontSize: 13.sp,
+                        fontWeight: FontWeight.w400,
+                        fontFamily: 'Poppins',
+                      ),
                       textAlign: TextAlign.center,
                     ),
                   ],
@@ -117,7 +121,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         : StringUtils.done,
                     style: TextStyle(
                       fontSize: 12.sp,
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w500,
+                      fontFamily: 'Poppins',
                       color: Colors.blue,
                     ),
                   ),
@@ -164,12 +169,17 @@ class OnboardingPage extends StatelessWidget {
           style: TextStyle(
             fontSize: 18.sp,
             fontWeight: FontWeight.bold,
+            fontFamily: 'Poppins',
           ),
         ),
         SizedBox(height: 2.h),
         Text(
           description,
-          style: TextStyle(fontSize: 13.sp, fontWeight: FontWeight.w400),
+          style: TextStyle(
+            fontSize: 13.sp,
+            fontWeight: FontWeight.w400,
+            fontFamily: 'Poppins',
+          ),
           textAlign: TextAlign.center,
         ),
       ],

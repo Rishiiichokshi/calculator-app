@@ -1,4 +1,4 @@
-name: calculator_app
+name: alpha_one
 description: A new Flutter project.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
@@ -26,6 +26,7 @@ dependencies:
   lottie: ^2.6.0
   tutorial_coach_mark: ^1.2.9
 
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -44,15 +45,15 @@ flutter:
     - assets/images/appScreenshot.png
   #   - images/a_dot_ham.jpeg
 
-#  fonts:
-#    - family: Poppins
-#      fonts:
-#        - asset: assets/fonts/Poppins-Bold.ttf
-#          weight: 700
-#        - asset: assets/fonts/Poppins-Light.ttf
-#          weight: 300
-#        - asset: assets/fonts/Poppins-Regular.ttf
-#          weight: 400
+  fonts:
+    - family: Poppins
+      fonts:
+        - asset: assets/fonts/Poppins-Bold.ttf
+          weight: 700
+        - asset: assets/fonts/Poppins-Light.ttf
+          weight: 300
+        - asset: assets/fonts/Poppins-Regular.ttf
+          weight: 400
 
 
   #   - family: Trajan Pro
