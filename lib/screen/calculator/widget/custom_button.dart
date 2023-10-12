@@ -24,9 +24,10 @@ class CustomButton extends StatelessWidget {
     return GestureDetector(
       onTap: buttonTapped,
       child: Container(
-        margin: const EdgeInsets.all(8),
+        margin: EdgeInsets.all(2.w),
         decoration: BoxDecoration(
           color: color,
+          // shape: BoxShape.circle
           borderRadius: BorderRadius.circular(30),
         ),
         child: Center(
@@ -34,7 +35,8 @@ class CustomButton extends StatelessWidget {
             text,
             style: TextStyle(
                 color: textColor,
-                fontSize: fontSize ?? 14.sp,
+                fontSize: fontSize ?? 16.sp,
+                // fontFamily: 'Poppins',
                 fontWeight: fontWeight ?? FontWeight.bold),
           ),
         ),

@@ -26,12 +26,15 @@ class _CurrencyConverterScreenState extends State<CurrencyConverterScreen> {
   @override
   void initState() {
     super.initState();
+    // print('----${_fetchData()}');
     _fetchData();
   }
 
   Future<void> _fetchData() async {
     ratesModel = fetchRates();
+    // print('----${fetchRates()}');
     currenciesModel = fetchCurrencies();
+    // print('-ccc---${fetchCurrencies()}');
   }
 
   // Callback function to handle currency selection
@@ -96,6 +99,8 @@ class _CurrencyConverterScreenState extends State<CurrencyConverterScreen> {
                 return FutureBuilder<Map>(
                     future: currenciesModel,
                     builder: (context, index) {
+                      // print('--index---${index.data}');
+                      // print('--rates---${snapshot.data!.rates}');
                       if (index.connectionState == ConnectionState.waiting) {
                         return const Center(
                           child: CircularProgressIndicator(),
