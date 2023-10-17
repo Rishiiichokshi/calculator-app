@@ -25,10 +25,10 @@ class StringUtils {
   ///snackBar
   static String warning = "Warning";
   static String youCantRemoveDefaultCurrency =
-      "You Can't remove default currency!!";
+      "You Can\'t remove default currency!!";
   static String deleteCurrencyConverter = "Delete Currency Converter";
   static String youCantDeleteDefaultUsdConverter =
-      "'You can't delete the default USD converter!'";
+      "'You can\'t delete the default USD converter!'";
   static String areYouSureYouWantToDeleteCurrencyConverter =
       "Are you sure you want to delete this currency converter?";
 

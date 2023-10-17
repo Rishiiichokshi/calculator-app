@@ -25,7 +25,6 @@ dependencies:
   shared_preferences: ^2.2.1
   lottie: ^2.6.0
   tutorial_coach_mark: ^1.2.9
-  shimmer: ^3.0.0
 
 
 dev_dependencies:

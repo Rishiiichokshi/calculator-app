@@ -2,7 +2,6 @@ import 'package:alpha_one/screen/calculator/scientific_calculator.dart';
 import 'package:alpha_one/screen/calculator/widget/custom_button.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:shimmer/shimmer.dart';
 import 'package:sizer/sizer.dart';
 
 ///
@@ -160,8 +159,8 @@ class _MainScreenState extends State<MainScreen> {
                         buttonTapped: () {
                           controller.onBtnTapped(buttons, index);
                         },
-                        fontWeight: FontWeight.w500,
-                        fontSize: isOperator(buttons[index]) ? 22.sp : 20.sp,
+                        fontWeight: FontWeight.bold,
+                        fontSize: isOperator(buttons[index]) ? 19.sp : 16.sp,
                         color: themeController.isDark
                             ? DarkColors.btnBgColor
                             : LightColors.btnBgColor,
@@ -191,125 +190,48 @@ class _MainScreenState extends State<MainScreen> {
             padding: const EdgeInsets.all(8.0),
             child: Row(
               children: [
-                // const Spacer(),
-                // IconButton(
-                //     onPressed: () {
-                //       Get.to(const CurrencyConverterScreen());
-                //     },
-                //     icon: Icon(
-                //       Icons.currency_exchange_outlined,
-                //       size: 18.sp,
-                //       color:
-                //           themeController.isDark ? Colors.white : Colors.black,
-                //     )),
-                // SizedBox(width: 1.5.w),
-                Expanded(
-                  child: GestureDetector(
-                    onTap: () {
+                const Spacer(),
+                IconButton(
+                    onPressed: () {
                       Get.to(const CurrencyConverterScreen());
                     },
-                    child: SizedBox(
-                      child: Stack(
-                        children: [
-                          Shimmer.fromColors(
-                            baseColor: themeController.isDark
-                                ? DarkColors.sheetBgColor
-                                : CommonColors.greyLight,
-                            // baseColor: Colors.grey[300]!,
-                            highlightColor: themeController.isDark
-                                ? Colors.black12
-                                : Colors.white60,
-                            child: Container(
-                              width: Get.width,
-                              height: 8.h,
-                              decoration: BoxDecoration(
-                                color: themeController.isDark
-                                    ? DarkColors.sheetBgColor
-                                    : LightColors.sheetBgColor,
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                            ),
-                          ),
-                          Container(
-                            width: Get.width,
-                            height: 8.h,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                Text(
-                                  'Currency Converter',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    color: themeController.isDark
-                                        ? Colors.white
-                                        : Colors.black,
-                                    fontWeight: FontWeight.w600,
-                                    fontFamily: 'Poppins',
-                                    fontSize: 12.sp,
-                                  ),
-                                ),
-                                IconButton(
-                                  onPressed: () {
-                                    // print('---tap');
-                                    Get.to(const CurrencyConverterScreen());
-                                  },
-                                  icon: Icon(
-                                    Icons.currency_exchange_outlined,
-                                    size: 18.sp,
-                                    color: themeController.isDark
-                                        ? DarkColors.leftOperatorColor
-                                        : LightColors.leftOperatorColor,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 2.w),
-                  child: IconButton(
-                    onPressed: () {
-                      themeController
-                          .toggleTheme(); // Call the toggleTheme method
-                    },
                     icon: Icon(
-                      size: 18.sp,
-                      themeController.isDark
-                          ? Icons.light_mode_outlined
-                          : Icons.dark_mode_outlined,
-                      color:
-                          themeController.isDark ? Colors.white : Colors.black,
-                    ),
-                  ),
-                ),
-                // SizedBox(width: 1.5.w),
-                Padding(
-                  padding: EdgeInsets.only(left: 1.w, right: 2.w),
-                  child: IconButton(
-                    onPressed: () {
-                      Get.to(const SettingScreen());
-                    },
-                    icon: Icon(
-                      Icons.settings,
+                      Icons.currency_exchange_outlined,
                       size: 18.sp,
                       color:
                           themeController.isDark ? Colors.white : Colors.black,
-                    ),
+                    )),
+                SizedBox(width: 1.5.w),
+                IconButton(
+                  onPressed: () {
+                    themeController
+                        .toggleTheme(); // Call the toggleTheme method
+                  },
+                  icon: Icon(
+                    size: 18.sp,
+                    themeController.isDark
+                        ? Icons.light_mode_outlined
+                        : Icons.dark_mode_outlined,
+                    color: themeController.isDark ? Colors.white : Colors.black,
                   ),
                 ),
-                // SizedBox(width: 1.5.w),
+                SizedBox(width: 1.5.w),
+                IconButton(
+                  onPressed: () {
+                    Get.to(const SettingScreen());
+                  },
+                  icon: Icon(
+                    Icons.settings,
+                    size: 18.sp,
+                    color: themeController.isDark ? Colors.white : Colors.black,
+                  ),
+                ),
+                SizedBox(width: 1.5.w),
               ],
             ),
           ),
           Padding(
-            padding: EdgeInsets.only(right: 6.w, top: 6.5.h),
+            padding: EdgeInsets.only(right: 6.w, top: 8.h),
             child: Column(
               // crossAxisAlignment: CrossAxisAlignment.end,
               children: [
