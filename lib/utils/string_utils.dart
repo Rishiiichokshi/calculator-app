@@ -4,7 +4,7 @@ import 'package:flutter/foundation.dart';
 class StringUtils {
   static String no = "No";
   static String yes = "Yes";
-  static String alphaOne = "Alpha One";
+  static String calcon = "CalCon";
   static String titleOneOnboarding = "More than Meets the Eye.";
   static String titleTwoOnboarding = "Currency Conversion Made Easy.";
   static String titleThreeOnboarding = "Ready to Calculate?";
@@ -20,7 +20,7 @@ class StringUtils {
   ///Settings screen
   static String settings = "Settings";
   static String privacyPolicy = "Privacy Policy";
-  static String ratingAndReviews = "Rating  &  reviews";
+  static String ratingAndReviews = "Rating & Reviews";
 
   ///snackBar
   static String warning = "Warning";

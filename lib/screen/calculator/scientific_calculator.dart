@@ -1,4 +1,4 @@
-import 'package:alpha_one/screen/calculator/widget/scientific_button.dart';
+import 'package:calcon/screen/calculator/widget/scientific_button.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 

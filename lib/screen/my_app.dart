@@ -1,3 +1,4 @@
+import 'package:calcon/screen/generalScreen/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -40,17 +41,17 @@ class _MyAppState extends State<MyApp> {
       builder: (context, orientation, deviceType) {
         return SafeArea(
           child: GetMaterialApp(
-            debugShowCheckedModeBanner: false,
-            theme: ThemeData(
-              primaryColor: LightColors.leftOperatorColor,
-              textSelectionTheme: const TextSelectionThemeData(
-                  cursorColor: LightColors.leftOperatorColor),
-            ),
-            initialBinding: MyBindings(),
-            title: StringUtils.alphaOne,
-            home:
-                _isFirstLaunch ? const OnboardingScreen() : const MainScreen(),
-          ),
+              debugShowCheckedModeBanner: false,
+              theme: ThemeData(
+                primaryColor: LightColors.leftOperatorColor,
+                textSelectionTheme: const TextSelectionThemeData(
+                    cursorColor: LightColors.leftOperatorColor),
+              ),
+              initialBinding: MyBindings(),
+              title: StringUtils.calcon,
+              home: SplashScreen()
+              // _isFirstLaunch ? const OnboardingScreen() : const MainScreen(),
+              ),
         );
       },
     );

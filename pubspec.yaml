@@ -1,4 +1,4 @@
-name: alpha_one
+name: calcon
 description: A new Flutter project.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
@@ -43,6 +43,8 @@ flutter:
     - assets/lottie/scientific_lottie.json
     - assets/lottie/rocket.json
     - assets/images/appScreenshot.png
+    - assets/images/splash.png
+    - assets/images/
   #   - images/a_dot_ham.jpeg
 
   fonts:

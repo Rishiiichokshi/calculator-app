@@ -59,9 +59,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       height: Get.height / 2,
                       width: double.infinity,
                     ),
-                    SizedBox(
-                      height: 5.w,
-                    ),
+                    SizedBox(height: 5.w),
                     Text(
                       StringUtils.titleTwoOnboarding,
                       textAlign: TextAlign.center,
