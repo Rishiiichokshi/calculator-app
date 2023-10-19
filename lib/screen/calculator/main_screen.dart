@@ -117,6 +117,7 @@ class _MainScreenState extends State<MainScreen> {
                         buttonTapped: () {
                           controller.clearInputAndOutput();
                         },
+                        fontSize: 20.sp,
                         color: themeController.isDark
                             ? DarkColors.btnBgColor
                             : LightColors.btnBgColor,
@@ -131,6 +132,7 @@ class _MainScreenState extends State<MainScreen> {
                         buttonTapped: () {
                           controller.deleteBtnAction();
                         },
+                        fontSize: 20.sp,
                         color: themeController.isDark
                             ? DarkColors.btnBgColor
                             : LightColors.btnBgColor,
@@ -145,7 +147,7 @@ class _MainScreenState extends State<MainScreen> {
                         buttonTapped: () {
                           controller.equalPressed();
                         },
-                        fontSize: 19.sp,
+                        fontSize: 29.sp,
                         color: themeController.isDark
                             ? DarkColors.btnBgColor
                             : LightColors.btnBgColor,
@@ -159,8 +161,9 @@ class _MainScreenState extends State<MainScreen> {
                         buttonTapped: () {
                           controller.onBtnTapped(buttons, index);
                         },
-                        fontWeight: FontWeight.bold,
-                        fontSize: isOperator(buttons[index]) ? 19.sp : 16.sp,
+                        fontWeight: FontWeight.w500,
+                        fontSize: isOperator(buttons[index]) ? 29.sp : 27.sp,
+                        // fontSize: isOperator(buttons[index]) ? 19.sp : 16.sp,
                         color: themeController.isDark
                             ? DarkColors.btnBgColor
                             : LightColors.btnBgColor,
