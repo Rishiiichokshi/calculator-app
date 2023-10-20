@@ -7,8 +7,6 @@ import 'package:sizer/sizer.dart';
 import '../bindings/my_bindings.dart';
 import '../utils/colors.dart';
 import '../utils/string_utils.dart';
-import 'calculator/main_screen.dart';
-import 'generalScreen/onboading_screen.dart';
 
 class MyApp extends StatefulWidget {
   const MyApp({Key? key}) : super(key: key);
@@ -49,7 +47,7 @@ class _MyAppState extends State<MyApp> {
               ),
               initialBinding: MyBindings(),
               title: StringUtils.calcon,
-              home: SplashScreen()
+              home: const SplashScreen()
               // _isFirstLaunch ? const OnboardingScreen() : const MainScreen(),
               ),
         );

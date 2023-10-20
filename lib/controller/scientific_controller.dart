@@ -41,18 +41,6 @@ class ScientificController extends GetxController {
     logs('====$userInput');
     logs('====userInputFC===$userInputFC');
 
-    // ///  y√x
-    // // Handle the "y√x" expression by capturing both inputs and inserting them
-    // final ySqrtXRegExp = RegExp(r'(\d+)√(\d+)');
-    // final matches = ySqrtXRegExp.allMatches(userInputFC);
-    // for (var match in matches) {
-    //   final fullMatch = match.group(0).toString(); // Convert to non-null string
-    //   final y = match.group(1); // Captured y
-    //   final x = match.group(2); // Captured x
-    //   final result = "($x)^(1/$y)";
-    //   userInputFC = userInputFC.replaceFirst(fullMatch, result);
-    // }
-
     //eˣ
     userInputFC = calculateExponential(userInputFC);
 
@@ -234,9 +222,6 @@ class ScientificController extends GetxController {
       // 10ˣ button
       else {
         if (userInput.isNotEmpty) {
-          // userInput = "10^$userInput";
-          // logs('----userInput 10x----$userInput');
-          // logs('----userOutput 10x----$userOutput');
           double base = 10.0; // The base for 10ˣ
           double exponent = (double.tryParse(userInput) ?? 0.0)
               .toDouble(); // Parse the exponent from userInput, default to 0 if parsing fails, and cast it to double
@@ -303,21 +288,6 @@ class ScientificController extends GetxController {
           calculateExponential(userInput);
           logs('====eˣ output====$userOutput');
         }
-
-        // if (userInput.isEmpty) {
-        //   userOutput = '0';
-        // } else {
-        //   double? input = dousble.tryParse(userInput);
-        //   if (input != null) {
-        //     double result = math.exp(input);
-        //     userInput = "e^$userInput";
-        //     userOutput = result.toString();
-        //     // userOutput = '0';
-        //   } else {
-        //     userInput = 'e^';
-        //     // userOutput = "Not a Number";
-        //   }
-        // }
       }
     }
 
@@ -552,33 +522,7 @@ class ScientificController extends GetxController {
     }
 
     /// . button
-    // else if (buttons[index] == '.') {
-    //   if (dotAllowed) {
-    //     if (userInput.isEmpty) {
-    //       userInput = '0.';
-    //     } else if (RegExp(r'\d$').hasMatch(userInput) &&
-    //         //this will not able to add .
-    //         // if there is already i mean if value is already double
-    //         !userInput.contains('.')) {
-    //       userInput += '.';
-    //     }
-    //     // Set the dotAllowed flag to false to prevent
-    //     // additional dots
-    //     dotAllowed = false;
-    //   }
-    // }
     else if (buttons[index] == '.') {
-      // if (userInput.isEmpty) {
-      //   // If there is no input yet, start with '0.'
-      //   userInput = '0.';
-      // } else {
-      //   final parts = userInput.split(RegExp(r'[+\-*/]'));
-      //   final lastPart = parts.last;
-      //   if (!lastPart.contains('.')) {
-      //     // Only add a dot if the last part doesn't already contain a dot
-      //     userInput += '.';
-      //   }
-      // }
       if (userInput.isEmpty ||
           userInput.endsWith('.') ||
           !isDigit(userInput[userInput.length - 1])) {
@@ -1292,9 +1236,6 @@ class ScientificController extends GetxController {
         final x = double.parse(xStr);
         final expressionResult = (pow(x, y)).toString(); // Calculate "y^x"
         result = result.replaceFirst(fullMatch, expressionResult);
-        // logs("Full Match: $fullMatch");
-        // logs("y: $y, x: $x");
-        // logs("Expression Result: $expressionResult");
       }
     }
 
@@ -1373,30 +1314,4 @@ class ScientificController extends GetxController {
     userInput = valueFromMemory.toString();
     userOutput = valueFromMemory.toString();
   }
-
-  // void memoryClear() {
-  //   memoryValue = ""; // Clear the memory
-  // }
-  //
-  // void memoryAdd() {
-  //   if (userOutput != 'Error') {
-  //     double result =
-  //         double.tryParse(userOutput) ?? 0.0; // Parse the current result
-  //     memoryValue = (double.tryParse(memoryValue) ?? 0.0 + result)
-  //         .toString(); // Add the result to memory
-  //   }
-  // }
-  //
-  // void memorySubtract() {
-  //   if (userOutput != 'Error') {
-  //     double result =
-  //         double.tryParse(userOutput) ?? 0.0; // Parse the current result
-  //     memoryValue = (double.tryParse(memoryValue) ?? 0.0 - result)
-  //         .toString(); // Subtract the result from memory
-  //   }
-  // }
-  //
-  // String memoryRecall() {
-  //   return memoryValue;
-  // }
 }

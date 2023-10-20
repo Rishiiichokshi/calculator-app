@@ -43,7 +43,6 @@ class _ScientificCalculatorState extends State<ScientificCalculator> {
     "1/x",
     "2√x",
     "∛x",
-    // "3√x",
     "y√x",
     "In",
     "log₁₀",

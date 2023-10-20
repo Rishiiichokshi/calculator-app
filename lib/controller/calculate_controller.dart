@@ -27,10 +27,6 @@ class CalculateController extends GetxController {
       userOutput = eval.toString();
       userInput = eval.toInt().toString();
     }
-
-    // userOutput = eval.toString();
-    // userInput = eval.toString();
-
     update();
   }
 
@@ -76,18 +72,6 @@ class CalculateController extends GetxController {
       userInput += buttons[index];
     }
 
-    // /// . button
-    // else if (buttons[index] == '.') {
-    //   if (dotAllowed) {
-    //     if (userInput.isEmpty) {
-    //       userInput = '0.';
-    //     } else if (RegExp(r'\d$').hasMatch(userInput)) {
-    //       userInput += '.';
-    //     }
-    //     // Set the dotAllowed flag to false to prevent additional dots
-    //     dotAllowed = false;
-    //   }
-    // }
     /// . button
     else if (buttons[index] == '.') {
       if (userInput.isEmpty ||
