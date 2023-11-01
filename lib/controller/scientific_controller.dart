@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'dart:math' as math;
 import 'dart:math';
 
@@ -15,6 +16,7 @@ class ScientificController extends GetxController {
   int cursorPosition = 0;
   RxString buttonText = "Rad".obs;
   double memoryValue = 0;
+  final NumberFormat numberFormat = NumberFormat.decimalPattern();
 
   /// Declare a flag to track if a dot is present in the current number
   bool dotAllowed = true;
@@ -32,6 +34,19 @@ class ScientificController extends GetxController {
   ///Rat to Deg Button change
   void changeButtonText() {
     buttonText.value = (buttonText.value == "Rad") ? "Deg" : "Rad";
+  }
+
+  String formatNumber(double number) {
+    const threshold = 99999999999999; // Set the threshold to your desired value
+    if (number.abs() >= threshold) {
+      final formatted = number.toStringAsExponential();
+      final parts = formatted.split('e');
+      final doublePart = double.parse(parts[0]).toStringAsFixed(7);
+      final exponentPart = parts[1].padLeft(2, '0');
+      return '$doublePart e$exponentPart';
+    } else {
+      return numberFormat.format(number);
+    }
   }
 
   /// Equal Button Pressed Func
@@ -115,17 +130,25 @@ class ScientificController extends GetxController {
       Parser p = Parser();
       Expression exp = p.parse(userInputFC);
       ContextModel ctx = ContextModel();
-      double eval = exp.evaluate(EvaluationType.REAL, ctx);
+      // double eval = exp.evaluate(EvaluationType.REAL, ctx);
 
-      if (eval % 1 == 0) {
-        // If the result is an integer, convert it to an integer and then to a string
-        userOutput = eval.toInt().toString();
-        userInput = eval.toInt().toString();
+      double eval = exp.evaluate(EvaluationType.REAL, ctx) as double;
+      if (eval.isFinite) {
+        userOutput = formatNumber(eval);
       } else {
-        // If it's not an integer, keep it as a double with 2 decimal places
-        userOutput = eval.toString();
-        userInput = eval.toString();
+        userOutput = 'Error';
+        logs('Error: Result is not a finite number');
       }
+
+      // if (eval % 1 == 0) {
+      //   // If the result is an integer, convert it to an integer and then to a string
+      //   userOutput = eval.toInt().toString();
+      //   userInput = eval.toInt().toString();
+      // } else {
+      //   // If it's not an integer, keep it as a double with 2 decimal places
+      //   userOutput = eval.toString();
+      //   userInput = eval.toString();
+      // }
       // userOutput = eval.toString();
       // userInput = eval.toString();
       logs('===ParcerUserOutput: $userOutput');
@@ -646,14 +669,22 @@ class ScientificController extends GetxController {
       Parser p = Parser();
       Expression exp = p.parse(userInputFC);
       ContextModel ctx = ContextModel();
-      double eval = exp.evaluate(EvaluationType.REAL, ctx);
-      if (eval % 1 == 0) {
-        // If the result is an integer, convert it to an integer and then to a string
-        userOutput = eval.toInt().toString();
+      // double eval = exp.evaluate(EvaluationType.REAL, ctx);
+
+      double eval = exp.evaluate(EvaluationType.REAL, ctx) as double;
+      if (eval.isFinite) {
+        userOutput = formatNumber(eval);
       } else {
-        // If it's not an integer, keep it as a double with 2 decimal places
-        userOutput = eval.toString();
+        userOutput = 'Error';
+        logs('Error: Result is not a finite number');
       }
+      // if (eval % 1 == 0) {
+      //   // If the result is an integer, convert it to an integer and then to a string
+      //   userOutput = eval.toInt().toString();
+      // } else {
+      //   // If it's not an integer, keep it as a double with 2 decimal places
+      //   userOutput = eval.toString();
+      // }
 
       logs('===LiveOutput: $userOutput');
     } catch (e) {

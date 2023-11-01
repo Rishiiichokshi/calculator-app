@@ -1,4 +1,5 @@
 import 'package:get/get_state_manager/src/simple/get_controllers.dart';
+import 'package:intl/intl.dart';
 import 'package:math_expressions/math_expressions.dart';
 
 import '../utils/string_utils.dart';
@@ -6,9 +7,36 @@ import '../utils/string_utils.dart';
 class CalculateController extends GetxController {
   var userInput = "";
   var userOutput = "0";
+  final NumberFormat numberFormat = NumberFormat.decimalPattern();
 
   /// Declare a flag to track if a dot is present in the current number
   bool dotAllowed = true;
+
+  String formatNumber(double number) {
+    // final digitsThreshold = 13; // Threshold set to 13 digits
+    //
+    // if (number.abs().toString().length > digitsThreshold) {
+    //   final formatted = number.toStringAsExponential();
+    //   return formatted;
+    // } else {
+    //   return numberFormat.format(number);
+    // }
+    const threshold = 99999999999999; // Set the threshold to your desired value
+    if (number.abs() >= threshold) {
+      final formatted = number.toStringAsExponential();
+      final parts = formatted.split('e');
+      final doublePart = double.parse(parts[0]).toStringAsFixed(7);
+      final exponentPart = parts[1].padLeft(2, '0');
+      return '$doublePart e$exponentPart';
+    } else {
+      return numberFormat.format(number);
+    }
+    // final formatted = number.toStringAsExponential();
+    // final parts = formatted.split('e');
+    // final doublePart = double.parse(parts[0]).toStringAsFixed(7);
+    // final exponentPart = parts[1].padLeft(2, '0');
+    // return '$doublePart e$exponentPart';
+  }
 
   /// Equal Button Pressed Func
   equalPressed() {
@@ -18,15 +46,28 @@ class CalculateController extends GetxController {
     Expression exp = p.parse(userInputFC);
     ContextModel ctx = ContextModel();
     double eval = exp.evaluate(EvaluationType.REAL, ctx);
-    if (eval % 1 == 0) {
-      // If the result is an integer, convert it to an integer and then to a string
-      userOutput = eval.toInt().toString();
-      userInput = eval.toInt().toString();
-    } else {
-      // If it's not an integer, keep it as a double with 2 decimal places
-      userOutput = eval.toString();
-      userInput = eval.toInt().toString();
+    try {
+      double eval = exp.evaluate(EvaluationType.REAL, ctx) as double;
+      if (eval.isFinite) {
+        userOutput = formatNumber(eval);
+      } else {
+        userOutput = 'Error';
+        logs('Error: Result is not a finite number');
+      }
+    } catch (e) {
+      userOutput = 'Error';
+      logs('Error: $e');
     }
+
+    // if (eval % 1 == 0) {
+    //   // If the result is an integer, convert it to an integer and then to a string
+    //   userOutput = eval.toInt().toString();
+    //   userInput = eval.toInt().toString();
+    // } else {
+    //   // If it's not an integer, keep it as a double with 2 decimal places
+    //   userOutput = eval.toString();
+    //   userInput = eval.toInt().toString();
+    // }
     update();
   }
 
@@ -138,13 +179,19 @@ class CalculateController extends GetxController {
       Expression exp = p.parse(userInputFC);
       ContextModel ctx = ContextModel();
       double eval = exp.evaluate(EvaluationType.REAL, ctx);
-      if (eval % 1 == 0) {
-        // If the result is an integer, convert it to an integer and then to a string
-        userOutput = eval.toInt().toString();
+      if (eval.isFinite) {
+        userOutput = formatNumber(eval);
       } else {
-        // If it's not an integer, keep it as a double with 2 decimal places
-        userOutput = eval.toString();
+        userOutput = 'Error';
+        logs('Error: Result is not a finite number');
       }
+      // if (eval % 1 == 0) {
+      //   // If the result is an integer, convert it to an integer and then to a string
+      //   userOutput = eval.toInt().toString();
+      // } else {
+      //   // If it's not an integer, keep it as a double with 2 decimal places
+      //   userOutput = eval.toString();
+      // }
       logs('===LiveOutput: $userOutput');
     } catch (e) {
       logs('===Error: $e');

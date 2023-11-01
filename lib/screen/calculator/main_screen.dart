@@ -2,6 +2,7 @@ import 'package:calcon/screen/calculator/scientific_calculator.dart';
 import 'package:calcon/screen/calculator/widget/custom_button.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:sizer/sizer.dart';
 
@@ -320,24 +321,26 @@ class _MainScreenState extends State<MainScreen> {
                 SizedBox(height: 1.h),
                 Align(
                   alignment: Alignment.centerRight,
-                  child: SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Text(
-                      ///remove.00
-                      controller.userOutput.isEmpty
-                          ? "0.00"
-                          : (controller.userOutput.endsWith(".00")
-                              ? controller.userOutput.substring(
-                                  0, controller.userOutput.length - 3)
-                              : controller.userOutput),
-                      style: TextStyle(
-                          color: themeController.isDark
-                              ? Colors.white
-                              : Colors.black,
-                          fontSize: 30.sp),
-                      maxLines: 1,
-                      // overflow: TextOverflow.clip,
-                    ),
+                  child: Text(
+                    ///remove.00
+                    // NumberFormat.compact().format(
+                    //   double.parse(controller.userInput.isEmpty
+                    //       ? '0'
+                    //       : controller.userInput),
+                    // ),
+                    controller.userOutput.isEmpty
+                        ? "0.00"
+                        : (controller.userOutput.endsWith(".00")
+                            ? controller.userOutput
+                                .substring(0, controller.userOutput.length - 3)
+                            : controller.userOutput),
+                    style: TextStyle(
+                        color: themeController.isDark
+                            ? Colors.white
+                            : Colors.black,
+                        fontSize: 30.sp),
+                    maxLines: 1,
+                    // overflow: TextOverflow.clip,
                   ),
                 ),
               ],
