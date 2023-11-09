@@ -551,9 +551,10 @@ class _TestConversionCardState extends State<TestConversionCard> {
         child: Column(
           children: [
             SizedBox(
-              height: 69.h,
+              // height: 69.h,
               child: ListView.builder(
                 shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
                 itemCount: conversionDataList.length,
                 itemBuilder: (context, index) {
                   ConversionData data = conversionDataList[index];
@@ -822,7 +823,7 @@ class _TestConversionCardState extends State<TestConversionCard> {
                 },
               ),
             ),
-            SizedBox(height: 3.h),
+            SizedBox(height: 4.w),
 
             /// add currency option
             Align(
@@ -861,7 +862,7 @@ class _TestConversionCardState extends State<TestConversionCard> {
                 ),
               ),
             ),
-            SizedBox(height: 4.h),
+            SizedBox(height: 4.w),
           ],
         ),
       ),

@@ -34,10 +34,14 @@ class _SettingScreenState extends State<SettingScreen> {
     const iOSAppId = '6469779310'; // Replace with your app's iOS App ID
     const url = 'itms-apps://itunes.apple.com/app/id$iOSAppId?mt=8';
 
-    if (await canLaunch(url)) {
-      await launch(url);
-    } else {
-      throw 'Could not launch App Store URL';
+    try {
+      if (await canLaunch(url)) {
+        await launch(url);
+      } else {
+        print('Could not launch App Store URL');
+      }
+    } catch (e) {
+      print('Error launching App Store URL: $e');
     }
   }
 

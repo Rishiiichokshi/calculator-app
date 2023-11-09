@@ -31,8 +31,9 @@ class ScientificButton extends StatelessWidget {
         child: Center(
           child: Text(
             text,
+            textAlign: TextAlign.center,
             style: TextStyle(
-                color: textColor, fontSize: 12.sp, fontWeight: FontWeight.bold),
+                color: textColor, fontSize: 10.sp, fontWeight: FontWeight.bold),
           ),
         ),
       ),

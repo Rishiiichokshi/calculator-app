@@ -1,12 +1,15 @@
 import 'package:calcon/screen/calculator/widget/scientific_button.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:shimmer/shimmer.dart';
 
 import 'package:sizer/sizer.dart';
 
 import '../../controller/scientific_controller.dart';
 import '../../controller/theme_controller.dart';
 import '../../utils/colors.dart';
+import '../currency_converter/currency_converter_screen.dart';
+import '../generalScreen/settings_screen.dart';
 
 ///SCientific
 
@@ -114,7 +117,7 @@ class _ScientificCalculatorState extends State<ScientificCalculator> {
                 topLeft: Radius.circular(4.w), topRight: Radius.circular(4.w))),
         child: GridView.builder(
             padding:
-                EdgeInsets.only(top: 1.h, bottom: 1.h, left: 3.w, right: 3.w),
+                EdgeInsets.only(top: 2.5.w, bottom: 2.w, left: 3.w, right: 3.w),
             physics: const NeverScrollableScrollPhysics(),
             itemCount: buttons.length,
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -375,51 +378,147 @@ class _ScientificCalculatorState extends State<ScientificCalculator> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          SizedBox(height: 1.h),
+          SizedBox(height: 2.w),
 
           ///Theme change light and dark
-          Container(
-            alignment: Alignment.topCenter,
-            width: 26.w,
-            height: 5.2.h,
-            decoration: BoxDecoration(
-                color: themeController.isDark
-                    ? DarkColors.sheetBgColor
-                    : LightColors.sheetBgColor,
-                borderRadius: BorderRadius.circular(13.w)),
-            child: Center(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      themeController.lightTheme();
+          Padding(
+            padding: EdgeInsets.all(0.w),
+            child: Row(
+              children: [
+                Padding(
+                  padding: EdgeInsets.only(
+                    left: 2.w,
+                  ),
+                  child: IconButton(
+                    onPressed: () {
+                      Get.to(const SettingScreen());
                     },
-                    child: Icon(
-                      Icons.light_mode_outlined,
+                    icon: Icon(
+                      Icons.settings,
+                      size: 18.sp,
                       color:
-                          themeController.isDark ? Colors.grey : Colors.black,
-                      size: 22.sp,
+                          themeController.isDark ? Colors.white : Colors.black,
                     ),
                   ),
-                  SizedBox(
-                    width: 3.w,
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      themeController.darkTheme();
+                ),
+                Padding(
+                  padding: EdgeInsets.only(left: 2.w),
+                  child: IconButton(
+                    onPressed: () {
+                      themeController
+                          .toggleTheme(); // Call the toggleTheme method
                     },
-                    child: Icon(
-                      Icons.dark_mode_outlined,
+                    icon: Icon(
+                      size: 18.sp,
+                      themeController.isDark
+                          ? Icons.light_mode_outlined
+                          : Icons.dark_mode_outlined,
                       color:
-                          themeController.isDark ? Colors.white : Colors.grey,
-                      size: 22.sp,
+                          themeController.isDark ? Colors.white : Colors.black,
                     ),
-                  )
-                ],
-              ),
+                  ),
+                ),
+                SizedBox(width: 2.w),
+                Expanded(
+                  child: GestureDetector(
+                    onTap: () {
+                      Get.to(const CurrencyConverterScreen());
+                    },
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: SizedBox(
+                        child: Stack(
+                          children: [
+                            Shimmer.fromColors(
+                              baseColor: themeController.isDark
+                                  ? DarkColors.sheetBgColor
+                                  : CommonColors.greyLight,
+                              // baseColor: Colors.grey[300]!,
+                              highlightColor: themeController.isDark
+                                  ? Colors.black12
+                                  : Colors.white60,
+                              child: Container(
+                                width: 10.w,
+                                height: 10.w,
+                                decoration: BoxDecoration(
+                                  color: themeController.isDark
+                                      ? DarkColors.sheetBgColor
+                                      : LightColors.sheetBgColor,
+                                  shape: BoxShape.circle,
+                                  // borderRadius: BorderRadius.circular(20),
+                                ),
+                              ),
+                            ),
+                            Positioned(
+                              top: 0,
+                              bottom: 0,
+                              left: 0,
+                              right: 0,
+                              child: IconButton(
+                                onPressed: () {
+                                  // print('---tap');
+                                  Get.to(const CurrencyConverterScreen());
+                                },
+                                icon: Icon(
+                                  Icons.currency_exchange_outlined,
+                                  size: 18.sp,
+                                  color: themeController.isDark
+                                      ? DarkColors.leftOperatorColor
+                                      : LightColors.leftOperatorColor,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
+          // Container(
+          //   alignment: Alignment.topCenter,
+          //   width: 26.w,
+          //   height: 5.2.h,
+          //   decoration: BoxDecoration(
+          //       color: themeController.isDark
+          //           ? DarkColors.sheetBgColor
+          //           : LightColors.sheetBgColor,
+          //       borderRadius: BorderRadius.circular(13.w)),
+          //   child: Center(
+          //     child: Row(
+          //       mainAxisAlignment: MainAxisAlignment.center,
+          //       children: [
+          //         GestureDetector(
+          //           onTap: () {
+          //             themeController.lightTheme();
+          //           },
+          //           child: Icon(
+          //             Icons.light_mode_outlined,
+          //             color:
+          //                 themeController.isDark ? Colors.grey : Colors.black,
+          //             size: 22.sp,
+          //           ),
+          //         ),
+          //         SizedBox(
+          //           width: 3.w,
+          //         ),
+          //         GestureDetector(
+          //           onTap: () {
+          //             themeController.darkTheme();
+          //           },
+          //           child: Icon(
+          //             Icons.dark_mode_outlined,
+          //             color:
+          //                 themeController.isDark ? Colors.white : Colors.grey,
+          //             size: 22.sp,
+          //           ),
+          //         )
+          //       ],
+          //     ),
+          //   ),
+          // ),
 
           ///output
           Padding(

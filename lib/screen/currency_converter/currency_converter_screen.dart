@@ -49,89 +49,89 @@ class _CurrencyConverterScreenState extends State<CurrencyConverterScreen> {
     final isLandscape =
         MediaQuery.of(context).orientation == Orientation.landscape;
 
-    if (isLandscape) {
-      // Navigate to the ScientificCalculator screen in landscape mode
-      return const ScientificCalculator();
-    } else {
-      return WillPopScope(
-        onWillPop: () async {
-          FocusScope.of(context).unfocus();
-          await Future.delayed(const Duration(milliseconds: 500));
-          return true;
-        },
-        child: Scaffold(
-          key: _scaffoldKey,
+    // if (isLandscape) {
+    //   // Navigate to the ScientificCalculator screen in landscape mode
+    //   return const ScientificCalculator();
+    // } else {
+    return WillPopScope(
+      onWillPop: () async {
+        FocusScope.of(context).unfocus();
+        await Future.delayed(const Duration(milliseconds: 500));
+        return true;
+      },
+      child: Scaffold(
+        key: _scaffoldKey,
+        backgroundColor: themeController.isDark
+            ? DarkColors.currencyScaffoldBgColor
+            : LightColors.scaffoldBgColor,
+        resizeToAvoidBottomInset: false,
+        appBar: AppBar(
+          leading: IconButton(
+              onPressed: () async {
+                FocusScope.of(context).unfocus();
+                await Future.delayed(const Duration(milliseconds: 500));
+                Get.back();
+              },
+              icon: Icon(
+                size: 5.w,
+                Icons.arrow_back,
+                color: themeController.isDark ? Colors.white : Colors.black,
+              )),
+          centerTitle: true,
           backgroundColor: themeController.isDark
               ? DarkColors.currencyScaffoldBgColor
               : LightColors.scaffoldBgColor,
-          resizeToAvoidBottomInset: false,
-          appBar: AppBar(
-            leading: IconButton(
-                onPressed: () async {
-                  FocusScope.of(context).unfocus();
-                  await Future.delayed(const Duration(milliseconds: 500));
-                  Get.back();
-                },
-                icon: Icon(
-                  size: 5.w,
-                  Icons.arrow_back,
-                  color: themeController.isDark ? Colors.white : Colors.black,
-                )),
-            centerTitle: true,
-            backgroundColor: themeController.isDark
-                ? DarkColors.currencyScaffoldBgColor
-                : LightColors.scaffoldBgColor,
-            title: Text(
-              StringUtils.currencyConvertor,
-              style: TextStyle(
-                  fontSize: 5.w,
-                  color: themeController.isDark
-                      ? CommonColors.white
-                      : CommonColors.black),
-            ),
+          title: Text(
+            StringUtils.currencyConvertor,
+            style: TextStyle(
+                fontSize: 5.w,
+                color: themeController.isDark
+                    ? CommonColors.white
+                    : CommonColors.black),
           ),
-          body: FutureBuilder<RatesModel>(
-              future: ratesModel,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(
-                    child: CircularProgressIndicator(
-                        color: themeController.isDark
-                            ? CommonColors.white
-                            : DarkColors.bottomSheetColor),
-                  );
-                } else {
-                  return FutureBuilder<Map>(
-                      future: currenciesModel,
-                      builder: (context, index) {
-                        if (index.connectionState == ConnectionState.waiting) {
-                          return const Center(
-                            child: CircularProgressIndicator(),
-                          );
-                        } else if (index.hasError) {
-                          return Center(
-                            child: Text(
-                              'Error: ${index.error}',
-                              style: TextStyle(
-                                  fontSize: 10.sp,
-                                  color: themeController.isDark
-                                      ? CommonColors.white
-                                      : CommonColors.black),
-                            ),
-                          );
-                        } else {
-                          return TestConversionCard(
-                            rates: snapshot.data!.rates,
-                            currencies: index.data!,
-                            scaffoldKey: _scaffoldKey,
-                            onCurrencySelected: handleCurrencySelected,
-                          );
-                        }
-                      });
-                }
-              }),
         ),
-      );
-    }
+        body: FutureBuilder<RatesModel>(
+            future: ratesModel,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Center(
+                  child: CircularProgressIndicator(
+                      color: themeController.isDark
+                          ? CommonColors.white
+                          : DarkColors.bottomSheetColor),
+                );
+              } else {
+                return FutureBuilder<Map>(
+                    future: currenciesModel,
+                    builder: (context, index) {
+                      if (index.connectionState == ConnectionState.waiting) {
+                        return const Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      } else if (index.hasError) {
+                        return Center(
+                          child: Text(
+                            'Error: ${index.error}',
+                            style: TextStyle(
+                                fontSize: 10.sp,
+                                color: themeController.isDark
+                                    ? CommonColors.white
+                                    : CommonColors.black),
+                          ),
+                        );
+                      } else {
+                        return TestConversionCard(
+                          rates: snapshot.data!.rates,
+                          currencies: index.data!,
+                          scaffoldKey: _scaffoldKey,
+                          onCurrencySelected: handleCurrencySelected,
+                        );
+                      }
+                    });
+              }
+            }),
+      ),
+    );
+    // }
   }
 }

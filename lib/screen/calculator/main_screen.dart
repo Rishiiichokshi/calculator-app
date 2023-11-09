@@ -84,6 +84,7 @@ class _MainScreenState extends State<MainScreen> {
   /// In put Section - Enter Numbers
   Expanded inPutSection(
       ThemeController themeController, CalculateController controller) {
+    var width = MediaQuery.of(context).size.width;
     return Expanded(
         flex: 2,
         child: Container(
@@ -93,18 +94,18 @@ class _MainScreenState extends State<MainScreen> {
                   ? DarkColors.sheetBgColor
                   : LightColors.sheetBgColor,
               borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(8.w),
-                  topRight: Radius.circular(8.w))),
+                  topLeft: Radius.circular(32), topRight: Radius.circular(32))),
           child: GridView.builder(
               padding:
-                  EdgeInsets.only(top: 1.h, bottom: 1.h, left: 3.w, right: 3.w),
+                  EdgeInsets.only(top: 2.w, bottom: 2.w, left: 3.w, right: 3.w),
               physics: const NeverScrollableScrollPhysics(),
               itemCount: buttons.length,
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 4,
-                mainAxisExtent: 11.5.h,
-                // mainAxisSpacing: 0,
-              ),
+                  crossAxisCount: 4, mainAxisExtent: width * 0.17
+                  // 24.w,
+                  // 11.5.h,
+                  // mainAxisSpacing: 0,
+                  ),
               itemBuilder: (contex, index) {
                 switch (index) {
                   /// CLEAR BTN
@@ -177,16 +178,17 @@ class _MainScreenState extends State<MainScreen> {
   /// Out put Section - Show Result
   Expanded outPutSection(
       ThemeController themeController, CalculateController controller) {
+    var width = MediaQuery.of(context).size.width;
     return Expanded(
       child: Column(
         // mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          SizedBox(height: 1.h),
+          SizedBox(height: 2.w),
 
           ///Theme change light and dark
           Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: EdgeInsets.all(2.w),
             child: Row(
               children: [
                 Expanded(
@@ -194,66 +196,55 @@ class _MainScreenState extends State<MainScreen> {
                     onTap: () {
                       Get.to(const CurrencyConverterScreen());
                     },
-                    child: SizedBox(
-                      child: Stack(
-                        children: [
-                          Shimmer.fromColors(
-                            baseColor: themeController.isDark
-                                ? DarkColors.sheetBgColor
-                                : CommonColors.greyLight,
-                            // baseColor: Colors.grey[300]!,
-                            highlightColor: themeController.isDark
-                                ? Colors.black12
-                                : Colors.white60,
-                            child: Container(
-                              width: Get.width,
-                              height: 8.h,
-                              decoration: BoxDecoration(
-                                color: themeController.isDark
+                    child: Align(
+                      alignment: Alignment.centerRight,
+                      child: SizedBox(
+                        child: Stack(
+                          children: [
+                            Shimmer.fromColors(
+                              baseColor: themeController.isDark
+                                  ? DarkColors.sheetBgColor
+                                  : CommonColors.greyLight,
+                              // baseColor: Colors.grey[300]!,
+                              highlightColor: themeController.isDark
+                                  ? Colors.black12
+                                  : Colors.white60,
+                              child: CircleAvatar(
+                                radius: 4.w,
+                                backgroundColor: themeController.isDark
                                     ? DarkColors.sheetBgColor
                                     : LightColors.sheetBgColor,
-                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              // Container(
+                              //   width: 12.w,
+                              //   height: 12.w,
+                              //   decoration: BoxDecoration(
+                              //     color: themeController.isDark
+                              //         ? DarkColors.sheetBgColor
+                              //         : LightColors.sheetBgColor,
+                              //     shape: BoxShape.circle,
+                              //     // borderRadius: BorderRadius.circular(20),
+                              //   ),
+                              // ),
+                            ),
+                            Positioned(
+                              top: -0.4.w,
+                              child: IconButton(
+                                onPressed: () {
+                                  // print('---tap');
+                                  Get.to(const CurrencyConverterScreen());
+                                },
+                                icon: Icon(
+                                  Icons.currency_exchange_outlined,
+                                  size: 16.sp,
+                                  color: themeController.isDark
+                                      ? DarkColors.leftOperatorColor
+                                      : LightColors.leftOperatorColor,
+                                ),
                               ),
                             ),
-                          ),
-                          Container(
-                            width: Get.width,
-                            height: 8.h,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                Text(
-                                  'Currency Converter',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    color: themeController.isDark
-                                        ? Colors.white
-                                        : Colors.black,
-                                    fontWeight: FontWeight.w600,
-                                    fontFamily: 'Poppins',
-                                    fontSize: 12.sp,
-                                  ),
-                                ),
-                                IconButton(
-                                  onPressed: () {
-                                    // print('---tap');
-                                    Get.to(const CurrencyConverterScreen());
-                                  },
-                                  icon: Icon(
-                                    Icons.currency_exchange_outlined,
-                                    size: 18.sp,
-                                    color: themeController.isDark
-                                        ? DarkColors.leftOperatorColor
-                                        : LightColors.leftOperatorColor,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                   ),
@@ -295,7 +286,7 @@ class _MainScreenState extends State<MainScreen> {
             ),
           ),
           Padding(
-            padding: EdgeInsets.only(right: 6.w, top: 8.h),
+            padding: EdgeInsets.only(right: 6.w, top: width * 0.20),
             child: Column(
               // crossAxisAlignment: CrossAxisAlignment.end,
               children: [
