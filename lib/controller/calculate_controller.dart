@@ -49,6 +49,7 @@ class CalculateController extends GetxController {
     try {
       double eval = exp.evaluate(EvaluationType.REAL, ctx) as double;
       if (eval.isFinite) {
+        userInput = formatNumber(eval);
         userOutput = formatNumber(eval);
       } else {
         userOutput = 'Error';
@@ -115,20 +116,40 @@ class CalculateController extends GetxController {
 
     /// . button
     else if (buttons[index] == '.') {
-      if (userInput.isEmpty ||
-          userInput.endsWith('.') ||
-          !isDigit(userInput[userInput.length - 1])) {
+      if (userInput.isEmpty) {
         // If there is no input yet, start with '0.'
         userInput += '0.';
+        dotAllowed = false;
       } else {
-        final parts = userInput.split(RegExp(r'[+\-*/]'));
+        final parts = userInput.split(RegExp(r'[+\-x/]'));
         final lastPart = parts.last;
-        if (!lastPart.contains('.')) {
-          // Only add a dot if the last part doesn't already contain a dot
+        if (lastPart.isEmpty) {
+          // If the last part is empty, add '0.' followed by the dot
+          userInput += '0.';
+        } else if (!lastPart.contains('.')) {
+          // Only add a dot if the last part is not empty and doesn't already contain a dot
           userInput += '.';
         }
+        dotAllowed = false;
       }
     }
+
+    // /// . button
+    // else if (buttons[index] == '.') {
+    //   if (userInput.isEmpty ||
+    //       userInput.endsWith('.') ||
+    //       !isDigit(userInput[userInput.length - 1])) {
+    //     // If there is no input yet, start with '0.'
+    //     userInput += '0.';
+    //   } else {
+    //     final parts = userInput.split(RegExp(r'[+\-*/]'));
+    //     final lastPart = parts.last;
+    //     if (!lastPart.contains('.')) {
+    //       // Only add a dot if the last part doesn't already contain a dot
+    //       userInput += '.';
+    //     }
+    //   }
+    // }
 
     ///this will add isOperator one time only
     else if (isOperator(buttons[index])) {
@@ -173,6 +194,11 @@ class CalculateController extends GetxController {
   /// Update userOutput based on the current userInput.
   void evaluateLiveOutput() {
     String userInputFC = userInput.replaceAll("x", "*");
+
+    if (userInputFC.isNotEmpty && userInputFC.endsWith('.')) {
+      // If userInput ends with a dot and there is no more input, remove the dot
+      userInputFC = userInputFC.substring(0, userInputFC.length - 1);
+    }
 
     try {
       Parser p = Parser();

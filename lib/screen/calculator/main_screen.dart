@@ -84,7 +84,11 @@ class _MainScreenState extends State<MainScreen> {
   /// In put Section - Enter Numbers
   Expanded inPutSection(
       ThemeController themeController, CalculateController controller) {
-    var width = MediaQuery.of(context).size.width;
+    final double screenWidth = MediaQuery.of(context).size.width;
+    final bool isTablet =
+        screenWidth > 600; // Define a threshold for tablet screens
+    final double buttonSize = isTablet ? screenWidth / 6 : screenWidth / 4;
+
     return Expanded(
         flex: 2,
         child: Container(
@@ -101,11 +105,13 @@ class _MainScreenState extends State<MainScreen> {
               physics: const NeverScrollableScrollPhysics(),
               itemCount: buttons.length,
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 4, mainAxisExtent: width * 0.24
-                  // 24.w,
-                  // 11.5.h,
-                  // mainAxisSpacing: 0,
-                  ),
+                crossAxisCount: 4,
+                // mainAxisExtent: 95,
+                childAspectRatio: buttonSize / (34.0 * 3),
+                // 24.w,
+                // 11.5.h,
+                // mainAxisSpacing: 0,
+              ),
               itemBuilder: (contex, index) {
                 switch (index) {
                   /// CLEAR BTN
@@ -178,13 +184,19 @@ class _MainScreenState extends State<MainScreen> {
   /// Out put Section - Show Result
   Expanded outPutSection(
       ThemeController themeController, CalculateController controller) {
-    var width = MediaQuery.of(context).size.width;
+    final double screenWidth = MediaQuery.of(context).size.width;
+    final bool isTablet =
+        screenWidth > 600; // Define a threshold for tablet screens
+
+    // Define padding values relative to screen size
+    final double topPadding = isTablet ? 5.h : 25.w;
+    final double rightPadding = isTablet ? 6.w : 6.w;
     return Expanded(
       child: Column(
         // mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          SizedBox(height: 2.w),
+          // SizedBox(height: 2.w),
 
           ///Theme change light and dark
           Padding(
@@ -196,54 +208,60 @@ class _MainScreenState extends State<MainScreen> {
                     onTap: () {
                       Get.to(const CurrencyConverterScreen());
                     },
-                    child: Align(
-                      alignment: Alignment.centerRight,
-                      child: SizedBox(
-                        child: Stack(
-                          children: [
-                            Shimmer.fromColors(
-                              baseColor: themeController.isDark
-                                  ? DarkColors.sheetBgColor
-                                  : CommonColors.greyLight,
-                              // baseColor: Colors.grey[300]!,
-                              highlightColor: themeController.isDark
-                                  ? Colors.black12
-                                  : Colors.white60,
-                              child: CircleAvatar(
-                                radius: 4.w,
-                                backgroundColor: themeController.isDark
+                    child: Padding(
+                      padding: EdgeInsets.only(top: isTablet ? 2.w : 0),
+                      child: Align(
+                        alignment: Alignment.bottomRight,
+                        child: SizedBox(
+                          child: Stack(
+                            children: [
+                              Shimmer.fromColors(
+                                baseColor: themeController.isDark
                                     ? DarkColors.sheetBgColor
-                                    : LightColors.sheetBgColor,
+                                    : CommonColors.greyLight,
+                                // baseColor: Colors.grey[300]!,
+                                highlightColor: themeController.isDark
+                                    ? Colors.black12
+                                    : Colors.white60,
+                                child: CircleAvatar(
+                                  radius: isTablet ? 4.w : 5.w,
+                                  backgroundColor: themeController.isDark
+                                      ? DarkColors.sheetBgColor
+                                      : LightColors.sheetBgColor,
+                                ),
+                                // Container(
+                                //   width: 12.w,
+                                //   height: 12.w,
+                                //   decoration: BoxDecoration(
+                                //     color: themeController.isDark
+                                //         ? DarkColors.sheetBgColor
+                                //         : LightColors.sheetBgColor,
+                                //     shape: BoxShape.circle,
+                                //     // borderRadius: BorderRadius.circular(20),
+                                //   ),
+                                // ),
                               ),
-                              // Container(
-                              //   width: 12.w,
-                              //   height: 12.w,
-                              //   decoration: BoxDecoration(
-                              //     color: themeController.isDark
-                              //         ? DarkColors.sheetBgColor
-                              //         : LightColors.sheetBgColor,
-                              //     shape: BoxShape.circle,
-                              //     // borderRadius: BorderRadius.circular(20),
-                              //   ),
-                              // ),
-                            ),
-                            Positioned(
-                              top: -0.4.w,
-                              child: IconButton(
-                                onPressed: () {
-                                  // print('---tap');
-                                  Get.to(const CurrencyConverterScreen());
-                                },
-                                icon: Icon(
-                                  Icons.currency_exchange_outlined,
-                                  size: 16.sp,
-                                  color: themeController.isDark
-                                      ? DarkColors.leftOperatorColor
-                                      : LightColors.leftOperatorColor,
+                              Positioned(
+                                top: 0,
+                                bottom: 0,
+                                left: 0,
+                                right: 0,
+                                child: IconButton(
+                                  onPressed: () {
+                                    // print('---tap');
+                                    Get.to(const CurrencyConverterScreen());
+                                  },
+                                  icon: Icon(
+                                    Icons.currency_exchange_outlined,
+                                    size: 16.sp,
+                                    color: themeController.isDark
+                                        ? DarkColors.leftOperatorColor
+                                        : LightColors.leftOperatorColor,
+                                  ),
                                 ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
                     ),
@@ -286,7 +304,7 @@ class _MainScreenState extends State<MainScreen> {
             ),
           ),
           Padding(
-            padding: EdgeInsets.only(right: 6.w, top: width * 0.20),
+            padding: EdgeInsets.only(right: rightPadding, top: topPadding),
             child: Column(
               // crossAxisAlignment: CrossAxisAlignment.end,
               children: [

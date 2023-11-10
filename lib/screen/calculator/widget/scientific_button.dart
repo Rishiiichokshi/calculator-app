@@ -19,6 +19,10 @@ class ScientificButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final double screenWidth = MediaQuery.of(context).size.width;
+    final bool isTablet = screenWidth > 1000;
+
+    double fontSize = isTablet ? 10.sp : 15.sp;
     return GestureDetector(
       onTap: buttonTapped,
       child: Container(
@@ -33,7 +37,11 @@ class ScientificButton extends StatelessWidget {
             text,
             textAlign: TextAlign.center,
             style: TextStyle(
-                color: textColor, fontSize: 10.sp, fontWeight: FontWeight.bold),
+              color: textColor,
+              fontSize: fontSize,
+              // 10.sp,
+              fontWeight: FontWeight.bold,
+            ),
           ),
         ),
       ),
