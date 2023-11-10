@@ -1,7 +1,9 @@
-import 'package:alpha_one/screen/calculator/scientific_calculator.dart';
-import 'package:alpha_one/screen/calculator/widget/custom_button.dart';
+import 'package:calcon/screen/calculator/scientific_calculator.dart';
+import 'package:calcon/screen/calculator/widget/custom_button.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:sizer/sizer.dart';
 
 ///
@@ -58,12 +60,6 @@ class _MainScreenState extends State<MainScreen> {
     } else {
       return WillPopScope(
         onWillPop: () async {
-          // Get.defaultDialog(
-          //     onConfirm: () {
-          //       // if(Plat≥onConfirm)
-          //       SystemNavigator.pop();
-          //     },
-          //     textConfirm: "Yes");
           return true;
         },
         child: GetBuilder<ThemeController>(builder: (context) {
@@ -88,6 +84,7 @@ class _MainScreenState extends State<MainScreen> {
   /// In put Section - Enter Numbers
   Expanded inPutSection(
       ThemeController themeController, CalculateController controller) {
+    var width = MediaQuery.of(context).size.width;
     return Expanded(
         flex: 2,
         child: Container(
@@ -97,18 +94,18 @@ class _MainScreenState extends State<MainScreen> {
                   ? DarkColors.sheetBgColor
                   : LightColors.sheetBgColor,
               borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(8.w),
-                  topRight: Radius.circular(8.w))),
+                  topLeft: Radius.circular(32), topRight: Radius.circular(32))),
           child: GridView.builder(
               padding:
-                  EdgeInsets.only(top: 1.h, bottom: 1.h, left: 3.w, right: 3.w),
+                  EdgeInsets.only(top: 2.w, bottom: 2.w, left: 3.w, right: 3.w),
               physics: const NeverScrollableScrollPhysics(),
               itemCount: buttons.length,
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 4,
-                mainAxisExtent: 11.5.h,
-                // mainAxisSpacing: 0,
-              ),
+                  crossAxisCount: 4, mainAxisExtent: width * 0.24
+                  // 24.w,
+                  // 11.5.h,
+                  // mainAxisSpacing: 0,
+                  ),
               itemBuilder: (contex, index) {
                 switch (index) {
                   /// CLEAR BTN
@@ -117,6 +114,7 @@ class _MainScreenState extends State<MainScreen> {
                         buttonTapped: () {
                           controller.clearInputAndOutput();
                         },
+                        fontSize: 20.sp,
                         color: themeController.isDark
                             ? DarkColors.btnBgColor
                             : LightColors.btnBgColor,
@@ -131,6 +129,7 @@ class _MainScreenState extends State<MainScreen> {
                         buttonTapped: () {
                           controller.deleteBtnAction();
                         },
+                        fontSize: 20.sp,
                         color: themeController.isDark
                             ? DarkColors.btnBgColor
                             : LightColors.btnBgColor,
@@ -145,7 +144,7 @@ class _MainScreenState extends State<MainScreen> {
                         buttonTapped: () {
                           controller.equalPressed();
                         },
-                        fontSize: 19.sp,
+                        fontSize: 29.sp,
                         color: themeController.isDark
                             ? DarkColors.btnBgColor
                             : LightColors.btnBgColor,
@@ -159,8 +158,9 @@ class _MainScreenState extends State<MainScreen> {
                         buttonTapped: () {
                           controller.onBtnTapped(buttons, index);
                         },
-                        fontWeight: FontWeight.bold,
-                        fontSize: isOperator(buttons[index]) ? 19.sp : 16.sp,
+                        fontWeight: FontWeight.w500,
+                        fontSize: isOperator(buttons[index]) ? 29.sp : 27.sp,
+                        // fontSize: isOperator(buttons[index]) ? 19.sp : 16.sp,
                         color: themeController.isDark
                             ? DarkColors.btnBgColor
                             : LightColors.btnBgColor,
@@ -178,52 +178,107 @@ class _MainScreenState extends State<MainScreen> {
   /// Out put Section - Show Result
   Expanded outPutSection(
       ThemeController themeController, CalculateController controller) {
+    var width = MediaQuery.of(context).size.width;
     return Expanded(
       child: Column(
         // mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          SizedBox(height: 1.h),
+          SizedBox(height: 2.w),
 
           ///Theme change light and dark
           Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: EdgeInsets.all(2.w),
             child: Row(
               children: [
-                const Spacer(),
-                IconButton(
-                    onPressed: () {
+                Expanded(
+                  child: GestureDetector(
+                    onTap: () {
                       Get.to(const CurrencyConverterScreen());
                     },
+                    child: Align(
+                      alignment: Alignment.centerRight,
+                      child: SizedBox(
+                        child: Stack(
+                          children: [
+                            Shimmer.fromColors(
+                              baseColor: themeController.isDark
+                                  ? DarkColors.sheetBgColor
+                                  : CommonColors.greyLight,
+                              // baseColor: Colors.grey[300]!,
+                              highlightColor: themeController.isDark
+                                  ? Colors.black12
+                                  : Colors.white60,
+                              child: CircleAvatar(
+                                radius: 4.w,
+                                backgroundColor: themeController.isDark
+                                    ? DarkColors.sheetBgColor
+                                    : LightColors.sheetBgColor,
+                              ),
+                              // Container(
+                              //   width: 12.w,
+                              //   height: 12.w,
+                              //   decoration: BoxDecoration(
+                              //     color: themeController.isDark
+                              //         ? DarkColors.sheetBgColor
+                              //         : LightColors.sheetBgColor,
+                              //     shape: BoxShape.circle,
+                              //     // borderRadius: BorderRadius.circular(20),
+                              //   ),
+                              // ),
+                            ),
+                            Positioned(
+                              top: -0.4.w,
+                              child: IconButton(
+                                onPressed: () {
+                                  // print('---tap');
+                                  Get.to(const CurrencyConverterScreen());
+                                },
+                                icon: Icon(
+                                  Icons.currency_exchange_outlined,
+                                  size: 16.sp,
+                                  color: themeController.isDark
+                                      ? DarkColors.leftOperatorColor
+                                      : LightColors.leftOperatorColor,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 2.w),
+                  child: IconButton(
+                    onPressed: () {
+                      themeController
+                          .toggleTheme(); // Call the toggleTheme method
+                    },
                     icon: Icon(
-                      Icons.currency_exchange_outlined,
+                      size: 18.sp,
+                      themeController.isDark
+                          ? Icons.light_mode_outlined
+                          : Icons.dark_mode_outlined,
+                      color:
+                          themeController.isDark ? Colors.white : Colors.black,
+                    ),
+                  ),
+                ),
+                // SizedBox(width: 1.5.w),
+                Padding(
+                  padding: EdgeInsets.only(left: 1.w, right: 2.w),
+                  child: IconButton(
+                    onPressed: () {
+                      Get.to(const SettingScreen());
+                    },
+                    icon: Icon(
+                      Icons.settings,
                       size: 18.sp,
                       color:
                           themeController.isDark ? Colors.white : Colors.black,
-                    )),
-                SizedBox(width: 1.5.w),
-                IconButton(
-                  onPressed: () {
-                    themeController
-                        .toggleTheme(); // Call the toggleTheme method
-                  },
-                  icon: Icon(
-                    size: 18.sp,
-                    themeController.isDark
-                        ? Icons.light_mode_outlined
-                        : Icons.dark_mode_outlined,
-                    color: themeController.isDark ? Colors.white : Colors.black,
-                  ),
-                ),
-                SizedBox(width: 1.5.w),
-                IconButton(
-                  onPressed: () {
-                    Get.to(const SettingScreen());
-                  },
-                  icon: Icon(
-                    Icons.settings,
-                    size: 18.sp,
-                    color: themeController.isDark ? Colors.white : Colors.black,
+                    ),
                   ),
                 ),
                 SizedBox(width: 1.5.w),
@@ -231,7 +286,7 @@ class _MainScreenState extends State<MainScreen> {
             ),
           ),
           Padding(
-            padding: EdgeInsets.only(right: 6.w, top: 8.h),
+            padding: EdgeInsets.only(right: 6.w, top: width * 0.20),
             child: Column(
               // crossAxisAlignment: CrossAxisAlignment.end,
               children: [
@@ -251,31 +306,32 @@ class _MainScreenState extends State<MainScreen> {
                               : Colors.black,
                           fontSize: 18.sp),
                       maxLines: 1,
-                      // overflow: TextOverflow.clip,
                     ),
                   ),
                 ),
                 SizedBox(height: 1.h),
                 Align(
                   alignment: Alignment.centerRight,
-                  child: SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Text(
-                      ///remove.00
-                      controller.userOutput.isEmpty
-                          ? "0.00"
-                          : (controller.userOutput.endsWith(".00")
-                              ? controller.userOutput.substring(
-                                  0, controller.userOutput.length - 3)
-                              : controller.userOutput),
-                      style: TextStyle(
-                          color: themeController.isDark
-                              ? Colors.white
-                              : Colors.black,
-                          fontSize: 30.sp),
-                      maxLines: 1,
-                      // overflow: TextOverflow.clip,
-                    ),
+                  child: Text(
+                    ///remove.00
+                    // NumberFormat.compact().format(
+                    //   double.parse(controller.userInput.isEmpty
+                    //       ? '0'
+                    //       : controller.userInput),
+                    // ),
+                    controller.userOutput.isEmpty
+                        ? "0.00"
+                        : (controller.userOutput.endsWith(".00")
+                            ? controller.userOutput
+                                .substring(0, controller.userOutput.length - 3)
+                            : controller.userOutput),
+                    style: TextStyle(
+                        color: themeController.isDark
+                            ? Colors.white
+                            : Colors.black,
+                        fontSize: 30.sp),
+                    maxLines: 1,
+                    // overflow: TextOverflow.clip,
                   ),
                 ),
               ],

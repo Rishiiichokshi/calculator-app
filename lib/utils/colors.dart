@@ -13,6 +13,7 @@ class DarkColors {
 class CommonColors {
   static const black = Colors.black;
   static const white = Colors.white;
+  static const greyLight = Color(0xffEAEAEA);
 }
 
 /// Light Colors

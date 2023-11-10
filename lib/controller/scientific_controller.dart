@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'dart:math' as math;
 import 'dart:math';
 
@@ -15,6 +16,7 @@ class ScientificController extends GetxController {
   int cursorPosition = 0;
   RxString buttonText = "Rad".obs;
   double memoryValue = 0;
+  final NumberFormat numberFormat = NumberFormat.decimalPattern();
 
   /// Declare a flag to track if a dot is present in the current number
   bool dotAllowed = true;
@@ -34,24 +36,25 @@ class ScientificController extends GetxController {
     buttonText.value = (buttonText.value == "Rad") ? "Deg" : "Rad";
   }
 
+  String formatNumber(double number) {
+    const threshold = 99999999999999; // Set the threshold to your desired value
+    if (number.abs() >= threshold) {
+      final formatted = number.toStringAsExponential();
+      final parts = formatted.split('e');
+      final doublePart = double.parse(parts[0]).toStringAsFixed(7);
+      final exponentPart = parts[1].padLeft(2, '0');
+      return '$doublePart e$exponentPart';
+    } else {
+      return numberFormat.format(number);
+    }
+  }
+
   /// Equal Button Pressed Func
   equalPressed() {
     String userInputFC = userInput;
 
     logs('====$userInput');
     logs('====userInputFC===$userInputFC');
-
-    // ///  y√x
-    // // Handle the "y√x" expression by capturing both inputs and inserting them
-    // final ySqrtXRegExp = RegExp(r'(\d+)√(\d+)');
-    // final matches = ySqrtXRegExp.allMatches(userInputFC);
-    // for (var match in matches) {
-    //   final fullMatch = match.group(0).toString(); // Convert to non-null string
-    //   final y = match.group(1); // Captured y
-    //   final x = match.group(2); // Captured x
-    //   final result = "($x)^(1/$y)";
-    //   userInputFC = userInputFC.replaceFirst(fullMatch, result);
-    // }
 
     //eˣ
     userInputFC = calculateExponential(userInputFC);
@@ -127,17 +130,25 @@ class ScientificController extends GetxController {
       Parser p = Parser();
       Expression exp = p.parse(userInputFC);
       ContextModel ctx = ContextModel();
-      double eval = exp.evaluate(EvaluationType.REAL, ctx);
+      // double eval = exp.evaluate(EvaluationType.REAL, ctx);
 
-      if (eval % 1 == 0) {
-        // If the result is an integer, convert it to an integer and then to a string
-        userOutput = eval.toInt().toString();
-        userInput = eval.toInt().toString();
+      double eval = exp.evaluate(EvaluationType.REAL, ctx) as double;
+      if (eval.isFinite) {
+        userOutput = formatNumber(eval);
       } else {
-        // If it's not an integer, keep it as a double with 2 decimal places
-        userOutput = eval.toString();
-        userInput = eval.toString();
+        userOutput = 'Error';
+        logs('Error: Result is not a finite number');
       }
+
+      // if (eval % 1 == 0) {
+      //   // If the result is an integer, convert it to an integer and then to a string
+      //   userOutput = eval.toInt().toString();
+      //   userInput = eval.toInt().toString();
+      // } else {
+      //   // If it's not an integer, keep it as a double with 2 decimal places
+      //   userOutput = eval.toString();
+      //   userInput = eval.toString();
+      // }
       // userOutput = eval.toString();
       // userInput = eval.toString();
       logs('===ParcerUserOutput: $userOutput');
@@ -234,9 +245,6 @@ class ScientificController extends GetxController {
       // 10ˣ button
       else {
         if (userInput.isNotEmpty) {
-          // userInput = "10^$userInput";
-          // logs('----userInput 10x----$userInput');
-          // logs('----userOutput 10x----$userOutput');
           double base = 10.0; // The base for 10ˣ
           double exponent = (double.tryParse(userInput) ?? 0.0)
               .toDouble(); // Parse the exponent from userInput, default to 0 if parsing fails, and cast it to double
@@ -303,21 +311,6 @@ class ScientificController extends GetxController {
           calculateExponential(userInput);
           logs('====eˣ output====$userOutput');
         }
-
-        // if (userInput.isEmpty) {
-        //   userOutput = '0';
-        // } else {
-        //   double? input = dousble.tryParse(userInput);
-        //   if (input != null) {
-        //     double result = math.exp(input);
-        //     userInput = "e^$userInput";
-        //     userOutput = result.toString();
-        //     // userOutput = '0';
-        //   } else {
-        //     userInput = 'e^';
-        //     // userOutput = "Not a Number";
-        //   }
-        // }
       }
     }
 
@@ -552,33 +545,7 @@ class ScientificController extends GetxController {
     }
 
     /// . button
-    // else if (buttons[index] == '.') {
-    //   if (dotAllowed) {
-    //     if (userInput.isEmpty) {
-    //       userInput = '0.';
-    //     } else if (RegExp(r'\d$').hasMatch(userInput) &&
-    //         //this will not able to add .
-    //         // if there is already i mean if value is already double
-    //         !userInput.contains('.')) {
-    //       userInput += '.';
-    //     }
-    //     // Set the dotAllowed flag to false to prevent
-    //     // additional dots
-    //     dotAllowed = false;
-    //   }
-    // }
     else if (buttons[index] == '.') {
-      // if (userInput.isEmpty) {
-      //   // If there is no input yet, start with '0.'
-      //   userInput = '0.';
-      // } else {
-      //   final parts = userInput.split(RegExp(r'[+\-*/]'));
-      //   final lastPart = parts.last;
-      //   if (!lastPart.contains('.')) {
-      //     // Only add a dot if the last part doesn't already contain a dot
-      //     userInput += '.';
-      //   }
-      // }
       if (userInput.isEmpty ||
           userInput.endsWith('.') ||
           !isDigit(userInput[userInput.length - 1])) {
@@ -702,14 +669,22 @@ class ScientificController extends GetxController {
       Parser p = Parser();
       Expression exp = p.parse(userInputFC);
       ContextModel ctx = ContextModel();
-      double eval = exp.evaluate(EvaluationType.REAL, ctx);
-      if (eval % 1 == 0) {
-        // If the result is an integer, convert it to an integer and then to a string
-        userOutput = eval.toInt().toString();
+      // double eval = exp.evaluate(EvaluationType.REAL, ctx);
+
+      double eval = exp.evaluate(EvaluationType.REAL, ctx) as double;
+      if (eval.isFinite) {
+        userOutput = formatNumber(eval);
       } else {
-        // If it's not an integer, keep it as a double with 2 decimal places
-        userOutput = eval.toString();
+        userOutput = 'Error';
+        logs('Error: Result is not a finite number');
       }
+      // if (eval % 1 == 0) {
+      //   // If the result is an integer, convert it to an integer and then to a string
+      //   userOutput = eval.toInt().toString();
+      // } else {
+      //   // If it's not an integer, keep it as a double with 2 decimal places
+      //   userOutput = eval.toString();
+      // }
 
       logs('===LiveOutput: $userOutput');
     } catch (e) {
@@ -1292,9 +1267,6 @@ class ScientificController extends GetxController {
         final x = double.parse(xStr);
         final expressionResult = (pow(x, y)).toString(); // Calculate "y^x"
         result = result.replaceFirst(fullMatch, expressionResult);
-        // logs("Full Match: $fullMatch");
-        // logs("y: $y, x: $x");
-        // logs("Expression Result: $expressionResult");
       }
     }
 
@@ -1373,30 +1345,4 @@ class ScientificController extends GetxController {
     userInput = valueFromMemory.toString();
     userOutput = valueFromMemory.toString();
   }
-
-  // void memoryClear() {
-  //   memoryValue = ""; // Clear the memory
-  // }
-  //
-  // void memoryAdd() {
-  //   if (userOutput != 'Error') {
-  //     double result =
-  //         double.tryParse(userOutput) ?? 0.0; // Parse the current result
-  //     memoryValue = (double.tryParse(memoryValue) ?? 0.0 + result)
-  //         .toString(); // Add the result to memory
-  //   }
-  // }
-  //
-  // void memorySubtract() {
-  //   if (userOutput != 'Error') {
-  //     double result =
-  //         double.tryParse(userOutput) ?? 0.0; // Parse the current result
-  //     memoryValue = (double.tryParse(memoryValue) ?? 0.0 - result)
-  //         .toString(); // Subtract the result from memory
-  //   }
-  // }
-  //
-  // String memoryRecall() {
-  //   return memoryValue;
-  // }
 }

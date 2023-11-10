@@ -1,4 +1,4 @@
-name: alpha_one
+name: calcon
 description: A new Flutter project.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
@@ -14,18 +14,21 @@ dependencies:
 
   cupertino_icons: ^1.0.2
   get: ^4.6.5
+  intl: ^0.18.1
   math_expressions: ^2.4.0
   device_preview: ^1.1.0
   sizer: ^2.0.15
   http: ^1.1.0
   flutter_slidable: ^3.0.0
-#  dropdown_search: ^5.0.6
   search_choices: 2.2.5
   carousel_slider: ^4.2.1
   shared_preferences: ^2.2.1
   lottie: ^2.6.0
-  tutorial_coach_mark: ^1.2.9
-
+  shimmer: ^3.0.0
+  webview_flutter: ^3.0.2
+  url_launcher: ^6.1.14
+#  in_app_review: ^2.0.8
+  rate_my_app: ^2.0.0
 
 dev_dependencies:
   flutter_test:
@@ -43,6 +46,8 @@ flutter:
     - assets/lottie/scientific_lottie.json
     - assets/lottie/rocket.json
     - assets/images/appScreenshot.png
+    - assets/images/splash.png
+    - assets/images/
   #   - images/a_dot_ham.jpeg
 
   fonts:
@@ -54,11 +59,3 @@ flutter:
           weight: 300
         - asset: assets/fonts/Poppins-Regular.ttf
           weight: 400
-
-
-  #   - family: Trajan Pro
-  #     fonts:
-  #       - asset: fonts/TrajanPro.ttf
-  #       - asset: fonts/TrajanPro_Bold.ttf
-  #         weight: 700
-  #

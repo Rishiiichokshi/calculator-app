@@ -225,7 +225,7 @@ class _TestConversionCardState extends State<TestConversionCard> {
     TextEditingController searchController = TextEditingController();
 
     // Initialize a list to store filtered currencies
-    List<dynamic> filteredCurrencies = List.from(widget.currencies.keys);
+    List<dynamic> filteredCurrencies = List.from(widget.rates.keys);
     final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
     await showModalBottomSheet<void>(
@@ -239,7 +239,7 @@ class _TestConversionCardState extends State<TestConversionCard> {
           builder: (BuildContext context, StateSetter setState1) {
             void handleClearSearch() {
               searchController.clear();
-              filteredCurrencies = List.from(widget.currencies.keys);
+              filteredCurrencies = List.from(widget.rates.keys);
               setState1(() {});
             }
 
@@ -251,10 +251,14 @@ class _TestConversionCardState extends State<TestConversionCard> {
                     cursorColor: LightColors.leftOperatorColor,
                     style: TextStyle(
                         fontSize: 15.sp,
+                        fontFamily: 'Poppins',
                         color: themeController.isDark
                             ? Colors.white
                             : Colors.black),
                     controller: searchController,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.deny(RegExp("^[ ]"))
+                    ],
                     decoration: InputDecoration(
                       hintText: StringUtils.searchCurrency,
                       focusedBorder: UnderlineInputBorder(
@@ -264,6 +268,7 @@ class _TestConversionCardState extends State<TestConversionCard> {
                                   : LightColors.leftOperatorColor)),
                       hintStyle: TextStyle(
                           fontSize: 12.sp,
+                          fontFamily: 'Poppins',
                           color: themeController.isDark
                               ? Colors.grey
                               : Colors.grey),
@@ -289,7 +294,7 @@ class _TestConversionCardState extends State<TestConversionCard> {
                     onChanged: (value) {
                       setState1(() {
                         // Update the filteredCurrencies list based on user input
-                        filteredCurrencies = widget.currencies.keys
+                        filteredCurrencies = widget.rates.keys
                             .where((currency) => currency
                                 .toLowerCase()
                                 .contains(value.toLowerCase()))
@@ -310,15 +315,21 @@ class _TestConversionCardState extends State<TestConversionCard> {
                       return ListTile(
                         title: Row(
                           children: [
-                            Text(
-                              '$value - ${widget.currencies[value]}',
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 1,
-                              style: TextStyle(
-                                fontSize: 12.sp,
-                                color: themeController.isDark
-                                    ? CommonColors.white
-                                    : CommonColors.black,
+                            Padding(
+                              padding: EdgeInsets.only(left: 4.w),
+                              child: Text(
+                                '$value '
+                                // '- ${widget.currencies[value]}'
+                                ,
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 1,
+                                style: TextStyle(
+                                  fontSize: 12.sp,
+                                  fontFamily: 'Poppins',
+                                  color: themeController.isDark
+                                      ? CommonColors.white
+                                      : CommonColors.black,
+                                ),
                               ),
                             ),
                             const Spacer(),
@@ -394,6 +405,7 @@ class _TestConversionCardState extends State<TestConversionCard> {
                                   titleText: Text(
                                     StringUtils.warning,
                                     style: TextStyle(
+                                      fontFamily: 'Poppins',
                                       color: Colors.white,
                                       fontSize: 12.sp,
                                       fontWeight: FontWeight.bold,
@@ -402,6 +414,7 @@ class _TestConversionCardState extends State<TestConversionCard> {
                                   messageText: Text(
                                     StringUtils.youCantRemoveDefaultCurrency,
                                     style: TextStyle(
+                                      fontFamily: 'Poppins',
                                       color: Colors.white,
                                       fontSize: 12.sp,
                                       fontWeight: FontWeight.bold,
@@ -531,7 +544,6 @@ class _TestConversionCardState extends State<TestConversionCard> {
   @override
   Widget build(BuildContext context) {
     var themeController = Get.find<ThemeController>();
-
     return SingleChildScrollView(
       // physics: ,
       child: Padding(
@@ -539,9 +551,10 @@ class _TestConversionCardState extends State<TestConversionCard> {
         child: Column(
           children: [
             SizedBox(
-              height: 69.h,
+              // height: 69.h,
               child: ListView.builder(
                 shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
                 itemCount: conversionDataList.length,
                 itemBuilder: (context, index) {
                   ConversionData data = conversionDataList[index];
@@ -551,8 +564,6 @@ class _TestConversionCardState extends State<TestConversionCard> {
                         key: const ValueKey(0),
                         startActionPane: ActionPane(
                           motion: const StretchMotion(),
-
-                          // dismissible: DismissiblePane(onDismissed: () {}),
                           children: [
                             // A SlidableAction can have an icon and/or a label.
                             SlidableAction(
@@ -591,118 +602,35 @@ class _TestConversionCardState extends State<TestConversionCard> {
                                 child: Row(
                                   children: [
                                     ///without search dropdown
-                                    // Theme(
-                                    //   data: Theme.of(context).copyWith(
-                                    //     // Define the background color for the dropdown menu
-                                    //     canvasColor: themeController.isDark
-                                    //         ? DarkColors.bottomSheetColor
-                                    //         : CommonColors.white,
-                                    //   ),
-                                    //   child: Expanded(
-                                    //     flex: 7,
-                                    //     child: DropdownButton<String>(
-                                    //       borderRadius: BorderRadius.circular(4.w),
-                                    //       menuMaxHeight: 50.h,
-                                    //       itemHeight: 6.5.h,
-                                    //       value: data.dropdownValue,
-                                    //       icon: Icon(
-                                    //         Icons.arrow_drop_down_rounded,
-                                    //         color: themeController.isDark
-                                    //             ? LightColors.btnBgColor
-                                    //             : CommonColors.black,
-                                    //         size: 15.sp,
-                                    //       ),
-                                    //       isExpanded: true,
-                                    //       onChanged: (String? newValue) {
-                                    //         setState(() {
-                                    //           if (index == 0) {
-                                    //             Get.snackbar(
-                                    //               'Warning',
-                                    //               'You can\'t change the default currency!',
-                                    //               snackPosition:
-                                    //                   SnackPosition.BOTTOM,
-                                    //               dismissDirection:
-                                    //                   DismissDirection.endToStart,
-                                    //               titleText: Text(
-                                    //                 'Warning',
-                                    //                 style: TextStyle(
-                                    //                   color: Colors.white,
-                                    //                   fontSize: 12.sp,
-                                    //                   fontWeight: FontWeight.bold,
-                                    //                 ),
-                                    //               ),
-                                    //               messageText: Text(
-                                    //                 'You can\'t change the default currency!',
-                                    //                 style: TextStyle(
-                                    //                   color: Colors.white,
-                                    //                   fontSize: 12.sp,
-                                    //                   fontWeight: FontWeight.bold,
-                                    //                 ),
-                                    //               ),
-                                    //               colorText: Colors.white,
-                                    //               backgroundColor: Colors.black54,
-                                    //               icon: Icon(
-                                    //                 Icons.add_alert,
-                                    //                 size: 15.sp,
-                                    //                 color: Colors.white,
-                                    //               ),
-                                    //             );
-                                    //           } else {
-                                    //             // Allow changing currency for subsequent containers
-                                    //             data.dropdownValue = newValue!;
-                                    //             if (isConvert) {
-                                    //               updateConversionData(data);
-                                    //             }
-                                    //           }
-                                    //         });
-                                    //       },
-                                    //       onTap: () {
-                                    //         selectConverter(data);
-                                    //       },
-                                    //       underline: Container(),
-                                    //       items: widget.currencies.keys
-                                    //           .toList()
-                                    //           .map<DropdownMenuItem<String>>(
-                                    //               (value) {
-                                    //         return DropdownMenuItem<String>(
-                                    //           value: value,
-                                    //           child: Text(
-                                    //             '$value - ${widget.currencies[value]}',
-                                    //             maxLines: 3,
-                                    //             overflow: TextOverflow.ellipsis,
-                                    //             style: TextStyle(
-                                    //                 color: themeController.isDark
-                                    //                     ? LightColors
-                                    //                         .leftOperatorColor
-                                    //                     : LightColors
-                                    //                         .leftOperatorColor,
-                                    //                 fontSize: 12.sp),
-                                    //           ),
-                                    //         );
-                                    //       }).toList(),
-                                    //     ),
-                                    //   ),
-                                    // ),
+
                                     Expanded(
                                       flex: 7,
                                       child: SearchChoices.single(
-                                        items: widget.currencies.keys
+                                        items: widget.rates.keys
                                             .toList()
                                             .map<DropdownMenuItem<String>>(
                                                 (value) {
                                           return DropdownMenuItem<String>(
                                             value: value,
-                                            child: Text(
-                                              '$value - ${widget.currencies[value]}',
-                                              maxLines: 3,
-                                              overflow: TextOverflow.ellipsis,
-                                              style: TextStyle(
-                                                  color: themeController.isDark
-                                                      ? LightColors
-                                                          .leftOperatorColor
-                                                      : LightColors
-                                                          .leftOperatorColor,
-                                                  fontSize: 12.sp),
+                                            child: Padding(
+                                              padding:
+                                                  EdgeInsets.only(left: 4.w),
+                                              child: Text(
+                                                '$value '
+                                                // '- ${widget.currencies[value]}'
+                                                ,
+                                                maxLines: 3,
+                                                overflow: TextOverflow.ellipsis,
+                                                style: TextStyle(
+                                                    fontFamily: 'Poppins',
+                                                    color: themeController
+                                                            .isDark
+                                                        ? LightColors
+                                                            .leftOperatorColor
+                                                        : LightColors
+                                                            .leftOperatorColor,
+                                                    fontSize: 12.sp),
+                                              ),
                                             ),
                                           );
                                         }).toList(),
@@ -711,7 +639,11 @@ class _TestConversionCardState extends State<TestConversionCard> {
                                           padding: const EdgeInsets.all(3),
                                           child: DropdownMenuItem(
                                             child: Text(
-                                                StringUtils.selectCurrency),
+                                              StringUtils.selectCurrency,
+                                              style: const TextStyle(
+                                                fontFamily: 'Poppins',
+                                              ),
+                                            ),
                                           ),
                                         ),
                                         menuBackgroundColor:
@@ -734,6 +666,7 @@ class _TestConversionCardState extends State<TestConversionCard> {
                                                 titleText: Text(
                                                   StringUtils.warning,
                                                   style: TextStyle(
+                                                    fontFamily: 'Poppins',
                                                     color: Colors.white,
                                                     fontSize: 12.sp,
                                                     fontWeight: FontWeight.bold,
@@ -743,6 +676,7 @@ class _TestConversionCardState extends State<TestConversionCard> {
                                                   StringUtils
                                                       .youCantRemoveDefaultCurrency,
                                                   style: TextStyle(
+                                                    fontFamily: 'Poppins',
                                                     color: Colors.white,
                                                     fontSize: 12.sp,
                                                     fontWeight: FontWeight.bold,
@@ -769,6 +703,7 @@ class _TestConversionCardState extends State<TestConversionCard> {
 
                                         style: TextStyle(
                                             fontSize: 12.sp,
+                                            fontFamily: 'Poppins',
                                             color: themeController.isDark
                                                 ? CommonColors.white
                                                 : CommonColors.black),
@@ -780,7 +715,6 @@ class _TestConversionCardState extends State<TestConversionCard> {
                                             color:
                                                 LightColors.leftOperatorColor,
                                           ),
-
                                           focusedBorder:
                                               const UnderlineInputBorder(
                                             borderSide: BorderSide(
@@ -789,8 +723,6 @@ class _TestConversionCardState extends State<TestConversionCard> {
                                               width: 1.0,
                                             ),
                                           ),
-
-                                          // border: OutlineInputBorder(),
                                         ),
                                         fieldDecoration: BoxDecoration(
                                           color: themeController.isDark
@@ -805,8 +737,9 @@ class _TestConversionCardState extends State<TestConversionCard> {
                                           return DropdownMenuItem(
                                             // value: value,
                                             child: Text(
-                                              '$selectedValue - ${widget.currencies[selectedValue]}',
+                                              '$selectedValue ',
                                               style: TextStyle(
+                                                fontFamily: 'Poppins',
                                                 color: themeController.isDark
                                                     ? Colors.white
                                                     : Colors.black,
@@ -827,23 +760,24 @@ class _TestConversionCardState extends State<TestConversionCard> {
                                             : LightColors.leftOperatorColor,
                                         style: TextStyle(
                                             fontSize: 12.sp,
+                                            fontFamily: 'Poppins',
                                             color: themeController.isDark
                                                 ? CommonColors.white
                                                 : CommonColors.black),
-                                        onChanged: (value) {
-                                          // setState(() {});
-                                          // value = data.amountController.text;
-                                        },
+                                        onChanged: (value) {},
                                         inputFormatters: <TextInputFormatter>[
                                           FilteringTextInputFormatter.allow(
                                               RegExp(r'^\d+\.?\d*')),
                                         ],
                                         controller: data.amountController,
                                         enableInteractiveSelection: false,
-                                        keyboardType: TextInputType.number,
+                                        keyboardType: const TextInputType
+                                            .numberWithOptions(
+                                            decimal: true, signed: true),
                                         decoration: InputDecoration(
                                           hintText: StringUtils.egHundred,
                                           hintStyle: TextStyle(
+                                              fontFamily: 'Poppins',
                                               color: Colors.grey,
                                               fontSize: 12.sp),
                                           border: InputBorder.none,
@@ -889,7 +823,7 @@ class _TestConversionCardState extends State<TestConversionCard> {
                 },
               ),
             ),
-            SizedBox(height: 3.h),
+            SizedBox(height: 4.w),
 
             /// add currency option
             Align(
@@ -917,6 +851,7 @@ class _TestConversionCardState extends State<TestConversionCard> {
                       Text(
                         StringUtils.addCurrency,
                         style: TextStyle(
+                            fontFamily: 'Poppins',
                             fontSize: 12.sp,
                             color: themeController.isDark
                                 ? CommonColors.white
@@ -927,7 +862,7 @@ class _TestConversionCardState extends State<TestConversionCard> {
                 ),
               ),
             ),
-            SizedBox(height: 4.h),
+            SizedBox(height: 4.w),
           ],
         ),
       ),

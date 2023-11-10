@@ -49,11 +49,17 @@ class _CurrencyConverterScreenState extends State<CurrencyConverterScreen> {
     final isLandscape =
         MediaQuery.of(context).orientation == Orientation.landscape;
 
-    if (isLandscape) {
-      // Navigate to the ScientificCalculator screen in landscape mode
-      return const ScientificCalculator();
-    } else {
-      return Scaffold(
+    // if (isLandscape) {
+    //   // Navigate to the ScientificCalculator screen in landscape mode
+    //   return const ScientificCalculator();
+    // } else {
+    return WillPopScope(
+      onWillPop: () async {
+        FocusScope.of(context).unfocus();
+        await Future.delayed(const Duration(milliseconds: 500));
+        return true;
+      },
+      child: Scaffold(
         key: _scaffoldKey,
         backgroundColor: themeController.isDark
             ? DarkColors.currencyScaffoldBgColor
@@ -61,7 +67,9 @@ class _CurrencyConverterScreenState extends State<CurrencyConverterScreen> {
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
           leading: IconButton(
-              onPressed: () {
+              onPressed: () async {
+                FocusScope.of(context).unfocus();
+                await Future.delayed(const Duration(milliseconds: 500));
                 Get.back();
               },
               icon: Icon(
@@ -122,7 +130,8 @@ class _CurrencyConverterScreenState extends State<CurrencyConverterScreen> {
                     });
               }
             }),
-      );
-    }
+      ),
+    );
+    // }
   }
 }

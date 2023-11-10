@@ -1,29 +1,47 @@
 PODS:
   - Flutter (1.0.0)
+  - rate_my_app (2.0.0):
+    - Flutter
   - search_choices (0.0.1):
     - Flutter
   - shared_preferences_foundation (0.0.1):
     - Flutter
     - FlutterMacOS
+  - url_launcher_ios (0.0.1):
+    - Flutter
+  - webview_flutter_wkwebview (0.0.1):
+    - Flutter
 
 DEPENDENCIES:
   - Flutter (from `Flutter`)
+  - rate_my_app (from `.symlinks/plugins/rate_my_app/ios`)
   - search_choices (from `.symlinks/plugins/search_choices/ios`)
   - shared_preferences_foundation (from `.symlinks/plugins/shared_preferences_foundation/darwin`)
+  - url_launcher_ios (from `.symlinks/plugins/url_launcher_ios/ios`)
+  - webview_flutter_wkwebview (from `.symlinks/plugins/webview_flutter_wkwebview/ios`)
 
 EXTERNAL SOURCES:
   Flutter:
     :path: Flutter
+  rate_my_app:
+    :path: ".symlinks/plugins/rate_my_app/ios"
   search_choices:
     :path: ".symlinks/plugins/search_choices/ios"
   shared_preferences_foundation:
     :path: ".symlinks/plugins/shared_preferences_foundation/darwin"
+  url_launcher_ios:
+    :path: ".symlinks/plugins/url_launcher_ios/ios"
+  webview_flutter_wkwebview:
+    :path: ".symlinks/plugins/webview_flutter_wkwebview/ios"
 
 SPEC CHECKSUMS:
   Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
+  rate_my_app: 80fba94c4885cd31738231b7b1f51c1ad726f5c7
   search_choices: b50731e8c425078048f681f39c34375c58d6ce8d
   shared_preferences_foundation: 5b919d13b803cadd15ed2dc053125c68730e5126
+  url_launcher_ios: 08a3dfac5fb39e8759aeb0abbd5d9480f30fc8b4
+  webview_flutter_wkwebview: b7e70ef1ddded7e69c796c7390ee74180182971f
 
-PODFILE CHECKSUM: 70d9d25280d0dd177a5f637cdb0f0b0b12c6a189
+PODFILE CHECKSUM: 6b9eb94e9f98a329f2ef624b852a6e42d090af2b
 
 COCOAPODS: 1.12.1

@@ -4,7 +4,7 @@ import 'package:flutter/foundation.dart';
 class StringUtils {
   static String no = "No";
   static String yes = "Yes";
-  static String alphaOne = "Alpha One";
+  static String calcon = "CalCon";
   static String titleOneOnboarding = "More than Meets the Eye.";
   static String titleTwoOnboarding = "Currency Conversion Made Easy.";
   static String titleThreeOnboarding = "Ready to Calculate?";
@@ -20,15 +20,15 @@ class StringUtils {
   ///Settings screen
   static String settings = "Settings";
   static String privacyPolicy = "Privacy Policy";
-  static String ratingAndReviews = "Rating  &  reviews";
+  static String ratingAndReviews = "Rating & Reviews";
 
   ///snackBar
   static String warning = "Warning";
   static String youCantRemoveDefaultCurrency =
-      "You Can\'t remove default currency!!";
+      "You Can't remove default currency!!";
   static String deleteCurrencyConverter = "Delete Currency Converter";
   static String youCantDeleteDefaultUsdConverter =
-      "'You can\'t delete the default USD converter!'";
+      "'You can't delete the default USD converter!'";
   static String areYouSureYouWantToDeleteCurrencyConverter =
       "Are you sure you want to delete this currency converter?";
 
