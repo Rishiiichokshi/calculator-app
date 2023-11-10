@@ -101,7 +101,7 @@ class _MainScreenState extends State<MainScreen> {
               physics: const NeverScrollableScrollPhysics(),
               itemCount: buttons.length,
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 4, mainAxisExtent: width * 0.17
+                  crossAxisCount: 4, mainAxisExtent: width * 0.24
                   // 24.w,
                   // 11.5.h,
                   // mainAxisSpacing: 0,
