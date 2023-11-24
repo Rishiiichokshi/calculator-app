@@ -1,7 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sizer/sizer.dart';
 import 'package:search_choices/search_choices.dart';
 
@@ -48,19 +51,80 @@ class _TestConversionCardState extends State<TestConversionCard> {
   @override
   void initState() {
     super.initState();
-
-    conversionDataList.add(ConversionData());
+    // Load data from SharedPreferences
+    loadDataFromSharedPreferences();
+    saveDataToSharedPreferences();
+    if (conversionDataList.isEmpty) {
+      // If empty, add a default ConversionData
+      conversionDataList.add(ConversionData());
+    }
+    // Set up listeners
     for (var data in conversionDataList) {
       data.amountController.addListener(() {
         updateConversionData(data);
       });
     }
-
-    conversionDataList[0].dropdownValue = defaultCurrency;
-    Future.delayed(Duration.zero, () {
+    if (conversionDataList.isEmpty) {
+      // If list is empty, set default values
+      conversionDataList[0].dropdownValue = defaultCurrency;
       conversionDataList[0].amountController.text = '1';
+    }
+  }
+
+  Future<void> saveDataToSharedPreferences() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    List<String> dataList = [];
+
+    for (var data in conversionDataList) {
+      // Convert ConversionData to a JSON string
+      String dataJson = dataToJson(data);
+      dataList.add(dataJson);
+    }
+
+    // Save the list of JSON strings to shared preferences
+    prefs.setStringList('conversionDataList', dataList);
+    // print('=============dataList $dataList');
+  }
+
+  Future<void> loadDataFromSharedPreferences() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    List<String>? dataList = prefs.getStringList('conversionDataList');
+
+    if (dataList != null) {
+      // Convert the list of JSON strings back to ConversionData objects
+      conversionDataList = dataList.map((jsonString) {
+        return jsonToData(jsonString);
+      }).toList();
       setState(() {});
-    });
+    }
+
+    // Other initialization logic
+  }
+
+// Convert a JSON string to ConversionData
+  ConversionData jsonToData(String jsonString) {
+    // Implement the conversion logic based on your data structure
+    // For example, you can use the `dart:convert` library
+    // Here is a simplified example assuming `ConversionData` has simple properties
+    Map<String, dynamic> dataMap = jsonDecode(jsonString);
+    ConversionData data = ConversionData();
+    data.amountController.text = dataMap['amountController'];
+    data.dropdownValue = dataMap['dropdownValue'];
+    // Set other properties as needed
+    return data;
+  }
+
+// Convert ConversionData to a JSON string
+  String dataToJson(ConversionData data) {
+    // Implement the conversion logic based on your data structure
+    // For example, you can use the `dart:convert` library
+    // Here is a simplified example assuming `ConversionData` has simple properties
+    Map<String, dynamic> dataMap = {
+      'amountController': data.amountController.text,
+      'dropdownValue': data.dropdownValue,
+      // Add other properties as needed
+    };
+    return jsonEncode(dataMap);
   }
 
   ///updating rates as per entered data
@@ -74,9 +138,7 @@ class _TestConversionCardState extends State<TestConversionCard> {
             updatedData.dropdownValue,
             data.dropdownValue,
           );
-
           double? convertedAmount = double.tryParse(conversionResult);
-
           if (convertedAmount != null) {
             data.amountController.text = conversionResult;
             data.convertedAmount = convertedAmount;
@@ -99,14 +161,13 @@ class _TestConversionCardState extends State<TestConversionCard> {
           updateConversionData(newData);
         }
       });
-
       newData.dropdownValue = defaultCurrency;
-
       if (selectedIndex >= 0 && selectedIndex < conversionDataList.length) {
         newData.amountController.text =
             conversionDataList[selectedIndex].amountController.text;
       }
       conversionDataList.add(newData);
+      saveDataToSharedPreferences();
     });
   }
 
@@ -535,6 +596,7 @@ class _TestConversionCardState extends State<TestConversionCard> {
 
   @override
   void dispose() {
+    saveDataToSharedPreferences();
     for (var data in conversionDataList) {
       data.amountController.dispose();
     }
@@ -830,6 +892,7 @@ class _TestConversionCardState extends State<TestConversionCard> {
               alignment: Alignment.centerLeft,
               child: TextButton(
                 onPressed: () async {
+                  saveDataToSharedPreferences();
                   await _showCurrencyOptions(context);
                 },
                 child: Container(

@@ -83,6 +83,7 @@ class CalculateController extends GetxController {
   /// Delete Button Pressed Func
   deleteBtnAction() {
     userInput = userInput.substring(0, userInput.length - 1);
+    evaluateLiveOutput();
     update();
   }
 

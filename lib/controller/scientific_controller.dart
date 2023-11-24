@@ -1,12 +1,9 @@
 import 'dart:math';
-
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'dart:math' as math;
 import 'dart:math';
-
 import 'package:math_expressions/math_expressions.dart';
-
 import '../utils/string_utils.dart';
 
 class ScientificController extends GetxController {
@@ -27,7 +24,6 @@ class ScientificController extends GetxController {
   //2nd button toggle
   void toggleButton() {
     isToggleOn.value = !isToggleOn.value;
-    logs(isToggleOn as String);
     update(); // Notify the UI to update after the toggle
   }
 
@@ -39,19 +35,23 @@ class ScientificController extends GetxController {
   String formatNumber(double number) {
     const threshold = 99999999999999; // Set the threshold to your desired value
     if (number.abs() >= threshold) {
+      print('-------formatted Number If condition');
       final formatted = number.toStringAsExponential();
       final parts = formatted.split('e');
-      final doublePart = double.parse(parts[0]).toStringAsFixed(7);
+      final doublePart = num.parse(parts[0]).toStringAsFixed(7);
       final exponentPart = parts[1].padLeft(2, '0');
       return '$doublePart e$exponentPart';
     } else {
+      print('-------formatted Number Else condition');
+      print('Formatted: ${numberFormat.format(number)}');
       return numberFormat.format(number);
     }
   }
 
   /// Equal Button Pressed Func
   equalPressed() {
-    String userInputFC = userInput;
+    String userInputWithoutCommas = userInput.replaceAll(',', '');
+    String userInputFC = userInputWithoutCommas;
 
     logs('====$userInput');
     logs('====userInputFC===$userInputFC');
@@ -106,6 +106,9 @@ class ScientificController extends GetxController {
     if (userInputFC.contains("atanh")) {
       userInputFC = calculateArcTanhRadian(userInputFC);
     }
+    if (userInputFC.contains("^")) {
+      userInputFC = handleXPowYExpression(userInputFC);
+    }
 
     //sinh
     userInputFC = calculateSinh(userInputFC);
@@ -123,6 +126,8 @@ class ScientificController extends GetxController {
     userInputFC = handleYSqrtXExpression(userInputFC);
     //yˣ
     userInputFC = handleYPowerXExpression(userInputFC);
+    //xy
+    // userInputFC = handleXPowerYExpression(userInputFC);
     //logᵧ
     userInputFC = handleYLogXExpression(userInputFC);
 
@@ -177,6 +182,7 @@ class ScientificController extends GetxController {
   /// Delete Button Pressed Func
   deleteBtnAction() {
     userInput = userInput.substring(0, userInput.length - 1);
+    evaluateLiveOutput();
     update();
   }
 
@@ -187,7 +193,15 @@ class ScientificController extends GetxController {
       if (userInput.isEmpty) {
         userOutput = '0';
       } else {
-        userInput += "^2";
+        // userInput += "^2";
+        double baseNumber = double.parse(userInput);
+
+        // Calculate the square
+        double squareResult = baseNumber * baseNumber;
+
+        // Update userInput and userOutput
+        userInput = formatNumber(squareResult);
+        userOutput = formatNumber(squareResult);
       }
     }
 
@@ -196,7 +210,15 @@ class ScientificController extends GetxController {
       if (userInput.isEmpty) {
         userOutput = '0';
       } else {
-        userInput += "^3";
+        // userInput += "^3";
+        double baseNumber = double.parse(userInput);
+
+        // Calculate the square
+        double squareResult = baseNumber * baseNumber * baseNumber;
+
+        // Update userInput and userOutput
+        userInput = formatNumber(squareResult);
+        userOutput = formatNumber(squareResult);
       }
     }
 
@@ -205,7 +227,13 @@ class ScientificController extends GetxController {
       if (userInput.isEmpty) {
         userOutput = '0';
       } else {
-        userInput += "^";
+        if (userInput.endsWith('^')) {
+          // Do nothing or handle as per your requirement
+        } else {
+          userInput += '^';
+        }
+        // userOutput += "^";
+        // userOutput = '$userInput';
       }
     }
 
@@ -238,7 +266,14 @@ class ScientificController extends GetxController {
       //2ˣ button
       if (isToggleOn.value) {
         if (userInput.isNotEmpty) {
-          userInput = "2^$userInput";
+          // userInput = "2^$userInput";
+          num base = 2; // The base for 2ˣ
+          num exponent =
+              (double.tryParse(userInput.replaceAll(',', '')) ?? 0.0);
+          num result = math.pow(base, exponent);
+          //.00 remove regex
+          userInput = result.toString().replaceAll(RegExp(r'\.0$'), '');
+          userOutput = userInput;
         } else {
           userOutput = "0";
         }
@@ -246,11 +281,11 @@ class ScientificController extends GetxController {
       // 10ˣ button
       else {
         if (userInput.isNotEmpty) {
-          double base = 10.0; // The base for 10ˣ
-          double exponent = (double.tryParse(userInput) ?? 0.0)
-              .toDouble(); // Parse the exponent from userInput, default to 0 if parsing fails, and cast it to double
-          num result = math.pow(base, exponent); // Calculate the result
-          userInput = result.toString(); // Update userInput with the result
+          double base = 10; // The base for 10ˣ
+          double exponent =
+              (double.tryParse(userInput.replaceAll(',', '')) ?? 0.0);
+          double result = math.pow(base, exponent) as double;
+          userInput = formatNumber(result);
           userOutput = userInput;
         } else {
           userOutput = "0";
@@ -267,7 +302,7 @@ class ScientificController extends GetxController {
           if (input != null && input > 0) {
             double result = math.log(input) / math.log(2);
             userInput = "log₂($userInput)";
-            userOutput = result.toString();
+            userOutput = result.toStringAsFixed(10);
           } else {
             userOutput = "Invalid input";
           }
@@ -502,6 +537,7 @@ class ScientificController extends GetxController {
       } else {
         // If the input is empty, display the value of π
         userOutput = math.pi.toString();
+        userInput = math.pi.toString();
       }
     }
 
@@ -641,7 +677,9 @@ class ScientificController extends GetxController {
 
   /// Update userOutput based on the current userInput.
   void evaluateLiveOutput() {
-    String userInputFC = userInput
+    String userInputWithoutCommas = userInput.replaceAll(',', '');
+    // String userInputFC = userInputWithoutCommas;
+    String userInputFC = userInputWithoutCommas
         .replaceAll("x", "*")
         .replaceAll('π', '${math.pi}')
         .replaceAll("EE", "*10^")
@@ -675,6 +713,10 @@ class ScientificController extends GetxController {
       userInputFC = calculateArcTanhRadian(userInputFC);
     }
 
+    if (userInputFC.contains("^")) {
+      userInputFC = handleXPowYExpression(userInputFC);
+    }
+
     userInputFC = calculateSinh(userInputFC);
     userInputFC = calculateCosh(userInputFC);
     userInputFC = calculateTanh(userInputFC);
@@ -684,6 +726,7 @@ class ScientificController extends GetxController {
     userInputFC = calculateNaturalLog(userInputFC);
     userInputFC = handleYSqrtXExpression(userInputFC);
     userInputFC = handleYPowerXExpression(userInputFC);
+    // userInputFC = handleXPowerYExpression(userInputFC);
     userInputFC = handleYLogXExpression(userInputFC);
 
     if (userInputFC.isNotEmpty && userInputFC.endsWith('.')) {
@@ -869,8 +912,8 @@ class ScientificController extends GetxController {
         final isDegMode = buttonText.value == "Deg";
         final resultInRadians =
             isDegMode ? math.sin(input) : math.sin(input * math.pi / 180);
-        userInputFC =
-            userInputFC.replaceFirst(fullMatch, resultInRadians.toString());
+        userInputFC = userInputFC.replaceFirst(
+            fullMatch, resultInRadians.toStringAsFixed(7));
       } else {
         userOutput = 'Error';
         update();
@@ -1297,6 +1340,23 @@ class ScientificController extends GetxController {
     }
 
     return result;
+  }
+
+  /// xʸ function handle
+  /// Function to handle xʸ expression
+  String handleXPowYExpression(String expression) {
+    List<String> parts = expression.split('^');
+    if (parts.length == 2) {
+      double base = double.tryParse(parts[0]) ?? 0.0;
+      double exponent = double.tryParse(parts[1]) ?? 0.0;
+
+      // Calculate the result of xʸ
+      num result = math.pow(base, exponent);
+
+      // Update expression with the result
+      expression = result.toString();
+    }
+    return expression;
   }
 
   ///logᵧ function handle

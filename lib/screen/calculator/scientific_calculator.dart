@@ -33,7 +33,6 @@ class _ScientificCalculatorState extends State<ScientificCalculator> {
     "%",
     "/",
     "2ⁿᵈ",
-    // "2nd",
     "x²",
     "x³",
     "xʸ",
