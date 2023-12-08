@@ -303,6 +303,7 @@ class _MainScreenState extends State<MainScreen> {
               ],
             ),
           ),
+
           Padding(
             padding: EdgeInsets.only(right: rightPadding, top: topPadding),
             child: Column(

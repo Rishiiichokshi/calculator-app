@@ -49,13 +49,25 @@ class CalculateController extends GetxController {
     try {
       double eval = exp.evaluate(EvaluationType.REAL, ctx) as double;
       if (eval.isFinite) {
-        userInput = formatNumber(eval);
-        userOutput = formatNumber(eval);
+        RegExpMatch? lastOperationMatch =
+            RegExp(r'([+\-x/]+)(\d+(?:\.\d+)?)$').firstMatch(userInput);
+        if (lastOperationMatch != null) {
+          String? lastOperator = lastOperationMatch.group(1) ?? '';
+          String? lastOperand = lastOperationMatch.group(2) ?? '';
+          // print('eval.toString()--${eval.toString()}');
+          userInput += lastOperator + lastOperand;
+          evaluateLiveOutput();
+        }
+
+        print('userInput====$userInput');
+        // userInput = formatNumber(eval);
+        // userOutput = formatNumber(eval);
       } else {
         userOutput = 'Error';
         logs('Error: Result is not a finite number');
       }
     } catch (e) {
+      // logs('frd');
       userOutput = 'Error';
       logs('Error: $e');
     }
