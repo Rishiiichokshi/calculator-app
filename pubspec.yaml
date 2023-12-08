@@ -19,6 +19,7 @@ dependencies:
   device_preview: ^1.1.0
   sizer: ^2.0.15
   http: ^1.1.0
+  decimal: ^2.3.3
   flutter_slidable: ^3.0.0
   search_choices: 2.2.5
   carousel_slider: ^4.2.1

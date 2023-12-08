@@ -33,7 +33,6 @@ class _ScientificCalculatorState extends State<ScientificCalculator> {
     "%",
     "/",
     "2ⁿᵈ",
-    // "2nd",
     "x²",
     "x³",
     "xʸ",
@@ -121,11 +120,12 @@ class _ScientificCalculatorState extends State<ScientificCalculator> {
             physics: const NeverScrollableScrollPhysics(),
             itemCount: buttons.length,
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 10,
-                mainAxisExtent: 9.5.w,
-                mainAxisSpacing: 1.5.w,
-                crossAxisSpacing: 2.9.w),
-            itemBuilder: (contex, index) {
+              crossAxisCount: 10,
+              mainAxisExtent: 9.5.w,
+              mainAxisSpacing: 1.2.w,
+              crossAxisSpacing: 2.9.w,
+            ),
+            itemBuilder: (context, index) {
               switch (index) {
                 /// CLEAR BTN
                 case 6:
@@ -372,13 +372,15 @@ class _ScientificCalculatorState extends State<ScientificCalculator> {
   /// Out put Section - Show Result
   Expanded outPutSection(
       ThemeController themeController, ScientificController controller) {
+    final double screenWidth = MediaQuery.of(context).size.width;
+    final bool isTablet = screenWidth > 1000;
     showRadText = controller.buttonText.value == "Deg" ||
         controller.buttonText.value == "rad";
     return Expanded(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          SizedBox(height: 2.w),
+          SizedBox(height: 1.w),
 
           ///Theme change light and dark
           Padding(
@@ -424,51 +426,56 @@ class _ScientificCalculatorState extends State<ScientificCalculator> {
                     onTap: () {
                       Get.to(const CurrencyConverterScreen());
                     },
-                    child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: SizedBox(
-                        child: Stack(
-                          children: [
-                            Shimmer.fromColors(
-                              baseColor: themeController.isDark
-                                  ? DarkColors.sheetBgColor
-                                  : CommonColors.greyLight,
-                              // baseColor: Colors.grey[300]!,
-                              highlightColor: themeController.isDark
-                                  ? Colors.black12
-                                  : Colors.white60,
-                              child: Container(
-                                width: 10.w,
-                                height: 10.w,
-                                decoration: BoxDecoration(
-                                  color: themeController.isDark
-                                      ? DarkColors.sheetBgColor
-                                      : LightColors.sheetBgColor,
-                                  shape: BoxShape.circle,
-                                  // borderRadius: BorderRadius.circular(20),
+                    child: Padding(
+                      padding: EdgeInsets.only(top: isTablet ? 2.w : 0),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: SizedBox(
+                          child: Stack(
+                            children: [
+                              Shimmer.fromColors(
+                                baseColor: themeController.isDark
+                                    ? DarkColors.sheetBgColor
+                                    : CommonColors.greyLight,
+                                // baseColor: Colors.grey[300]!,
+                                highlightColor: themeController.isDark
+                                    ? Colors.black12
+                                    : Colors.white60,
+                                child: Container(
+                                  width: isTablet ? 10.w : 10.w,
+                                  height: isTablet ? 8.w : 10.w,
+                                  // width: 10.w,
+                                  // height: 10.w,
+                                  decoration: BoxDecoration(
+                                    color: themeController.isDark
+                                        ? DarkColors.sheetBgColor
+                                        : LightColors.sheetBgColor,
+                                    shape: BoxShape.circle,
+                                    // borderRadius: BorderRadius.circular(20),
+                                  ),
                                 ),
                               ),
-                            ),
-                            Positioned(
-                              top: 0,
-                              bottom: 0,
-                              left: 0,
-                              right: 0,
-                              child: IconButton(
-                                onPressed: () {
-                                  // print('---tap');
-                                  Get.to(const CurrencyConverterScreen());
-                                },
-                                icon: Icon(
-                                  Icons.currency_exchange_outlined,
-                                  size: 18.sp,
-                                  color: themeController.isDark
-                                      ? DarkColors.leftOperatorColor
-                                      : LightColors.leftOperatorColor,
+                              Positioned(
+                                top: 0,
+                                bottom: 0,
+                                left: 0,
+                                right: 0,
+                                child: IconButton(
+                                  onPressed: () {
+                                    // print('---tap');
+                                    Get.to(const CurrencyConverterScreen());
+                                  },
+                                  icon: Icon(
+                                    Icons.currency_exchange_outlined,
+                                    size: 18.sp,
+                                    color: themeController.isDark
+                                        ? DarkColors.leftOperatorColor
+                                        : LightColors.leftOperatorColor,
+                                  ),
                                 ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
                     ),
@@ -522,9 +529,7 @@ class _ScientificCalculatorState extends State<ScientificCalculator> {
 
           ///output
           Padding(
-            padding: EdgeInsets.only(
-              right: 6.w,
-            ),
+            padding: EdgeInsets.only(right: 6.w),
             child: Column(
               children: [
                 ///userInput

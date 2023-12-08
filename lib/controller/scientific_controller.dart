@@ -1,12 +1,9 @@
 import 'dart:math';
-
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'dart:math' as math;
 import 'dart:math';
-
 import 'package:math_expressions/math_expressions.dart';
-
 import '../utils/string_utils.dart';
 
 class ScientificController extends GetxController {
@@ -27,7 +24,6 @@ class ScientificController extends GetxController {
   //2nd button toggle
   void toggleButton() {
     isToggleOn.value = !isToggleOn.value;
-    logs(isToggleOn as String);
     update(); // Notify the UI to update after the toggle
   }
 
@@ -39,19 +35,23 @@ class ScientificController extends GetxController {
   String formatNumber(double number) {
     const threshold = 99999999999999; // Set the threshold to your desired value
     if (number.abs() >= threshold) {
+      print('-------formatted Number If condition');
       final formatted = number.toStringAsExponential();
       final parts = formatted.split('e');
-      final doublePart = double.parse(parts[0]).toStringAsFixed(7);
+      final doublePart = num.parse(parts[0]).toStringAsFixed(7);
       final exponentPart = parts[1].padLeft(2, '0');
       return '$doublePart e$exponentPart';
     } else {
+      print('-------formatted Number Else condition');
+      print('Formatted: ${numberFormat.format(number)}');
       return numberFormat.format(number);
     }
   }
 
   /// Equal Button Pressed Func
   equalPressed() {
-    String userInputFC = userInput;
+    String userInputWithoutCommas = userInput.replaceAll(',', '');
+    String userInputFC = userInputWithoutCommas;
 
     logs('====$userInput');
     logs('====userInputFC===$userInputFC');
@@ -106,6 +106,9 @@ class ScientificController extends GetxController {
     if (userInputFC.contains("atanh")) {
       userInputFC = calculateArcTanhRadian(userInputFC);
     }
+    if (userInputFC.contains("^")) {
+      userInputFC = handleXPowYExpression(userInputFC);
+    }
 
     //sinh
     userInputFC = calculateSinh(userInputFC);
@@ -123,6 +126,8 @@ class ScientificController extends GetxController {
     userInputFC = handleYSqrtXExpression(userInputFC);
     //yˣ
     userInputFC = handleYPowerXExpression(userInputFC);
+    //xy
+    // userInputFC = handleXPowerYExpression(userInputFC);
     //logᵧ
     userInputFC = handleYLogXExpression(userInputFC);
 
@@ -134,9 +139,22 @@ class ScientificController extends GetxController {
 
       double eval = exp.evaluate(EvaluationType.REAL, ctx) as double;
       if (eval.isFinite) {
-        userOutput = formatNumber(eval);
+        RegExpMatch? lastOperationMatch =
+            RegExp(r'([+\-x/]+)(\d+(?:\.\d+)?)$').firstMatch(userInput);
+        if (lastOperationMatch != null) {
+          String? lastOperator = lastOperationMatch.group(1) ?? '';
+          String? lastOperand = lastOperationMatch.group(2) ?? '';
+          // print('eval.toString()--${eval.toString()}');
+          userInput += lastOperator + lastOperand;
+          evaluateLiveOutput();
+        }
+        // userInput = formatNumber(eval);
+        ///
+        // userOutput = formatNumber(eval);
+        // print('----parseFormattedNumber----${parseFormattedNumber(userInput)}');
       } else {
         userOutput = 'Error';
+        // print('----parseFormattedNumber----${parseFormattedNumber(userInput)}');
         logs('Error: Result is not a finite number');
       }
 
@@ -154,6 +172,7 @@ class ScientificController extends GetxController {
       logs('===ParcerUserOutput: $userOutput');
       logs('===ParceruserInputFC: $userInputFC');
     } catch (e) {
+      // print('----parseFormattedNumber----${parseFormattedNumber(userInput)}');
       logs('===Equal press Error ==Error: $e');
       userOutput = 'Error';
     }
@@ -176,17 +195,54 @@ class ScientificController extends GetxController {
   /// Delete Button Pressed Func
   deleteBtnAction() {
     userInput = userInput.substring(0, userInput.length - 1);
+    evaluateLiveOutput();
     update();
   }
 
   /// on Number Button Tapped
   void onBtnTapped(List<String> buttons, int index) {
+    if (RegExp(r'sin\(\d').hasMatch(userInput)) {
+      return;
+    }
+    if (RegExp(r'cos\(\d').hasMatch(userInput)) {
+      return;
+    }
+    if (RegExp(r'tan\(\d').hasMatch(userInput)) {
+      return;
+    }
+    if (RegExp(r'sinh\(\d').hasMatch(userInput)) {
+      return;
+    }
+    if (RegExp(r'cosh\(\d').hasMatch(userInput)) {
+      return;
+    }
+    if (RegExp(r'tanh\(\d').hasMatch(userInput)) {
+      return;
+    }
+    if (RegExp(r'asin\(\d').hasMatch(userInput)) {
+      return;
+    }
+    if (RegExp(r'acos\(\d').hasMatch(userInput)) {
+      return;
+    }
+    if (RegExp(r'atan\(\d').hasMatch(userInput)) {
+      return;
+    }
+
     /// x² button
     if (buttons[index] == 'x²') {
       if (userInput.isEmpty) {
         userOutput = '0';
       } else {
-        userInput += "^2";
+        // userInput += "^2";
+        double baseNumber = double.parse(userInput);
+
+        // Calculate the square
+        double squareResult = baseNumber * baseNumber;
+
+        // Update userInput and userOutput
+        userInput = formatNumber(squareResult);
+        userOutput = formatNumber(squareResult);
       }
     }
 
@@ -195,7 +251,15 @@ class ScientificController extends GetxController {
       if (userInput.isEmpty) {
         userOutput = '0';
       } else {
-        userInput += "^3";
+        // userInput += "^3";
+        double baseNumber = double.parse(userInput);
+
+        // Calculate the square
+        double squareResult = baseNumber * baseNumber * baseNumber;
+
+        // Update userInput and userOutput
+        userInput = formatNumber(squareResult);
+        userOutput = formatNumber(squareResult);
       }
     }
 
@@ -204,7 +268,13 @@ class ScientificController extends GetxController {
       if (userInput.isEmpty) {
         userOutput = '0';
       } else {
-        userInput += "^";
+        if (userInput.endsWith('^')) {
+          // Do nothing or handle as per your requirement
+        } else {
+          userInput += '^';
+        }
+        // userOutput += "^";
+        // userOutput = '$userInput';
       }
     }
 
@@ -237,7 +307,14 @@ class ScientificController extends GetxController {
       //2ˣ button
       if (isToggleOn.value) {
         if (userInput.isNotEmpty) {
-          userInput = "2^$userInput";
+          // userInput = "2^$userInput";
+          num base = 2; // The base for 2ˣ
+          num exponent =
+              (double.tryParse(userInput.replaceAll(',', '')) ?? 0.0);
+          num result = math.pow(base, exponent);
+          //.00 remove regex
+          userInput = result.toString().replaceAll(RegExp(r'\.0$'), '');
+          userOutput = userInput;
         } else {
           userOutput = "0";
         }
@@ -245,11 +322,11 @@ class ScientificController extends GetxController {
       // 10ˣ button
       else {
         if (userInput.isNotEmpty) {
-          double base = 10.0; // The base for 10ˣ
-          double exponent = (double.tryParse(userInput) ?? 0.0)
-              .toDouble(); // Parse the exponent from userInput, default to 0 if parsing fails, and cast it to double
-          num result = math.pow(base, exponent); // Calculate the result
-          userInput = result.toString(); // Update userInput with the result
+          double base = 10; // The base for 10ˣ
+          double exponent =
+              (double.tryParse(userInput.replaceAll(',', '')) ?? 0.0);
+          double result = math.pow(base, exponent) as double;
+          userInput = formatNumber(result);
           userOutput = userInput;
         } else {
           userOutput = "0";
@@ -266,7 +343,7 @@ class ScientificController extends GetxController {
           if (input != null && input > 0) {
             double result = math.log(input) / math.log(2);
             userInput = "log₂($userInput)";
-            userOutput = result.toString();
+            userOutput = result.toStringAsFixed(10);
           } else {
             userOutput = "Invalid input";
           }
@@ -344,12 +421,13 @@ class ScientificController extends GetxController {
     /// sin button or  sin⁻¹ button
     else if (buttons[index] == 'sin' || buttons[index] == 'sin⁻¹') {
       if (isToggleOn.value) {
-        if (userInput.isEmpty) {
-          userInput += "asin(";
-        } else {
-          // Handle the case when there is user input
-          userInput += "*asin(";
-        }
+        // if (userInput.isEmpty) {
+        //   userInput += "asin(";
+        // } else {
+        //   // Handle the case when there is user input
+        //   userInput += "*asin(";
+        // }
+        asinButtonPressed();
       } else {
         sinButtonPressed();
       }
@@ -358,12 +436,13 @@ class ScientificController extends GetxController {
     /// cos button or cos⁻¹ button
     else if (buttons[index] == 'cos' || buttons[index] == 'cos⁻¹') {
       if (isToggleOn.value) {
-        if (userInput.isEmpty) {
-          userInput += "acos(";
-        } else {
-          // Handle the case when there is user input
-          userInput += "*acos(";
-        }
+        // if (userInput.isEmpty) {
+        //   userInput += "acos(";
+        // } else {
+        //   // Handle the case when there is user input
+        //   userInput += "*acos(";
+        // }
+        acosButtonPressed();
       } else {
         cosButtonPressed();
       }
@@ -372,12 +451,13 @@ class ScientificController extends GetxController {
     /// tan button or tan⁻¹ button
     else if (buttons[index] == 'tan' || buttons[index] == 'tan⁻¹') {
       if (isToggleOn.value) {
-        if (userInput.isEmpty) {
-          userInput += "atan(";
-        } else {
-          // Handle the case when there is user input
-          userInput += "*atan(";
-        }
+        // if (userInput.isEmpty) {
+        //   userInput += "atan(";
+        // } else {
+        //   // Handle the case when there is user input
+        //   userInput += "*atan(";
+        // }
+        atanButtonPressed();
       } else {
         tanButtonPressed();
       }
@@ -386,12 +466,13 @@ class ScientificController extends GetxController {
     /// sinh button or sinh⁻¹ button
     else if (buttons[index] == 'sinh' || buttons[index] == 'sinh⁻¹') {
       if (isToggleOn.value) {
-        if (userInput.isEmpty) {
-          userInput += "asinh(";
-        } else {
-          // Handle the case when there is user input
-          userInput += "*asinh(";
-        }
+        // if (userInput.isEmpty) {
+        //   userInput += "asinh(";
+        // } else {
+        //   // Handle the case when there is user input
+        //   userInput += "*asinh(";
+        // }
+        asinhButtonPressed();
       } else {
         sinhButtonPressed();
       }
@@ -400,12 +481,13 @@ class ScientificController extends GetxController {
     /// cosh button or cosh⁻¹ button
     else if (buttons[index] == 'cosh' || buttons[index] == 'cosh⁻¹') {
       if (isToggleOn.value) {
-        if (userInput.isEmpty) {
-          userInput += "acosh(";
-        } else {
-          // Handle the case when there is user input
-          userInput += "*acosh(";
-        }
+        // if (userInput.isEmpty) {
+        //   userInput += "acosh(";
+        // } else {
+        //   // Handle the case when there is user input
+        //   userInput += "*acosh(";
+        // }
+        acoshButtonPressed();
       } else {
         coshButtonPressed();
       }
@@ -414,12 +496,13 @@ class ScientificController extends GetxController {
     /// tanh button or tanh⁻¹ button
     else if (buttons[index] == 'tanh' || buttons[index] == 'tanh⁻¹') {
       if (isToggleOn.value) {
-        if (userInput.isEmpty) {
-          userInput += "atanh(";
-        } else {
-          // Handle the case when there is user input
-          userInput += "*atanh(";
-        }
+        // if (userInput.isEmpty) {
+        //   userInput += "atanh(";
+        // } else {
+        //   // Handle the case when there is user input
+        //   userInput += "*atanh(";
+        // }
+        atanhButtonPressed();
       } else {
         tanhButtonPressed();
       }
@@ -501,6 +584,7 @@ class ScientificController extends GetxController {
       } else {
         // If the input is empty, display the value of π
         userOutput = math.pi.toString();
+        userInput = math.pi.toString();
       }
     }
 
@@ -544,20 +628,40 @@ class ScientificController extends GetxController {
       randButtonPressed();
     }
 
+    // /// . button
+    // else if (buttons[index] == '.') {
+    //   if (userInput.isEmpty ||
+    //       userInput.endsWith('.') ||
+    //       !isDigit(userInput[userInput.length - 1])) {
+    //     // If there is no input yet, start with '0.'
+    //     userInput += '0.';
+    //   } else {
+    //     final parts = userInput.split(RegExp(r'[+\-*/]'));
+    //     final lastPart = parts.last;
+    //     if (!lastPart.contains('.')) {
+    //       // Only add a dot if the last part doesn't already contain a dot
+    //       userInput += '.';
+    //     }
+    //   }
+    // }
+
     /// . button
     else if (buttons[index] == '.') {
-      if (userInput.isEmpty ||
-          userInput.endsWith('.') ||
-          !isDigit(userInput[userInput.length - 1])) {
+      if (userInput.isEmpty) {
         // If there is no input yet, start with '0.'
         userInput += '0.';
+        dotAllowed = false;
       } else {
-        final parts = userInput.split(RegExp(r'[+\-*/]'));
+        final parts = userInput.split(RegExp(r'[+\-x/]'));
         final lastPart = parts.last;
-        if (!lastPart.contains('.')) {
-          // Only add a dot if the last part doesn't already contain a dot
+        if (lastPart.isEmpty) {
+          // If the last part is empty, add '0.' followed by the dot
+          userInput += '0.';
+        } else if (!lastPart.contains('.')) {
+          // Only add a dot if the last part is not empty and doesn't already contain a dot
           userInput += '.';
         }
+        dotAllowed = false;
       }
     }
 
@@ -620,7 +724,9 @@ class ScientificController extends GetxController {
 
   /// Update userOutput based on the current userInput.
   void evaluateLiveOutput() {
-    String userInputFC = userInput
+    String userInputWithoutCommas = userInput.replaceAll(',', '');
+    // String userInputFC = userInputWithoutCommas;
+    String userInputFC = userInputWithoutCommas
         .replaceAll("x", "*")
         .replaceAll('π', '${math.pi}')
         .replaceAll("EE", "*10^")
@@ -654,6 +760,10 @@ class ScientificController extends GetxController {
       userInputFC = calculateArcTanhRadian(userInputFC);
     }
 
+    if (userInputFC.contains("^")) {
+      userInputFC = handleXPowYExpression(userInputFC);
+    }
+
     userInputFC = calculateSinh(userInputFC);
     userInputFC = calculateCosh(userInputFC);
     userInputFC = calculateTanh(userInputFC);
@@ -663,7 +773,13 @@ class ScientificController extends GetxController {
     userInputFC = calculateNaturalLog(userInputFC);
     userInputFC = handleYSqrtXExpression(userInputFC);
     userInputFC = handleYPowerXExpression(userInputFC);
+    // userInputFC = handleXPowerYExpression(userInputFC);
     userInputFC = handleYLogXExpression(userInputFC);
+
+    if (userInputFC.isNotEmpty && userInputFC.endsWith('.')) {
+      // If userInput ends with a dot and there is no more input, remove the dot
+      userInputFC = userInputFC.substring(0, userInputFC.length - 1);
+    }
 
     try {
       Parser p = Parser();
@@ -804,7 +920,34 @@ class ScientificController extends GetxController {
   }
 
   //sin
-  ///manage click of sin button --how input will display--manage conditions
+  // ///manage click of sin button --how input will display--manage conditions
+  // void sinButtonPressed() {
+  //   // Find the beginning of the current number or operator.
+  //   final startIndex = userInput.isNotEmpty
+  //       ? userInput.lastIndexOf(RegExp(r'[+\-x/]')) + 1
+  //       : 0;
+  //
+  //   // Check if there's a number before sin
+  //   final isNumberBeforeSin = startIndex < userInput.length &&
+  //       RegExp(r'\d').hasMatch(userInput[startIndex]);
+  //
+  //   // If there's a number before sin, insert "*sin("; otherwise, insert "sin(".
+  //   if (isNumberBeforeSin) {
+  //     userInput =
+  //         "${userInput.substring(0, startIndex)}${userInput.substring(startIndex)}*sin(";
+  //   } else {
+  //     userInput = "${userInput}sin(";
+  //   }
+  //
+  //   // Update the cursor position to be inside the "sin()" function.
+  //   int newCursorPosition = startIndex +
+  //       (isNumberBeforeSin ? 5 : 4); // 5 is the length of "*sin()".
+  //   updateCursorPosition(newCursorPosition);
+  //
+  //   // Evaluate the updated expression.
+  //   evaluateLiveOutput();
+  // }
+
   void sinButtonPressed() {
     // Find the beginning of the current number or operator.
     final startIndex = userInput.isNotEmpty
@@ -815,18 +958,36 @@ class ScientificController extends GetxController {
     final isNumberBeforeSin = startIndex < userInput.length &&
         RegExp(r'\d').hasMatch(userInput[startIndex]);
 
-    // If there's a number before sin, insert "*sin("; otherwise, insert "sin(".
-    if (isNumberBeforeSin) {
-      userInput =
-          "${userInput.substring(0, startIndex)}${userInput.substring(startIndex)}*sin(";
-    } else {
-      userInput = "${userInput}sin(";
-    }
+    // If there's a number before sin, insert "sin("; otherwise, insert "sin(".
+    String sinExpression = isNumberBeforeSin ? "sin(" : "sin(";
 
-    // Update the cursor position to be inside the "sin()" function.
-    int newCursorPosition = startIndex +
-        (isNumberBeforeSin ? 5 : 4); // 5 is the length of "*sin()".
-    updateCursorPosition(newCursorPosition);
+    // Check if "sin(" is already present in userInput.
+    final isSinPresent = userInput.contains("sin(");
+
+    // If "sin(" is not already present, update userInput.
+    if (!isSinPresent) {
+      // Find the end of the current number.
+      final endIndex = userInput.indexOf(RegExp(r'[+\-x/]'), startIndex + 1);
+      final endOfString = endIndex == -1 ? userInput.length : endIndex;
+
+      // Extract the current number.
+      final currentNumber = userInput.substring(startIndex, endOfString);
+
+      // Insert the sin expression with parentheses around the current number.
+      userInput = userInput.replaceRange(
+        startIndex,
+        endOfString,
+        '$sinExpression$currentNumber)',
+      );
+
+      // Update the cursor position to be inside the "sin()" function.
+      int newCursorPosition =
+          startIndex + sinExpression.length + currentNumber.length + 1;
+      updateCursorPosition(newCursorPosition);
+    } else {
+      // If "sin(" is already present, do not allow any additions.
+      return;
+    }
 
     // Evaluate the updated expression.
     evaluateLiveOutput();
@@ -843,8 +1004,8 @@ class ScientificController extends GetxController {
         final isDegMode = buttonText.value == "Deg";
         final resultInRadians =
             isDegMode ? math.sin(input) : math.sin(input * math.pi / 180);
-        userInputFC =
-            userInputFC.replaceFirst(fullMatch, resultInRadians.toString());
+        userInputFC = userInputFC.replaceFirst(
+            fullMatch, resultInRadians.toStringAsFixed(7));
       } else {
         userOutput = 'Error';
         update();
@@ -854,8 +1015,172 @@ class ScientificController extends GetxController {
     return userInputFC;
   }
 
+  ///sin-1
+  void asinButtonPressed() {
+    // Find the beginning of the current number or operator.
+    final startIndex = userInput.isNotEmpty
+        ? userInput.lastIndexOf(RegExp(r'[+\-x/]')) + 1
+        : 0;
+
+    // Check if there's a number before asin
+    final isNumberBeforeAsin = startIndex < userInput.length &&
+        RegExp(r'\d').hasMatch(userInput[startIndex]);
+
+    // If there's a number before asin, insert "*asin("; otherwise, insert "asin(".
+    String asinExpression = isNumberBeforeAsin ? "asin(" : "asin(";
+
+    // Check if "asin(" is already present in userInput.
+    final isAsinPresent = userInput.contains("asin(");
+
+    // If "asin(" is not already present, update userInput.
+    if (!isAsinPresent) {
+      // Find the end of the current number.
+      final endIndex = userInput.indexOf(RegExp(r'[+\-x/]'), startIndex + 1);
+      final endOfString = endIndex == -1 ? userInput.length : endIndex;
+
+      // Extract the current number.
+      final currentNumber = userInput.substring(startIndex, endOfString);
+
+      // Insert the asin expression with parentheses around the current number.
+      userInput = userInput.replaceRange(
+        startIndex,
+        endOfString,
+        '$asinExpression$currentNumber)',
+      );
+
+      // Update the cursor position to be inside the "asin()" function.
+      int newCursorPosition =
+          startIndex + asinExpression.length + currentNumber.length + 1;
+      updateCursorPosition(newCursorPosition);
+    } else {
+      // If "asin(" is already present, simply update the cursor position.
+      updateCursorPosition(startIndex + asinExpression.length);
+    }
+
+    // Evaluate the updated expression.
+    evaluateLiveOutput();
+  }
+
+  ///cos-1
+  void acosButtonPressed() {
+    // Find the beginning of the current number or operator.
+    final startIndex = userInput.isNotEmpty
+        ? userInput.lastIndexOf(RegExp(r'[+\-x/]')) + 1
+        : 0;
+
+    // Check if there's a number before acos
+    final isNumberBeforeAcos = startIndex < userInput.length &&
+        RegExp(r'\d').hasMatch(userInput[startIndex]);
+
+    // If there's a number before acos, insert "*acos("; otherwise, insert "acos(".
+    String acosExpression = isNumberBeforeAcos ? "acos(" : "acos(";
+
+    // Check if "acos(" is already present in userInput.
+    final isAcosPresent = userInput.contains("acos(");
+
+    // If "acos(" is not already present, update userInput.
+    if (!isAcosPresent) {
+      // Find the end of the current number.
+      final endIndex = userInput.indexOf(RegExp(r'[+\-x/]'), startIndex + 1);
+      final endOfString = endIndex == -1 ? userInput.length : endIndex;
+
+      // Extract the current number.
+      final currentNumber = userInput.substring(startIndex, endOfString);
+
+      // Insert the acos expression with parentheses around the current number.
+      userInput = userInput.replaceRange(
+        startIndex,
+        endOfString,
+        '$acosExpression$currentNumber)',
+      );
+
+      // Update the cursor position to be inside the "acos()" function.
+      int newCursorPosition =
+          startIndex + acosExpression.length + currentNumber.length + 1;
+      updateCursorPosition(newCursorPosition);
+    } else {
+      // If "acos(" is already present, simply update the cursor position.
+      updateCursorPosition(startIndex + acosExpression.length);
+    }
+
+    // Evaluate the updated expression.
+    evaluateLiveOutput();
+  }
+
+  ///tan-1
+  void atanButtonPressed() {
+    // Find the beginning of the current number or operator.
+    final startIndex = userInput.isNotEmpty
+        ? userInput.lastIndexOf(RegExp(r'[+\-x/]')) + 1
+        : 0;
+
+    // Check if there's a number before atan
+    final isNumberBeforeAtan = startIndex < userInput.length &&
+        RegExp(r'\d').hasMatch(userInput[startIndex]);
+
+    // If there's a number before atan, insert "*atan("; otherwise, insert "atan(".
+    String atanExpression = isNumberBeforeAtan ? "atan(" : "atan(";
+
+    // Check if "atan(" is already present in userInput.
+    final isAtanPresent = userInput.contains("atan(");
+
+    // If "atan(" is not already present, update userInput.
+    if (!isAtanPresent) {
+      // Find the end of the current number.
+      final endIndex = userInput.indexOf(RegExp(r'[+\-x/]'), startIndex + 1);
+      final endOfString = endIndex == -1 ? userInput.length : endIndex;
+
+      // Extract the current number.
+      final currentNumber = userInput.substring(startIndex, endOfString);
+
+      // Insert the atan expression with parentheses around the current number.
+      userInput = userInput.replaceRange(
+        startIndex,
+        endOfString,
+        '$atanExpression$currentNumber)',
+      );
+
+      // Update the cursor position to be inside the "atan()" function.
+      int newCursorPosition =
+          startIndex + atanExpression.length + currentNumber.length + 1;
+      updateCursorPosition(newCursorPosition);
+    } else {
+      // If "atan(" is already present, simply update the cursor position.
+      updateCursorPosition(startIndex + atanExpression.length);
+    }
+
+    // Evaluate the updated expression.
+    evaluateLiveOutput();
+  }
+
   //cos
-  ///manage click of cos button --how input will display--manage conditions
+  // ///manage click of cos button --how input will display--manage conditions
+  // void cosButtonPressed() {
+  //   // Find the beginning of the current number or operator.
+  //   final startIndex = userInput.isNotEmpty
+  //       ? userInput.lastIndexOf(RegExp(r'[+\-x/]')) + 1
+  //       : 0;
+  //
+  //   // Check if there's a number before cos
+  //   final isNumberBeforeCos = startIndex < userInput.length &&
+  //       RegExp(r'\d').hasMatch(userInput[startIndex]);
+  //
+  //   // If there's a number before cos, insert "*cos("; otherwise, insert "cos(".
+  //   if (isNumberBeforeCos) {
+  //     userInput =
+  //         "${userInput.substring(0, startIndex)}${userInput.substring(startIndex)}*cos(";
+  //   } else {
+  //     userInput = "${userInput}cos(";
+  //   }
+  //
+  //   // Update the cursor position to be inside the "cos()" function.
+  //   int newCursorPosition = startIndex +
+  //       (isNumberBeforeCos ? 5 : 4); // 5 is the length of "*cos()".
+  //   updateCursorPosition(newCursorPosition);
+  //
+  //   // Evaluate the updated expression.
+  //   evaluateLiveOutput();
+  // }
   void cosButtonPressed() {
     // Find the beginning of the current number or operator.
     final startIndex = userInput.isNotEmpty
@@ -866,18 +1191,36 @@ class ScientificController extends GetxController {
     final isNumberBeforeCos = startIndex < userInput.length &&
         RegExp(r'\d').hasMatch(userInput[startIndex]);
 
-    // If there's a number before cos, insert "*cos("; otherwise, insert "cos(".
-    if (isNumberBeforeCos) {
-      userInput =
-          "${userInput.substring(0, startIndex)}${userInput.substring(startIndex)}*cos(";
-    } else {
-      userInput = "${userInput}cos(";
-    }
+    // If there's a number before cos, insert "cos("; otherwise, insert "cos(".
+    String cosExpression = isNumberBeforeCos ? "cos(" : "cos(";
 
-    // Update the cursor position to be inside the "cos()" function.
-    int newCursorPosition = startIndex +
-        (isNumberBeforeCos ? 5 : 4); // 5 is the length of "*cos()".
-    updateCursorPosition(newCursorPosition);
+    // Check if "cos(" is already present in userInput.
+    final isCosPresent = userInput.contains("cos(");
+
+    // If "cos(" is not already present, update userInput.
+    if (!isCosPresent) {
+      // Find the end of the current number.
+      final endIndex = userInput.indexOf(RegExp(r'[+\-x/]'), startIndex + 1);
+      final endOfString = endIndex == -1 ? userInput.length : endIndex;
+
+      // Extract the current number.
+      final currentNumber = userInput.substring(startIndex, endOfString);
+
+      // Insert the cos expression with parentheses around the current number.
+      userInput = userInput.replaceRange(
+        startIndex,
+        endOfString,
+        '$cosExpression$currentNumber)',
+      );
+
+      // Update the cursor position to be inside the "cos()" function.
+      int newCursorPosition =
+          startIndex + cosExpression.length + currentNumber.length + 1;
+      updateCursorPosition(newCursorPosition);
+    } else {
+      // If "cos(" is already present, simply update the cursor position.
+      updateCursorPosition(startIndex + cosExpression.length);
+    }
 
     // Evaluate the updated expression.
     evaluateLiveOutput();
@@ -917,18 +1260,36 @@ class ScientificController extends GetxController {
     final isNumberBeforeTan = startIndex < userInput.length &&
         RegExp(r'\d').hasMatch(userInput[startIndex]);
 
-    // If there's a number before tan, insert "*tan("; otherwise, insert "tan(".
-    if (isNumberBeforeTan) {
-      userInput =
-          "${userInput.substring(0, startIndex)}${userInput.substring(startIndex)}*tan(";
-    } else {
-      userInput = "${userInput}tan(";
-    }
+    // If there's a number before tan, insert "tan("; otherwise, insert "tan(".
+    String tanExpression = isNumberBeforeTan ? "tan(" : "tan(";
 
-    // Update the cursor position to be inside the "tan()" function.
-    int newCursorPosition = startIndex +
-        (isNumberBeforeTan ? 5 : 4); // 5 is the length of "*tan()".
-    updateCursorPosition(newCursorPosition);
+    // Check if "tan(" is already present in userInput.
+    final isTanPresent = userInput.contains("tan(");
+
+    // If "tan(" is not already present, update userInput.
+    if (!isTanPresent) {
+      // Find the end of the current number.
+      final endIndex = userInput.indexOf(RegExp(r'[+\-x/]'), startIndex + 1);
+      final endOfString = endIndex == -1 ? userInput.length : endIndex;
+
+      // Extract the current number.
+      final currentNumber = userInput.substring(startIndex, endOfString);
+
+      // Insert the tan expression with parentheses around the current number.
+      userInput = userInput.replaceRange(
+        startIndex,
+        endOfString,
+        '$tanExpression$currentNumber)',
+      );
+
+      // Update the cursor position to be inside the "tan()" function.
+      int newCursorPosition =
+          startIndex + tanExpression.length + currentNumber.length + 1;
+      updateCursorPosition(newCursorPosition);
+    } else {
+      // If "tan(" is already present, simply update the cursor position.
+      updateCursorPosition(startIndex + tanExpression.length);
+    }
 
     // Evaluate the updated expression.
     evaluateLiveOutput();
@@ -956,6 +1317,144 @@ class ScientificController extends GetxController {
     return userInputFC;
   }
 
+  ///sinh-1
+  void asinhButtonPressed() {
+    // Find the beginning of the current number or operator.
+    final startIndex = userInput.isNotEmpty
+        ? userInput.lastIndexOf(RegExp(r'[+\-x/]')) + 1
+        : 0;
+
+    // Check if there's a number before asinh
+    final isNumberBeforeAsinh = startIndex < userInput.length &&
+        RegExp(r'\d').hasMatch(userInput[startIndex]);
+
+    // If there's a number before asinh, insert "*asinh("; otherwise, insert "asinh(".
+    String asinhExpression = isNumberBeforeAsinh ? "asinh(" : "asinh(";
+
+    // Check if "asinh(" is already present in userInput.
+    final isAsinhPresent = userInput.contains("asinh(");
+
+    // If "asinh(" is not already present, update userInput.
+    if (!isAsinhPresent) {
+      // Find the end of the current number.
+      final endIndex = userInput.indexOf(RegExp(r'[+\-x/]'), startIndex + 1);
+      final endOfString = endIndex == -1 ? userInput.length : endIndex;
+
+      // Extract the current number.
+      final currentNumber = userInput.substring(startIndex, endOfString);
+
+      // Insert the asinh expression with parentheses around the current number.
+      userInput = userInput.replaceRange(
+        startIndex,
+        endOfString,
+        '$asinhExpression$currentNumber)',
+      );
+
+      // Update the cursor position to be inside the "asinh()" function.
+      int newCursorPosition =
+          startIndex + asinhExpression.length + currentNumber.length + 1;
+      updateCursorPosition(newCursorPosition);
+    } else {
+      // If "asinh(" is already present, simply update the cursor position.
+      updateCursorPosition(startIndex + asinhExpression.length);
+    }
+
+    // Evaluate the updated expression.
+    evaluateLiveOutput();
+  }
+
+  ///cosh-1
+  void acoshButtonPressed() {
+    // Find the beginning of the current number or operator.
+    final startIndex = userInput.isNotEmpty
+        ? userInput.lastIndexOf(RegExp(r'[+\-x/]')) + 1
+        : 0;
+
+    // Check if there's a number before acosh
+    final isNumberBeforeAcosh = startIndex < userInput.length &&
+        RegExp(r'\d').hasMatch(userInput[startIndex]);
+
+    // If there's a number before acosh, insert "*acosh("; otherwise, insert "acosh(".
+    String acoshExpression = isNumberBeforeAcosh ? "acosh(" : "acosh(";
+
+    // Check if "acosh(" is already present in userInput.
+    final isAcoshPresent = userInput.contains("acosh(");
+
+    // If "acosh(" is not already present, update userInput.
+    if (!isAcoshPresent) {
+      // Find the end of the current number.
+      final endIndex = userInput.indexOf(RegExp(r'[+\-x/]'), startIndex + 1);
+      final endOfString = endIndex == -1 ? userInput.length : endIndex;
+
+      // Extract the current number.
+      final currentNumber = userInput.substring(startIndex, endOfString);
+
+      // Insert the acosh expression with parentheses around the current number.
+      userInput = userInput.replaceRange(
+        startIndex,
+        endOfString,
+        '$acoshExpression$currentNumber)',
+      );
+
+      // Update the cursor position to be inside the "acosh()" function.
+      int newCursorPosition =
+          startIndex + acoshExpression.length + currentNumber.length + 1;
+      updateCursorPosition(newCursorPosition);
+    } else {
+      // If "acosh(" is already present, simply update the cursor position.
+      updateCursorPosition(startIndex + acoshExpression.length);
+    }
+
+    // Evaluate the updated expression.
+    evaluateLiveOutput();
+  }
+
+  ///tanh-1
+  void atanhButtonPressed() {
+    // Find the beginning of the current number or operator.
+    final startIndex = userInput.isNotEmpty
+        ? userInput.lastIndexOf(RegExp(r'[+\-x/]')) + 1
+        : 0;
+
+    // Check if there's a number before atanh
+    final isNumberBeforeAtanh = startIndex < userInput.length &&
+        RegExp(r'\d').hasMatch(userInput[startIndex]);
+
+    // If there's a number before atanh, insert "*atanh("; otherwise, insert "atanh(".
+    String atanhExpression = isNumberBeforeAtanh ? "atanh(" : "atanh(";
+
+    // Check if "atanh(" is already present in userInput.
+    final isAtanhPresent = userInput.contains("atanh(");
+
+    // If "atanh(" is not already present, update userInput.
+    if (!isAtanhPresent) {
+      // Find the end of the current number.
+      final endIndex = userInput.indexOf(RegExp(r'[+\-x/]'), startIndex + 1);
+      final endOfString = endIndex == -1 ? userInput.length : endIndex;
+
+      // Extract the current number.
+      final currentNumber = userInput.substring(startIndex, endOfString);
+
+      // Insert the atanh expression with parentheses around the current number.
+      userInput = userInput.replaceRange(
+        startIndex,
+        endOfString,
+        '$atanhExpression$currentNumber)',
+      );
+
+      // Update the cursor position to be inside the "atanh()" function.
+      int newCursorPosition =
+          startIndex + atanhExpression.length + currentNumber.length + 1;
+      updateCursorPosition(newCursorPosition);
+    } else {
+      // If "atanh(" is already present, simply update the cursor position.
+      updateCursorPosition(startIndex + atanhExpression.length);
+    }
+
+    // Evaluate the updated expression.
+    evaluateLiveOutput();
+  }
+
   //sinh
   ///manage click of sinh button --how input will display--manage conditions
   void sinhButtonPressed() {
@@ -968,18 +1467,36 @@ class ScientificController extends GetxController {
     final isNumberBeforeSinh = startIndex < userInput.length &&
         RegExp(r'\d').hasMatch(userInput[startIndex]);
 
-    // If there's a number before sinh, insert "*sinh("; otherwise, insert "sinh(".
-    if (isNumberBeforeSinh) {
-      userInput =
-          "${userInput.substring(0, startIndex)}${userInput.substring(startIndex)}*sinh(";
-    } else {
-      userInput = "${userInput}sinh(";
-    }
+    // If there's a number before sinh, insert "sinh("; otherwise, insert "sinh(".
+    String sinhExpression = isNumberBeforeSinh ? "sinh(" : "sinh(";
 
-    // Update the cursor position to be inside the "sinh()" function.
-    int newCursorPosition = startIndex +
-        (isNumberBeforeSinh ? 6 : 5); // 6 is the length of "*sinh()".
-    updateCursorPosition(newCursorPosition);
+    // Check if "sinh(" is already present in userInput.
+    final isSinhPresent = userInput.contains("sinh(");
+
+    // If "sinh(" is not already present, update userInput.
+    if (!isSinhPresent) {
+      // Find the end of the current number.
+      final endIndex = userInput.indexOf(RegExp(r'[+\-x/]'), startIndex + 1);
+      final endOfString = endIndex == -1 ? userInput.length : endIndex;
+
+      // Extract the current number.
+      final currentNumber = userInput.substring(startIndex, endOfString);
+
+      // Insert the sinh expression with parentheses around the current number.
+      userInput = userInput.replaceRange(
+        startIndex,
+        endOfString,
+        '$sinhExpression$currentNumber)',
+      );
+
+      // Update the cursor position to be inside the "sinh()" function.
+      int newCursorPosition =
+          startIndex + sinhExpression.length + currentNumber.length + 1;
+      updateCursorPosition(newCursorPosition);
+    } else {
+      // If "sinh(" is already present, simply update the cursor position.
+      updateCursorPosition(startIndex + sinhExpression.length);
+    }
 
     // Evaluate the updated expression.
     evaluateLiveOutput();
@@ -1015,18 +1532,36 @@ class ScientificController extends GetxController {
     final isNumberBeforeCosh = startIndex < userInput.length &&
         RegExp(r'\d').hasMatch(userInput[startIndex]);
 
-    // If there's a number before cosh, insert "*cosh("; otherwise, insert "cosh(".
-    if (isNumberBeforeCosh) {
-      userInput =
-          "${userInput.substring(0, startIndex)}${userInput.substring(startIndex)}*cosh(";
-    } else {
-      userInput = "${userInput}cosh(";
-    }
+    // If there's a number before cosh, insert "cosh("; otherwise, insert "cosh(".
+    String coshExpression = isNumberBeforeCosh ? "cosh(" : "cosh(";
 
-    // Update the cursor position to be inside the "cosh()" function.
-    int newCursorPosition = startIndex +
-        (isNumberBeforeCosh ? 6 : 5); // 6 is the length of "*cosh()".
-    updateCursorPosition(newCursorPosition);
+    // Check if "cosh(" is already present in userInput.
+    final isCoshPresent = userInput.contains("cosh(");
+
+    // If "cosh(" is not already present, update userInput.
+    if (!isCoshPresent) {
+      // Find the end of the current number.
+      final endIndex = userInput.indexOf(RegExp(r'[+\-x/]'), startIndex + 1);
+      final endOfString = endIndex == -1 ? userInput.length : endIndex;
+
+      // Extract the current number.
+      final currentNumber = userInput.substring(startIndex, endOfString);
+
+      // Insert the cosh expression with parentheses around the current number.
+      userInput = userInput.replaceRange(
+        startIndex,
+        endOfString,
+        '$coshExpression$currentNumber)',
+      );
+
+      // Update the cursor position to be inside the "cosh()" function.
+      int newCursorPosition =
+          startIndex + coshExpression.length + currentNumber.length + 1;
+      updateCursorPosition(newCursorPosition);
+    } else {
+      // If "cosh(" is already present, simply update the cursor position.
+      updateCursorPosition(startIndex + coshExpression.length);
+    }
 
     // Evaluate the updated expression.
     evaluateLiveOutput();
@@ -1062,18 +1597,36 @@ class ScientificController extends GetxController {
     final isNumberBeforeTanh = startIndex < userInput.length &&
         RegExp(r'\d').hasMatch(userInput[startIndex]);
 
-    // If there's a number before tanh, insert "*tanh("; otherwise, insert "tanh(".
-    if (isNumberBeforeTanh) {
-      userInput =
-          "${userInput.substring(0, startIndex)}${userInput.substring(startIndex)}*tanh(";
-    } else {
-      userInput = "${userInput}tanh(";
-    }
+    // If there's a number before tanh, insert "tanh("; otherwise, insert "tanh(".
+    String tanhExpression = isNumberBeforeTanh ? "tanh(" : "tanh(";
 
-    // Update the cursor position to be inside the "tanh()" function.
-    int newCursorPosition = startIndex +
-        (isNumberBeforeTanh ? 6 : 5); // 6 is the length of "*tanh()".
-    updateCursorPosition(newCursorPosition);
+    // Check if "tanh(" is already present in userInput.
+    final isTanhPresent = userInput.contains("tanh(");
+
+    // If "tanh(" is not already present, update userInput.
+    if (!isTanhPresent) {
+      // Find the end of the current number.
+      final endIndex = userInput.indexOf(RegExp(r'[+\-x/]'), startIndex + 1);
+      final endOfString = endIndex == -1 ? userInput.length : endIndex;
+
+      // Extract the current number.
+      final currentNumber = userInput.substring(startIndex, endOfString);
+
+      // Insert the tanh expression with parentheses around the current number.
+      userInput = userInput.replaceRange(
+        startIndex,
+        endOfString,
+        '$tanhExpression$currentNumber)',
+      );
+
+      // Update the cursor position to be inside the "tanh()" function.
+      int newCursorPosition =
+          startIndex + tanhExpression.length + currentNumber.length + 1;
+      updateCursorPosition(newCursorPosition);
+    } else {
+      // If "tanh(" is already present, simply update the cursor position.
+      updateCursorPosition(startIndex + tanhExpression.length);
+    }
 
     // Evaluate the updated expression.
     evaluateLiveOutput();
@@ -1271,6 +1824,23 @@ class ScientificController extends GetxController {
     }
 
     return result;
+  }
+
+  /// xʸ function handle
+  /// Function to handle xʸ expression
+  String handleXPowYExpression(String expression) {
+    List<String> parts = expression.split('^');
+    if (parts.length == 2) {
+      double base = double.tryParse(parts[0]) ?? 0.0;
+      double exponent = double.tryParse(parts[1]) ?? 0.0;
+
+      // Calculate the result of xʸ
+      num result = math.pow(base, exponent);
+
+      // Update expression with the result
+      expression = result.toString();
+    }
+    return expression;
   }
 
   ///logᵧ function handle
