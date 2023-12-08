@@ -49,14 +49,17 @@ class _SplashScreenState extends State<SplashScreen> {
     return Scaffold(
       body: OrientationBuilder(
         builder: (context, orientation) {
-          return Container(
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage(orientation == Orientation.portrait
-                    ? 'assets/images/splash.png'
-                    : 'assets/images/splash.png'),
-                fit: BoxFit.cover,
-              ),
+          return SizedBox(
+            width: double.infinity,
+            height: double.infinity,
+            child: Image.asset(
+              orientation == Orientation.portrait
+                  ? 'assets/images/splash.png'
+                  : 'assets/images/splashLandscape.png',
+              width: double.infinity,
+              height: double.infinity,
+              // : 'assets/images/splash.png',
+              fit: BoxFit.fill,
             ),
           );
         },
