@@ -537,6 +537,7 @@ class _ScientificCalculatorState extends State<ScientificCalculator> {
                 Align(
                   alignment: Alignment.centerRight,
                   child: SingleChildScrollView(
+                    controller: controller.inputScrollController,
                     scrollDirection: Axis.horizontal,
                     child: Text(
                       controller.userInput,

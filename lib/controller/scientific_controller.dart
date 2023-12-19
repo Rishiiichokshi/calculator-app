@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:decimal/decimal.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'dart:math' as math;
@@ -16,6 +17,7 @@ class ScientificController extends GetxController {
   double memoryValue = 0;
   double lastResult = 0.0;
   int equalButtonClickCount = 0;
+  ScrollController inputScrollController = ScrollController();
   final NumberFormat numberFormat = NumberFormat.decimalPattern();
 
   /// Declare a flag to track if a dot is present in the current number
@@ -770,6 +772,11 @@ class ScientificController extends GetxController {
       userInput += buttons[index];
       // lastCharIsOperator = isOperator(buttons[index]);
     }
+    inputScrollController.animateTo(
+      inputScrollController.position.maxScrollExtent + 20,
+      duration: const Duration(milliseconds: 500),
+      curve: Curves.easeInOut,
+    );
 
     evaluateLiveOutput();
     update();
