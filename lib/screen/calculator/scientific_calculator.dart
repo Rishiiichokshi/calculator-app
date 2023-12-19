@@ -90,6 +90,7 @@ class _ScientificCalculatorState extends State<ScientificCalculator> {
             children: [
               GetBuilder<ScientificController>(
                 builder: (controller) {
+                  print('controller.userInput=>${controller.userInput}');
                   return outPutSection(themeController, scientificController);
                 },
               ),

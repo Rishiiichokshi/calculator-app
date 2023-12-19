@@ -229,6 +229,11 @@ class CalculateController extends GetxController {
         logs(e.toString());
       }
     }
+    inputScrollController.animateTo(
+      inputScrollController.position.maxScrollExtent + 20,
+      duration: const Duration(milliseconds: 500),
+      curve: Curves.easeInOut,
+    );
     evaluateLiveOutput();
     update();
   }

@@ -97,7 +97,7 @@ class _MainScreenState extends State<MainScreen> {
               color: themeController.isDark
                   ? DarkColors.sheetBgColor
                   : LightColors.sheetBgColor,
-              borderRadius: BorderRadius.only(
+              borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(32), topRight: Radius.circular(32))),
           child: GridView.builder(
               padding:
@@ -312,6 +312,7 @@ class _MainScreenState extends State<MainScreen> {
                 Align(
                   alignment: Alignment.centerRight,
                   child: SingleChildScrollView(
+                    controller: controller.inputScrollController,
                     scrollDirection: Axis.horizontal,
                     child: Text(
                       ///remove.00

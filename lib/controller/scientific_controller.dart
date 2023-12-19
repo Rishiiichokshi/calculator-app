@@ -261,6 +261,8 @@ class ScientificController extends GetxController {
       return;
     }
 
+    print('buttons[index]==>${buttons[index]}');
+
     /// x² button
     if (buttons[index] == 'x²') {
       if (userInput.isEmpty) {
@@ -268,12 +270,13 @@ class ScientificController extends GetxController {
       } else {
         String sanitizedInput = userInput.replaceAll(',', '');
         try {
-          double baseNumber = double.parse(sanitizedInput);
-          double squareResult = baseNumber * baseNumber;
+          Decimal baseNumber = Decimal.parse(sanitizedInput);
+          Decimal squareResult = baseNumber * baseNumber;
+          userInput = formatNumber(squareResult.toDouble());
+          print('X2 ---userInput--$userInput');
 
-          // Update userInput and userOutput
-          userInput = formatNumber(squareResult);
-          userOutput = formatNumber(squareResult);
+          userOutput = formatNumber(squareResult.toDouble());
+          print('---userOutput--$userOutput');
         } catch (e) {
           userOutput = 'Not a Number';
           logs('Error: $e');
@@ -297,21 +300,14 @@ class ScientificController extends GetxController {
     //     userOutput = formatNumber(squareResult);
     //   }
     // }
-    if (buttons[index] == 'x³') {
+    else if (buttons[index] == 'x³') {
       if (userInput.isEmpty) {
         userOutput = '0';
       } else {
         String sanitizedInput = userInput.replaceAll(',', '');
-
-        // String sanitizedInput = userInput.replaceAll(',', '');
-
         try {
           Decimal baseNumber = Decimal.parse(sanitizedInput);
-
-          // Calculate the cube
           Decimal cubeResult = baseNumber * baseNumber * baseNumber;
-
-          // Update userInput and userOutput
           userInput = formatNumber(cubeResult.toDouble());
           userOutput = formatNumber(cubeResult.toDouble());
         } catch (e) {
@@ -326,13 +322,20 @@ class ScientificController extends GetxController {
       if (userInput.isEmpty) {
         userOutput = '0';
       } else {
-        if (userInput.endsWith('^')) {
-          // Do nothing or handle as per your requirement
-        } else {
-          userInput += '^';
+        try {
+          if (userInput.endsWith('^')) {
+            // Do nothing or handle as per your requirement
+          } else {
+            userInput += '^';
+            print('---userInput--$userInput');
+            print('---userOutput--$userOutput');
+          }
+          // userOutput += "^";
+          // userOutput = '$userInput';
+        } catch (e) {
+          userOutput = 'Not a Number';
+          logs('Error: $e');
         }
-        // userOutput += "^";
-        // userOutput = '$userInput';
       }
     }
 
@@ -763,6 +766,7 @@ class ScientificController extends GetxController {
 
     /// other  buttons
     else {
+      print('ELSE ---------');
       userInput += buttons[index];
       // lastCharIsOperator = isOperator(buttons[index]);
     }
