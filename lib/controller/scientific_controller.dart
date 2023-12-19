@@ -223,6 +223,7 @@ class ScientificController extends GetxController {
     userInput = "";
     userOutput = "0";
     dotAllowed = true;
+    equalButtonClickCount = 0;
     update();
   }
 
