@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:get/get_state_manager/src/simple/get_controllers.dart';
 import 'package:intl/intl.dart';
 import 'package:math_expressions/math_expressions.dart';
@@ -7,6 +8,9 @@ import '../utils/string_utils.dart';
 class CalculateController extends GetxController {
   var userInput = "";
   var userOutput = "0";
+  double lastResult = 0.0;
+  int equalButtonClickCount = 0;
+  ScrollController inputScrollController = ScrollController();
   final NumberFormat numberFormat = NumberFormat.decimalPattern();
 
   /// Declare a flag to track if a dot is present in the current number
@@ -46,31 +50,59 @@ class CalculateController extends GetxController {
     Expression exp = p.parse(userInputFC);
     ContextModel ctx = ContextModel();
     double eval = exp.evaluate(EvaluationType.REAL, ctx);
+
     try {
       double eval = exp.evaluate(EvaluationType.REAL, ctx) as double;
       if (eval.isFinite) {
-        RegExpMatch? lastOperationMatch =
-            RegExp(r'([+\-x/]+)(\d+(?:\.\d+)?)$').firstMatch(userInput);
-        if (lastOperationMatch != null) {
-          String? lastOperator = lastOperationMatch.group(1) ?? '';
-          String? lastOperand = lastOperationMatch.group(2) ?? '';
-          // print('eval.toString()--${eval.toString()}');
-          userInput += lastOperator + lastOperand;
-          evaluateLiveOutput();
+        // Append the last operation to the input string only on the second click
+        if (equalButtonClickCount > 0) {
+          RegExpMatch? lastOperationMatch =
+              RegExp(r'([+\-x/]+)(\d+(?:\.\d+)?)$').firstMatch(userInput);
+          if (lastOperationMatch != null) {
+            String? lastOperator = lastOperationMatch.group(1) ?? '';
+            String? lastOperand = lastOperationMatch.group(2) ?? '';
+            userInput += lastOperator + lastOperand;
+            evaluateLiveOutput();
+          }
         }
-
+        // Update the last evaluated result
+        lastResult = eval;
         print('userInput====$userInput');
-        // userInput = formatNumber(eval);
-        // userOutput = formatNumber(eval);
+        equalButtonClickCount++;
       } else {
         userOutput = 'Error';
         logs('Error: Result is not a finite number');
       }
     } catch (e) {
-      // logs('frd');
       userOutput = 'Error';
       logs('Error: $e');
     }
+
+    // try {
+    //   double eval = exp.evaluate(EvaluationType.REAL, ctx) as double;
+    //   if (eval.isFinite) {
+    //     RegExpMatch? lastOperationMatch =
+    //         RegExp(r'([+\-x/]+)(\d+(?:\.\d+)?)$').firstMatch(userInput);
+    //     if (lastOperationMatch != null) {
+    //       String? lastOperator = lastOperationMatch.group(1) ?? '';
+    //       String? lastOperand = lastOperationMatch.group(2) ?? '';
+    //       // print('eval.toString()--${eval.toString()}');
+    //       userInput += lastOperator + lastOperand;
+    //       evaluateLiveOutput();
+    //     }
+    //
+    //     print('userInput====$userInput');
+    //     // userInput = formatNumber(eval);
+    //     // userOutput = formatNumber(eval);
+    //   } else {
+    //     userOutput = 'Error';
+    //     logs('Error: Result is not a finite number');
+    //   }
+    // } catch (e) {
+    //   // logs('frd');
+    //   userOutput = 'Error';
+    //   logs('Error: $e');
+    // }
 
     // if (eval % 1 == 0) {
     //   // If the result is an integer, convert it to an integer and then to a string
@@ -88,6 +120,7 @@ class CalculateController extends GetxController {
   clearInputAndOutput() {
     userInput = "";
     userOutput = "0";
+    equalButtonClickCount = 0;
     dotAllowed = true;
     update();
   }

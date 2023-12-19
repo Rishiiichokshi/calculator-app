@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'package:decimal/decimal.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'dart:math' as math;
@@ -13,6 +14,8 @@ class ScientificController extends GetxController {
   int cursorPosition = 0;
   RxString buttonText = "Rad".obs;
   double memoryValue = 0;
+  double lastResult = 0.0;
+  int equalButtonClickCount = 0;
   final NumberFormat numberFormat = NumberFormat.decimalPattern();
 
   /// Declare a flag to track if a dot is present in the current number
@@ -131,51 +134,80 @@ class ScientificController extends GetxController {
     //logᵧ
     userInputFC = handleYLogXExpression(userInputFC);
 
+    Parser p = Parser();
+    Expression exp = p.parse(userInputFC);
+    ContextModel ctx = ContextModel();
+    double eval = exp.evaluate(EvaluationType.REAL, ctx);
     try {
-      Parser p = Parser();
-      Expression exp = p.parse(userInputFC);
-      ContextModel ctx = ContextModel();
-      // double eval = exp.evaluate(EvaluationType.REAL, ctx);
-
       double eval = exp.evaluate(EvaluationType.REAL, ctx) as double;
       if (eval.isFinite) {
-        RegExpMatch? lastOperationMatch =
-            RegExp(r'([+\-x/]+)(\d+(?:\.\d+)?)$').firstMatch(userInput);
-        if (lastOperationMatch != null) {
-          String? lastOperator = lastOperationMatch.group(1) ?? '';
-          String? lastOperand = lastOperationMatch.group(2) ?? '';
-          // print('eval.toString()--${eval.toString()}');
-          userInput += lastOperator + lastOperand;
-          evaluateLiveOutput();
+        // Append the last operation to the input string only on the second click
+        if (equalButtonClickCount > 0) {
+          RegExpMatch? lastOperationMatch =
+              RegExp(r'([+\-x/]+)(\d+(?:\.\d+)?)$').firstMatch(userInput);
+          if (lastOperationMatch != null) {
+            String? lastOperator = lastOperationMatch.group(1) ?? '';
+            String? lastOperand = lastOperationMatch.group(2) ?? '';
+            userInput += lastOperator + lastOperand;
+            evaluateLiveOutput();
+          }
         }
-        // userInput = formatNumber(eval);
-        ///
-        // userOutput = formatNumber(eval);
-        // print('----parseFormattedNumber----${parseFormattedNumber(userInput)}');
+        // Update the last evaluated result
+        lastResult = eval;
+        print('userInput====$userInput');
+        equalButtonClickCount++;
       } else {
         userOutput = 'Error';
-        // print('----parseFormattedNumber----${parseFormattedNumber(userInput)}');
         logs('Error: Result is not a finite number');
       }
-
-      // if (eval % 1 == 0) {
-      //   // If the result is an integer, convert it to an integer and then to a string
-      //   userOutput = eval.toInt().toString();
-      //   userInput = eval.toInt().toString();
-      // } else {
-      //   // If it's not an integer, keep it as a double with 2 decimal places
-      //   userOutput = eval.toString();
-      //   userInput = eval.toString();
-      // }
-      // userOutput = eval.toString();
-      // userInput = eval.toString();
-      logs('===ParcerUserOutput: $userOutput');
-      logs('===ParceruserInputFC: $userInputFC');
     } catch (e) {
       // print('----parseFormattedNumber----${parseFormattedNumber(userInput)}');
       logs('===Equal press Error ==Error: $e');
       userOutput = 'Error';
     }
+
+    // try {
+    //   Parser p = Parser();
+    //   Expression exp = p.parse(userInputFC);
+    //   ContextModel ctx = ContextModel();
+    //   // double eval = exp.evaluate(EvaluationType.REAL, ctx);
+    //
+    //   double eval = exp.evaluate(EvaluationType.REAL, ctx) as double;
+    //   if (eval.isFinite) {
+    //     RegExpMatch? lastOperationMatch =
+    //         RegExp(r'([+\-x/]+)(\d+(?:\.\d+)?)$').firstMatch(userInput);
+    //     if (lastOperationMatch != null) {
+    //       String? lastOperator = lastOperationMatch.group(1) ?? '';
+    //       String? lastOperand = lastOperationMatch.group(2) ?? '';
+    //       // print('eval.toString()--${eval.toString()}');
+    //       userInput += lastOperator + lastOperand;
+    //       evaluateLiveOutput();
+    //     }
+    //     // userInput = formatNumber(eval);
+    //     ///
+    //     // userOutput = formatNumber(eval);
+    //     // print('----parseFormattedNumber----${parseFormattedNumber(userInput)}');
+    //   } else {
+    //     userOutput = 'Error';
+    //     // print('----parseFormattedNumber----${parseFormattedNumber(userInput)}');
+    //     logs('Error: Result is not a finite number');
+    //   }
+    //
+    //   // if (eval % 1 == 0) {
+    //   //   // If the result is an integer, convert it to an integer and then to a string
+    //   //   userOutput = eval.toInt().toString();
+    //   //   userInput = eval.toInt().toString();
+    //   // } else {
+    //   //   // If it's not an integer, keep it as a double with 2 decimal places
+    //   //   userOutput = eval.toString();
+    //   //   userInput = eval.toString();
+    //   // }
+    //   // userOutput = eval.toString();
+    //   // userInput = eval.toString();
+    //   logs('===ParcerUserOutput: $userOutput');
+    //   logs('===ParceruserInputFC: $userInputFC');
+    // }
+
     cursorPosition = userInput.length;
     update();
   }
@@ -234,32 +266,58 @@ class ScientificController extends GetxController {
       if (userInput.isEmpty) {
         userOutput = '0';
       } else {
-        // userInput += "^2";
-        double baseNumber = double.parse(userInput);
+        String sanitizedInput = userInput.replaceAll(',', '');
+        try {
+          double baseNumber = double.parse(sanitizedInput);
+          double squareResult = baseNumber * baseNumber;
 
-        // Calculate the square
-        double squareResult = baseNumber * baseNumber;
-
-        // Update userInput and userOutput
-        userInput = formatNumber(squareResult);
-        userOutput = formatNumber(squareResult);
+          // Update userInput and userOutput
+          userInput = formatNumber(squareResult);
+          userOutput = formatNumber(squareResult);
+        } catch (e) {
+          userOutput = 'Not a Number';
+          logs('Error: $e');
+        }
       }
     }
 
     /// x³ button
-    else if (buttons[index] == 'x³') {
+    // else if (buttons[index] == 'x³') {
+    //   if (userInput.isEmpty) {
+    //     userOutput = '0';
+    //   } else {
+    //     // userInput += "^3";
+    //     double baseNumber = double.parse(userInput);
+    //
+    //     // Calculate the square
+    //     double squareResult = baseNumber * baseNumber * baseNumber;
+    //
+    //     // Update userInput and userOutput
+    //     userInput = formatNumber(squareResult);
+    //     userOutput = formatNumber(squareResult);
+    //   }
+    // }
+    if (buttons[index] == 'x³') {
       if (userInput.isEmpty) {
         userOutput = '0';
       } else {
-        // userInput += "^3";
-        double baseNumber = double.parse(userInput);
+        String sanitizedInput = userInput.replaceAll(',', '');
 
-        // Calculate the square
-        double squareResult = baseNumber * baseNumber * baseNumber;
+        // String sanitizedInput = userInput.replaceAll(',', '');
 
-        // Update userInput and userOutput
-        userInput = formatNumber(squareResult);
-        userOutput = formatNumber(squareResult);
+        try {
+          Decimal baseNumber = Decimal.parse(sanitizedInput);
+
+          // Calculate the cube
+          Decimal cubeResult = baseNumber * baseNumber * baseNumber;
+
+          // Update userInput and userOutput
+          userInput = formatNumber(cubeResult.toDouble());
+          userOutput = formatNumber(cubeResult.toDouble());
+        } catch (e) {
+          userOutput = 'Not a Number';
+          logs('Error: $e');
+        }
       }
     }
 
