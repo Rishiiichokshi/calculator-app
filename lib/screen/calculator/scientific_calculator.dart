@@ -539,6 +539,7 @@ class _ScientificCalculatorState extends State<ScientificCalculator> {
                   child: SingleChildScrollView(
                     controller: controller.inputScrollController,
                     scrollDirection: Axis.horizontal,
+                    physics: ClampingScrollPhysics(),
                     child: Text(
                       controller.userInput,
                       style: TextStyle(

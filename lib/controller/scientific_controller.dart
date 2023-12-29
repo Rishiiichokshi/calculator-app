@@ -773,9 +773,14 @@ class ScientificController extends GetxController {
       userInput += buttons[index];
       // lastCharIsOperator = isOperator(buttons[index]);
     }
+    // inputScrollController.animateTo(
+    //   inputScrollController.position.maxScrollExtent + 20,
+    //   duration: const Duration(milliseconds: 500),
+    //   curve: Curves.ease,
+    // );
     inputScrollController.animateTo(
       inputScrollController.position.maxScrollExtent + 20,
-      duration: const Duration(milliseconds: 500),
+      duration: const Duration(milliseconds: 10),
       curve: Curves.ease,
     );
 

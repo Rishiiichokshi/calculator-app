@@ -314,6 +314,7 @@ class _MainScreenState extends State<MainScreen> {
                   child: SingleChildScrollView(
                     controller: controller.inputScrollController,
                     scrollDirection: Axis.horizontal,
+                    physics: ClampingScrollPhysics(),
                     child: Text(
                       ///remove.00
                       (controller.userInput.endsWith(".00")
