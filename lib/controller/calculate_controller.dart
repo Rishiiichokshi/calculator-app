@@ -16,6 +16,12 @@ class CalculateController extends GetxController {
   /// Declare a flag to track if a dot is present in the current number
   bool dotAllowed = true;
 
+  void initialiseInputAndOutput(var input, var output) {
+    userInput = input;
+    userOutput = output;
+    update();
+  }
+
   String formatNumber(double number) {
     // final digitsThreshold = 13; // Threshold set to 13 digits
     //
@@ -64,6 +70,8 @@ class CalculateController extends GetxController {
             userInput += lastOperator + lastOperand;
             evaluateLiveOutput();
           }
+        } else {
+          evaluateLiveOutput();
         }
         // Update the last evaluated result
         lastResult = eval;
@@ -127,9 +135,15 @@ class CalculateController extends GetxController {
 
   /// Delete Button Pressed Func
   deleteBtnAction() {
-    userInput = userInput.substring(0, userInput.length - 1);
-    evaluateLiveOutput();
-    update();
+    print('userInput==>$userInput ==>${userInput.length}');
+    if (userInput.isNotEmpty) {
+      userInput = userInput.substring(0, userInput.length - 1);
+      evaluateLiveOutput();
+      update();
+    } else {
+      userOutput = "0";
+      update();
+    }
   }
 
   /// on Number Button Tapped
@@ -223,7 +237,7 @@ class CalculateController extends GetxController {
         Expression exp = p.parse(userInput);
         ContextModel ctx = ContextModel();
         double eval = exp.evaluate(EvaluationType.REAL, ctx);
-        userOutput = eval.toString();
+        // userOutput = eval.toString();
       } catch (e) {
         // userOutput = 'Error';
         logs(e.toString());
@@ -240,7 +254,7 @@ class CalculateController extends GetxController {
       duration: const Duration(milliseconds: 10),
       curve: Curves.ease,
     );
-    evaluateLiveOutput();
+    // evaluateLiveOutput();
     update();
   }
 

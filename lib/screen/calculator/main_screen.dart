@@ -1,3 +1,4 @@
+import 'package:calcon/controller/scientific_controller.dart';
 import 'package:calcon/screen/calculator/scientific_calculator.dart';
 import 'package:calcon/screen/calculator/widget/custom_button.dart';
 import 'package:flutter/material.dart';
@@ -47,17 +48,27 @@ class _MainScreenState extends State<MainScreen> {
   ];
 
   @override
-  Widget build(BuildContext context) {
-    var controller = Get.find<CalculateController>();
-    var themeController = Get.find<ThemeController>();
+  void initState() {
+    print('MainScreen========');
+    super.initState();
+  }
 
+  var controller = Get.find<CalculateController>();
+  var scientificController = Get.find<ScientificController>();
+  var themeController = Get.find<ThemeController>();
+  @override
+  Widget build(BuildContext context) {
     final isLandscape =
         MediaQuery.of(context).orientation == Orientation.landscape;
-
+    print('isLandscape=.......$isLandscape');
     if (isLandscape) {
+      scientificController.initialiseInputAndOutput(
+          controller.userInput, controller.userOutput);
       // Navigate to the ScientificCalculator screen in landscape mode
       return const ScientificCalculator();
     } else {
+      controller.initialiseInputAndOutput(
+          scientificController.userInput, scientificController.userOutput);
       return WillPopScope(
         onWillPop: () async {
           return true;

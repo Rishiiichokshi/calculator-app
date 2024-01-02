@@ -77,6 +77,12 @@ class _ScientificCalculatorState extends State<ScientificCalculator> {
   bool showRadText = true;
 
   @override
+  void initState() {
+    print('ScientificCalculator===============');
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     var scientificController = Get.find<ScientificController>();
     var themeController = Get.find<ThemeController>();

@@ -32,6 +32,12 @@ class ScientificController extends GetxController {
     update(); // Notify the UI to update after the toggle
   }
 
+  void initialiseInputAndOutput(var input, var output) {
+    userInput = input;
+    userOutput = output;
+    update();
+  }
+
   ///Rat to Deg Button change
   void changeButtonText() {
     buttonText.value = (buttonText.value == "Rad") ? "Deg" : "Rad";
@@ -140,6 +146,7 @@ class ScientificController extends GetxController {
     Expression exp = p.parse(userInputFC);
     ContextModel ctx = ContextModel();
     double eval = exp.evaluate(EvaluationType.REAL, ctx);
+    print('eval==>$eval');
     try {
       double eval = exp.evaluate(EvaluationType.REAL, ctx) as double;
       if (eval.isFinite) {
@@ -153,6 +160,8 @@ class ScientificController extends GetxController {
             userInput += lastOperator + lastOperand;
             evaluateLiveOutput();
           }
+        } else {
+          evaluateLiveOutput();
         }
         // Update the last evaluated result
         lastResult = eval;
@@ -229,9 +238,15 @@ class ScientificController extends GetxController {
 
   /// Delete Button Pressed Func
   deleteBtnAction() {
-    userInput = userInput.substring(0, userInput.length - 1);
-    evaluateLiveOutput();
-    update();
+    print('userInput==>$userInput ==>${userInput.length}');
+    if (userInput.isNotEmpty) {
+      userInput = userInput.substring(0, userInput.length - 1);
+      evaluateLiveOutput();
+      update();
+    } else {
+      userOutput = "0";
+      update();
+    }
   }
 
   /// on Number Button Tapped
@@ -784,7 +799,7 @@ class ScientificController extends GetxController {
       curve: Curves.ease,
     );
 
-    evaluateLiveOutput();
+    // evaluateLiveOutput();
     update();
   }
 
@@ -800,6 +815,7 @@ class ScientificController extends GetxController {
   /// Update userOutput based on the current userInput.
   void evaluateLiveOutput() {
     String userInputWithoutCommas = userInput.replaceAll(',', '');
+    print('userInput====>$userInput');
     // String userInputFC = userInputWithoutCommas;
     String userInputFC = userInputWithoutCommas
         .replaceAll("x", "*")
@@ -863,6 +879,7 @@ class ScientificController extends GetxController {
       // double eval = exp.evaluate(EvaluationType.REAL, ctx);
 
       double eval = exp.evaluate(EvaluationType.REAL, ctx) as double;
+      print('userInputFC=======>$userInputFC eval==>$eval');
       if (eval.isFinite) {
         userOutput = formatNumber(eval);
       } else {
@@ -1901,16 +1918,27 @@ class ScientificController extends GetxController {
     return result;
   }
 
+  double convertModuleByToDouble(String str) {
+    final split = str.split('/');
+    return num.parse(split.first) / num.parse(split[1]);
+  }
+
   /// xʸ function handle
   /// Function to handle xʸ expression
   String handleXPowYExpression(String expression) {
     List<String> parts = expression.split('^');
+    print('parts==>$parts');
     if (parts.length == 2) {
+      final exponentTemp = parts[1].replaceAll('(', "").replaceAll(')', "");
+      print('exponentTemp==>$exponentTemp');
       double base = double.tryParse(parts[0]) ?? 0.0;
-      double exponent = double.tryParse(parts[1]) ?? 0.0;
-
+      double exponent = exponentTemp.contains('/')
+          ? convertModuleByToDouble(exponentTemp)
+          : double.tryParse(exponentTemp) ?? 0.0;
+      print('BASE ==>$base exponent:=>$exponent');
       // Calculate the result of xʸ
       num result = math.pow(base, exponent);
+      // num result = math.pow(base, 0.33);
 
       // Update expression with the result
       expression = result.toString();
