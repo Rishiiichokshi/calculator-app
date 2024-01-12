@@ -56,6 +56,7 @@ class _MainScreenState extends State<MainScreen> {
   var controller = Get.find<CalculateController>();
   var scientificController = Get.find<ScientificController>();
   var themeController = Get.find<ThemeController>();
+
   @override
   Widget build(BuildContext context) {
     final isLandscape =
@@ -328,10 +329,19 @@ class _MainScreenState extends State<MainScreen> {
                     physics: ClampingScrollPhysics(),
                     child: Text(
                       ///remove.00
+                      /*(controller.userInput.endsWith(".00")
+                          ? controller.userInput
+                              .substring(0, controller.userInput.length - 3)
+                          : controller.userInput),*/
                       (controller.userInput.endsWith(".00")
                           ? controller.userInput
                               .substring(0, controller.userInput.length - 3)
-                          : controller.userInput),
+                          : controller.userInput.isEmpty
+                              ? ""
+                              : NumberFormat("#,##0", "en_US").format(
+                                  num.parse(controller.userInput),
+                                )),
+
                       style: TextStyle(
                           color: themeController.isDark
                               ? Colors.white
