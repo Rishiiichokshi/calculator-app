@@ -329,18 +329,18 @@ class _MainScreenState extends State<MainScreen> {
                     physics: ClampingScrollPhysics(),
                     child: Text(
                       ///remove.00
-                      /*(controller.userInput.endsWith(".00")
+                      (controller.userInput.endsWith(".00")
                           ? controller.userInput
                               .substring(0, controller.userInput.length - 3)
-                          : controller.userInput),*/
-                      (controller.userInput.endsWith(".00")
+                          : controller.userInput),
+                      /*  (controller.userInput.endsWith(".00")
                           ? controller.userInput
                               .substring(0, controller.userInput.length - 3)
                           : controller.userInput.isEmpty
                               ? ""
                               : NumberFormat("#,##0", "en_US").format(
                                   num.parse(controller.userInput),
-                                )),
+                                )),*/
 
                       style: TextStyle(
                           color: themeController.isDark

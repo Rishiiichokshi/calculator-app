@@ -548,12 +548,12 @@ class _ScientificCalculatorState extends State<ScientificCalculator> {
                     scrollDirection: Axis.horizontal,
                     physics: ClampingScrollPhysics(),
                     child: Text(
-                      // controller.userInput,
-                      controller.userInput.isEmpty
+                      controller.userInput,
+                      /*controller.userInput.isEmpty
                           ? ""
                           : NumberFormat("#,##0", "en_US").format(
                               num.parse(controller.userInput),
-                            ),
+                            ),*/
                       style: TextStyle(
                           color: themeController.isDark
                               ? Colors.white
