@@ -145,38 +145,32 @@ class ScientificController extends GetxController {
     Parser p = Parser();
     Expression exp = p.parse(userInputFC);
     ContextModel ctx = ContextModel();
-    double eval = exp.evaluate(EvaluationType.REAL, ctx);
-    print('eval==>$eval');
+    double eval;
     try {
-      double eval = exp.evaluate(EvaluationType.REAL, ctx) as double;
+      eval = exp.evaluate(EvaluationType.REAL, ctx) as double;
       if (eval.isFinite) {
-        // Append the last operation to the input string only on the second click
-        if (equalButtonClickCount > 0) {
-          RegExpMatch? lastOperationMatch =
-              RegExp(r'([+\-x/]+)(\d+(?:\.\d+)?)$').firstMatch(userInput);
-          if (lastOperationMatch != null) {
-            String? lastOperator = lastOperationMatch.group(1) ?? '';
-            String? lastOperand = lastOperationMatch.group(2) ?? '';
-            userInput += lastOperator + lastOperand;
-            evaluateLiveOutput();
-          }
-        } else {
-          evaluateLiveOutput();
-        }
         // Update the last evaluated result
         lastResult = eval;
+
+        // Reset userInput to the new value without trailing zero if necessary
+        userInput =
+            eval.toStringAsFixed(eval.truncateToDouble() == eval ? 0 : 2);
+
+        // Reset equalButtonClickCount to 0 after each calculation
+        equalButtonClickCount = 0;
+
+        // Evaluate the new expression based on the user input
+        evaluateLiveOutput();
+
         print('userInput====$userInput');
-        equalButtonClickCount++;
       } else {
         userOutput = 'Error';
         logs('Error: Result is not a finite number');
       }
     } catch (e) {
-      // print('----parseFormattedNumber----${parseFormattedNumber(userInput)}');
-      logs('===Equal press Error ==Error: $e');
       userOutput = 'Error';
+      logs('Error: $e');
     }
-
     // try {
     //   Parser p = Parser();
     //   Expression exp = p.parse(userInputFC);
@@ -219,7 +213,6 @@ class ScientificController extends GetxController {
     //   logs('===ParceruserInputFC: $userInputFC');
     // }
 
-    cursorPosition = userInput.length;
     update();
   }
 
