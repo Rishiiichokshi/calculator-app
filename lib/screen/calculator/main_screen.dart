@@ -3,7 +3,7 @@ import 'package:calcon/screen/calculator/scientific_calculator.dart';
 import 'package:calcon/screen/calculator/widget/custom_button.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:intl/intl.dart';
+
 import 'package:shimmer/shimmer.dart';
 import 'package:sizer/sizer.dart';
 

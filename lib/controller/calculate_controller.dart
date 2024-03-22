@@ -48,7 +48,44 @@ class CalculateController extends GetxController {
     // return '$doublePart e$exponentPart';
   }
 
-  /// Equal Button Pressed Func
+  equalPressed() {
+    String userInputFC = userInput;
+    userInputFC = userInputFC.replaceAll("x", "*");
+    Parser p = Parser();
+    Expression exp = p.parse(userInputFC);
+    ContextModel ctx = ContextModel();
+
+    double eval;
+    try {
+      eval = exp.evaluate(EvaluationType.REAL, ctx) as double;
+      if (eval.isFinite) {
+        // Update the last evaluated result
+        lastResult = eval;
+
+        // Reset userInput to the new value without trailing zero if necessary
+        userInput =
+            eval.toStringAsFixed(eval.truncateToDouble() == eval ? 0 : 2);
+
+        // Reset equalButtonClickCount to 0 after each calculation
+        equalButtonClickCount = 0;
+
+        // Evaluate the new expression based on the user input
+        evaluateLiveOutput();
+
+        print('userInput====$userInput');
+      } else {
+        userOutput = 'Error';
+        logs('Error: Result is not a finite number');
+      }
+    } catch (e) {
+      userOutput = 'Error';
+      logs('Error: $e');
+    }
+
+    update();
+  }
+
+/*  /// Equal Button Pressed Func
   equalPressed() {
     String userInputFC = userInput;
     userInputFC = userInputFC.replaceAll("x", "*");
@@ -122,7 +159,7 @@ class CalculateController extends GetxController {
     //   userInput = eval.toInt().toString();
     // }
     update();
-  }
+  }*/
 
   /// Clear Button Pressed Func
   clearInputAndOutput() {
